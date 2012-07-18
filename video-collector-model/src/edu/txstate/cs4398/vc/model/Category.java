@@ -1,11 +1,14 @@
 package edu.txstate.cs4398.vc.model;
 
 public class Category extends AbstractModel {
-
 	private int categoryId;
 	private String name;
 
-	public void getCategoryId() {
+	public Category(int categoryId, String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	public int getCategoryId() {
 		throw new UnsupportedOperationException();
 	}
 

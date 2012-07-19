@@ -5,6 +5,9 @@ package edu.txstate.cs4398.vc.desktop.utils;
 
 import static org.junit.Assert.*;
 
+import java.net.NetworkInterface;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,7 +16,7 @@ import org.junit.Test;
 
 /**
  * @author Ed
- *
+ * 
  */
 public class NetworkUtilsTest {
 
@@ -46,8 +49,17 @@ public class NetworkUtilsTest {
 	}
 
 	@Test
-	public void testGetInterfaces() {
-		NetworkUtils.getInterfaces();
+	public void testGetInterfaces() throws Exception {
+		/*
+		 * since this will vary for each machine under test we have to make this
+		 * generic enough to pass on any machine but still check the logic of
+		 * the method
+		 */
+		List<NetworkInterface> interfaces = NetworkUtils.getInterfaces();
+		assertTrue(interfaces.size() > 0);
+		NetworkInterface netInt = interfaces.get(0);
+		assertTrue(netInt.isUp());
+		assertTrue(netInt.supportsMulticast());
 	}
 
 }

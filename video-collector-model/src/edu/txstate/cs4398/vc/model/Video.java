@@ -13,47 +13,48 @@ public class Video extends AbstractModel {
 	private Category category;
 
 	public Video(int videoId, String title) {
-		throw new UnsupportedOperationException();
+		this.videoId = videoId;
+		this.title = title;
 	}
 
 	public int getVideoId() {
-		throw new UnsupportedOperationException();
+		return videoId;
 	}
 
 	public void setVideoId(int videoId) {
-		throw new UnsupportedOperationException();
+		this.videoId = videoId;
 	}
 
 	public String getTitle() {
-		throw new UnsupportedOperationException();
+		return title;
 	}
 
 	public void setTitle(String title) {
-		throw new UnsupportedOperationException();
+		this.title = title;
 	}
 
 	public int getYear() {
-		throw new UnsupportedOperationException();
+		return year;
 	}
 
 	public void setYear(int year) {
-		throw new UnsupportedOperationException();
+		this.year = year;
 	}
 
 	public int getRuntime() {
-		throw new UnsupportedOperationException();
+		return runtime;
 	}
 
 	public void setRuntime(int runtime) {
-		throw new UnsupportedOperationException();
+		this.runtime = runtime;
 	}
 
 	public long getUpc() {
-		throw new UnsupportedOperationException();
+		return upc;
 	}
 
 	public void setUpc(long upc) {
-		throw new UnsupportedOperationException();
+		this.upc = upc;
 	}
 
 	public byte getMyRating() {

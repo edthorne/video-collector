@@ -13,6 +13,11 @@ import org.junit.Test;
 import edu.txstate.cs4398.vc.desktop.services.VideoLookupService;
 import edu.txstate.cs4398.vc.model.Video;
 
+/**
+ * 
+ * @author mnosler
+ *
+ */
 public class TestVideoLookupService {
 
 	VideoLookupService videoLookupService;
@@ -47,7 +52,7 @@ public class TestVideoLookupService {
 		System.out.println("Name lookup : The Dukes of Hazzard (Unrated Widescreen Edition)");
 		Video video = new Video(0,"");
 		try {
-			video = videoLookupService.getVideoByName("The Dukes of Hazzard (Unrated Widescreen Edition)");
+			video = videoLookupService.getVideoByName("The Dukes of Hazzard (Unrated Widescreen Edition)",video);
 			System.out.println("Title: " + video.getTitle());
 			System.out.println("Runtime: " + video.getRuntime());
 		} catch (IOException e) {
@@ -76,7 +81,7 @@ public class TestVideoLookupService {
 		Video video = new Video(0,"");
 		
 		try {
-			video = videoLookupService.getVideoByName(videoName);
+			video = videoLookupService.getVideoByName(videoName, video);
 		} catch (IOException e) {
 			fail();
 		} catch (JSONException e) {
@@ -90,7 +95,7 @@ public class TestVideoLookupService {
 	@Test
 	public void testList(){
 		ArrayList<String> upcList = new ArrayList<String>();
-		
+		ArrayList<Video> videos = new ArrayList<Video>();
 		upcList.add("024543382034");
 		upcList.add("012569736658");
 		upcList.add("025192328824");
@@ -103,7 +108,8 @@ public class TestVideoLookupService {
 		{
 			System.out.println("UPC: " + upc);
 			try {
-				Video video = videoLookupService.getVideoByName(videoLookupService.getProductName(upc));
+				Video video = new Video(upcList.indexOf(upc), "");
+				videos.add(videoLookupService.getVideoByName(videoLookupService.getProductName(upc), video));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -113,6 +119,11 @@ public class TestVideoLookupService {
 				e.printStackTrace();
 				fail();
 			}
+		}
+		
+		for(Video video : videos)
+		{
+			System.out.println("Video " + videos.indexOf(video) + ": " + video.getTitle());
 		}
 	}
 	

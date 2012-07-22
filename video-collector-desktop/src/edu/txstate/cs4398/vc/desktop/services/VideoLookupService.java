@@ -14,11 +14,13 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.txstate.cs4398.vc.model.Category;
-import edu.txstate.cs4398.vc.model.Person;
-import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
+/**
+ * 
+ * @author mnosler
+ *
+ */
 public class VideoLookupService {
 	
 	private Properties prop = new Properties();
@@ -51,7 +53,6 @@ public class VideoLookupService {
 		
 		URLConnection upcCon = upcURL.openConnection();
 
-		//System.out.println(upcURL.toString());
 	    BufferedReader in = new BufferedReader(new InputStreamReader(upcCon.getInputStream()));
 
 	    String inputLine;
@@ -62,8 +63,6 @@ public class VideoLookupService {
 	    in.close();
 
 	    JSONObject upcResponse = new JSONObject(builder.toString());
-	    //System.out.println(upcResponse);
-	   // System.out.println(upcResponse.getJSONObject("0").getString("productname"));
 	    String videoName = upcResponse.getJSONObject("0").getString("productname");
 	    
 	    return videoName;
@@ -73,21 +72,20 @@ public class VideoLookupService {
 	 * Returns a video after searching web services for information
 	 * Uses rotten tomatoes API first, followed by imdb if nothing found
 	 * @param videoName
+	 * @param videoObject - a video object that already has its unique ID assigned
 	 * @return a video object - will be empty title if no result found.
 	 * @throws IOException if there is a problem establishing the connection with the web service
 	 * @throws JSONException
 	 * @throws Exception
 	 */
-	public Video getVideoByName(String videoName) throws IOException, JSONException
+	public Video getVideoByName(String videoName, Video videoObject) throws IOException, JSONException
 	{
 		videoName = videoName.toLowerCase();
-		//System.out.println(videoName);
 		if(videoName.contains("("))
 			videoName = videoName.substring(0, videoName.indexOf("("));
-		//System.out.println(videoName);
 		if(videoName.contains("collector"))
 			videoName = videoName.substring(0, videoName.indexOf("collector"));
-			
+		
 		videoName = URLEncoder.encode(videoName, "UTF-8");
 		URL tomatoURL;
 		try {
@@ -110,7 +108,6 @@ public class VideoLookupService {
 	    in.close();
 
 	    JSONObject tomatoResponse;
-	    Video videoObject = new Video(0,"");
 
 	    try {
 			tomatoResponse = new JSONObject(builder.toString());
@@ -183,7 +180,6 @@ public class VideoLookupService {
 	private String getDirector(long movieId) throws Exception
 	{
 		URL serviceURL = new URL("http://api.rottentomatoes.com/api/public/v1.0/movies/" + movieId + ".json?apikey=" + tomato_token);
-		//System.out.println(imdbURL.toString());
 		URLConnection serviceCon = serviceURL.openConnection();
 	    BufferedReader in = new BufferedReader(new InputStreamReader(serviceCon.getInputStream()));
 	    

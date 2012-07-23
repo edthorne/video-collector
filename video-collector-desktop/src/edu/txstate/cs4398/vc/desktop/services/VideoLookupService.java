@@ -14,6 +14,8 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.txstate.cs4398.vc.model.Person;
+import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
 /**
@@ -63,14 +65,15 @@ public class VideoLookupService {
 	    in.close();
 
 	    JSONObject upcResponse = new JSONObject(builder.toString());
-	    String videoName = upcResponse.getJSONObject("0").getString("productname");
+	    String productName = upcResponse.getJSONObject("0").getString("productname");
 	    
-	    return videoName;
+	    return productName;
 	}
 	
 	/**
 	 * Returns a video after searching web services for information
 	 * Uses rotten tomatoes API first, followed by imdb if nothing found
+	 * If nothing is found on either service, the existing video will be returned
 	 * @param videoName
 	 * @param videoObject - a video object that already has its unique ID assigned
 	 * @return a video object - will be empty title if no result found.
@@ -113,7 +116,6 @@ public class VideoLookupService {
 			tomatoResponse = new JSONObject(builder.toString());
 		} catch (JSONException e) {
 			try {
-				System.out.println(videoName);
 				return imdbLookupService(videoName, videoObject);
 			} catch (Exception e1) {
 				return videoObject;
@@ -135,15 +137,13 @@ public class VideoLookupService {
 		tomatoResponse = tomatoResponse.getJSONArray("movies").getJSONObject(0);
 	    videoObject.setTitle(tomatoResponse.getString("title"));
 	    videoObject.setRuntime(Integer.parseInt(tomatoResponse.getString("runtime")));
-	    
-	    System.out.println("Rotten Tomatoes Response:");
-	    System.out.println("Title: " + tomatoResponse.getString("title"));
-	    System.out.println("MPAA Rating: " + tomatoResponse.getString("mpaa_rating"));
-	    System.out.println("Year: " + tomatoResponse.getString("year"));
+	    videoObject.setRated(getRating(tomatoResponse.getString("mpaa_rating")));
+	    videoObject.setYear(Integer.parseInt(tomatoResponse.getString("year")));
 	    try {
-			System.out.println("Director: " + getDirector(tomatoResponse.getLong("id")));
+	    	videoObject.setDirector(getDirectorTomatoes(tomatoResponse.getLong("id")));
 		} catch (Exception e) {
-			System.out.println("Director: Not Found");
+			//TODO unique.
+			videoObject.setDirector(new Person(0,"",""));
 		}
 	    System.out.println();
 	    
@@ -168,16 +168,32 @@ public class VideoLookupService {
 	    videoObject.setTitle(imdbResponse.getString("Title"));
 
 	    System.out.println("IMDB Lookup Response:");
-	    System.out.println("Title: " + imdbResponse.getString("Title"));
-	    System.out.println("MPAA Rating: " + imdbResponse.getString("Rated"));
-	    System.out.println("Year: " + imdbResponse.getString("Year"));
-	    System.out.println("Director: " + imdbResponse.getString("Director"));
-	    System.out.println();
+	    videoObject.setTitle(imdbResponse.getString("Title"));
+	    System.out.println(imdbResponse.getString("Rated"));
+	    videoObject.setRated(getRating(imdbResponse.getString("Rated")));
+	    videoObject.setYear(Integer.parseInt(imdbResponse.getString("Year")));
+	    String directorName = imdbResponse.getString("Director");
+	    
+	    String[] nameSplit = directorName.split(" ");
+	    if(nameSplit.length > 2)
+	    {
+	    	String firstName = nameSplit[0];
+	    	String lastName = nameSplit[1];
+		    //TODO replace with unique ID.
+	    	videoObject.setDirector(new Person(0,lastName, firstName));
+	    }
+	    else
+		    //TODO replace with unique ID.
+	    	videoObject.setDirector(new Person(0,"",""));
+	    
+	    videoObject.setRuntime(getImdbRuntime(imdbResponse.getString("Runtime")));
+
 
 		return videoObject;
 	}
 	
-	private String getDirector(long movieId) throws Exception
+
+	private Person getDirectorTomatoes(long movieId) throws Exception
 	{
 		URL serviceURL = new URL("http://api.rottentomatoes.com/api/public/v1.0/movies/" + movieId + ".json?apikey=" + tomato_token);
 		URLConnection serviceCon = serviceURL.openConnection();
@@ -193,8 +209,49 @@ public class VideoLookupService {
 	    JSONObject tomatoResponse = new JSONObject(builder.toString());
 	    
 	    tomatoResponse = tomatoResponse.getJSONArray("abridged_directors").getJSONObject(0);
-	    return tomatoResponse.getString("name");
+	    String directorName = tomatoResponse.getString("name");
 	    
+	    String[] nameSplit = directorName.split(" ");
+	    String firstName = nameSplit[0];
+	    String lastName = nameSplit[1];
+	    //TODO replace with unique ID.
+	    return new Person(0,lastName,firstName);
+	}
+	
+	private Rating getRating(String rating)
+	{
+		if(rating.equals("G"))
+			return Rating.G;
+		else if(rating.equals("PG"))
+			return Rating.PG;
+		else if(rating.equals("PG-13"))
+			return Rating.PG13;
+		else if(rating.equals("R"))
+			return Rating.R;
+		else if(rating.equals("NC-17"))
+			return Rating.NC17;
+		else 
+			return Rating.NR;
+		
+	}
+	
+	public int getImdbRuntime(String string) {
+		string = string.replace(" ", "");
+		string = string.replaceAll("h|min", " ");
+		string = string.trim();
+
+		String[] divided = string.split(" ");
+		
+		int runtime = 0;
+		
+		if(divided.length>1)
+		{
+			runtime += 60*Integer.parseInt(divided[0]);
+			runtime += Integer.parseInt(divided[1]);
+		}
+		else
+			runtime = Integer.parseInt(string);
+		return runtime;
 	}
 
 

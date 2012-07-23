@@ -11,6 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.txstate.cs4398.vc.desktop.services.VideoLookupService;
+import edu.txstate.cs4398.vc.model.Category;
+import edu.txstate.cs4398.vc.model.Person;
+import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
 /**
@@ -109,7 +112,10 @@ public class TestVideoLookupService {
 			System.out.println("UPC: " + upc);
 			try {
 				Video video = new Video(upcList.indexOf(upc), "");
-				videos.add(videoLookupService.getVideoByName(videoLookupService.getProductName(upc), video));
+				video.setUpc(Long.parseLong(upc));
+				video = videoLookupService.getVideoByName(videoLookupService.getProductName(upc), video);
+				printVideo(video);
+				videos.add(video);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -119,11 +125,6 @@ public class TestVideoLookupService {
 				e.printStackTrace();
 				fail();
 			}
-		}
-		
-		for(Video video : videos)
-		{
-			System.out.println("Video " + videos.indexOf(video) + ": " + video.getTitle());
 		}
 	}
 	
@@ -144,5 +145,44 @@ public class TestVideoLookupService {
 		System.out.println("video" + videoName);
 		fail();
 	}
-
+	
+	@Test
+	public void testInvalidMovie()
+	{
+		System.out.println("Test invalid movie");
+		Video video = new Video(0,"nothinginthistitle");
+		Video video2 = null;
+		try {
+			video = videoLookupService.getVideoByName("invalidmoviesearchstring", video);
+			video2 = videoLookupService.getVideoByName("invalidmoviesearchstring", video);
+		} catch (IOException e) {
+			fail();
+		} catch (JSONException e) {
+			fail();
+		}
+		assertEquals(video, video2);
+		assertEquals(video.getTitle(),"nothinginthistitle");
+	}
+	
+	@Test
+	public void testImdbRuntime()
+	{
+		int runtime = videoLookupService.getImdbRuntime("3 h 14 min");
+		assertEquals(runtime, 194);
+		
+		runtime = videoLookupService.getImdbRuntime("14 min");
+		assertEquals(runtime, 14);
+	}
+	
+	private void printVideo(Video video)
+	{
+		System.out.println("Video:");
+		System.out.println("Title: " + video.getTitle());
+		System.out.println("Year:  " + video.getYear());
+		System.out.println("Runtime: " + video.getRuntime());
+		System.out.println("UPC: " + video.getUpc());
+		System.out.println("Director: " + video.getDirector().getFirstName() + " " + video.getDirector().getLastName());
+		System.out.println("Rated: " + video.getRated());
+		System.out.println();
+	}
 }

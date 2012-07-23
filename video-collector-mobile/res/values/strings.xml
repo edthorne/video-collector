@@ -1,8 +1,9 @@
 <resources>
 
     <string name="app_name">Video Manager</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="client">Mobile Client!</string>
     <string name="menu_settings">Settings</string>
+    <string name="mobile_client">MobileClient</string>
     <string name="title_activity_hello_world">HelloWorldActivity</string>
 
 </resources>

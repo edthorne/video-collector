@@ -1,5 +1,10 @@
 package edu.txstate.cs4398.vc.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+
+@XmlRootElement(name = "video")
+
 public class Video extends AbstractModel {
 	private int videoId;
 	private String title;
@@ -12,9 +17,27 @@ public class Video extends AbstractModel {
 	private Rating rated;
 	private Category category;
 
+	public Video()
+	{
+	}
+	
 	public Video(int videoId, String title) {
 		this.videoId = videoId;
 		this.title = title;
+	}
+	
+	public Video(int videoId, String title, int year, int runtime, long upc, Person director, Rating rated, Category category)
+	{
+		this.myRating = 0;
+		this.notes = "";
+		this.videoId = videoId;
+		this.title = title;
+		this.year = year;
+		this.runtime = runtime;
+		this.upc = upc;
+		this.director = director;
+		this.rated = rated;
+		this.category = category;		
 	}
 
 	public int getVideoId() {
@@ -58,18 +81,36 @@ public class Video extends AbstractModel {
 	}
 
 	public byte getMyRating() {
-		throw new UnsupportedOperationException();
+		return myRating;
 	}
 
 	public void setMyRating(byte myRating) {
-		throw new UnsupportedOperationException();
+		this.myRating = myRating;
 	}
 
 	public String getNotes() {
-		throw new UnsupportedOperationException();
+		return notes;
 	}
 
 	public void setNotes(String notes) {
-		throw new UnsupportedOperationException();
+		this.notes = notes;
+	}
+	
+	public Person getDirector()
+	{
+		return director;
+	}
+	
+	public void setDirector(Person director)
+	{
+		this.director = director;
+	}
+
+	public Rating getRated() {
+		return rated;
+	}
+
+	public void setRated(Rating rated) {
+		this.rated = rated;
 	}
 }

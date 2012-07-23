@@ -1,7 +1,12 @@
 package edu.txstate.cs4398.vc.model;
 
 import java.util.ArrayList;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
 import edu.txstate.cs4398.vc.model.Video;
+
+@XmlRootElement(name = "person")
 
 public class Person extends AbstractModel {
 	private int personId;
@@ -9,31 +14,37 @@ public class Person extends AbstractModel {
 	private String firstName;
 	private ArrayList<Video> directed = new ArrayList<Video>();
 
+	public Person()
+	{
+	
+	}
 	public Person(int personId, String lastName, String firstName) {
-		throw new UnsupportedOperationException();
+		this.personId = personId;
+		this.lastName = lastName;
+		this.firstName = firstName;
 	}
 
 	public int getPersonId() {
-		throw new UnsupportedOperationException();
+		return personId;
 	}
 
 	public void setPersonId(int personId) {
-		throw new UnsupportedOperationException();
+		this.personId = personId;
 	}
 
 	public String getLastName() {
-		throw new UnsupportedOperationException();
+		return lastName;
 	}
 
 	public void setLastName(String lastName) {
-		throw new UnsupportedOperationException();
+		this.lastName = lastName;
 	}
 
 	public String getFirstName() {
-		throw new UnsupportedOperationException();
+		return firstName;
 	}
 
 	public void setFirstName(String firstName) {
-		throw new UnsupportedOperationException();
+		this.firstName = firstName;
 	}
 }

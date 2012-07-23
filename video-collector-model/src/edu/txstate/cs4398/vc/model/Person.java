@@ -3,10 +3,12 @@ package edu.txstate.cs4398.vc.model;
 import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import edu.txstate.cs4398.vc.model.Video;
 
 @XmlRootElement(name = "person")
+@XmlType(propOrder = {"personId", "lastName", "firstName"})
 
 public class Person extends AbstractModel {
 	private int personId;
@@ -14,10 +16,8 @@ public class Person extends AbstractModel {
 	private String firstName;
 	private ArrayList<Video> directed = new ArrayList<Video>();
 
-	public Person()
-	{
+	public Person(){}
 	
-	}
 	public Person(int personId, String lastName, String firstName) {
 		this.personId = personId;
 		this.lastName = lastName;

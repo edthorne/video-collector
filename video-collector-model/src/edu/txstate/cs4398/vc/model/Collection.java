@@ -20,12 +20,15 @@ public class Collection extends AbstractModel {
 	 * Useful for searching videos by rating
 	 */
 	private HashMap<Rating, List<Video>> ratedVideos;
+	
 	@XmlElementWrapper(name = "videoList")
 	@XmlElement(name = "video")
 	private ArrayList<Video> videos = new ArrayList<Video>();
+	
 	@XmlElementWrapper(name = "categoryList")
 	@XmlElement(name = "category")
 	private ArrayList<Category> categories = new ArrayList<Category>();
+	
 	@XmlElementWrapper(name = "peopleList")
 	@XmlElement(name = "Person")
 	private ArrayList<Person> people = new ArrayList<Person>();

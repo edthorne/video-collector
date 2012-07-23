@@ -1,10 +1,12 @@
 package edu.txstate.cs4398.vc.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 @XmlRootElement(name = "video")
 
+@XmlType(propOrder = {"videoId", "upc", "title", "director",  "year", "rated", "runtime", "category", "myRating", "notes" })
 public class Video extends AbstractModel {
 	private int videoId;
 	private String title;
@@ -37,7 +39,7 @@ public class Video extends AbstractModel {
 		this.upc = upc;
 		this.director = director;
 		this.rated = rated;
-		this.category = category;		
+		this.category = category;	
 	}
 
 	public int getVideoId() {
@@ -112,5 +114,13 @@ public class Video extends AbstractModel {
 
 	public void setRated(Rating rated) {
 		this.rated = rated;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 }

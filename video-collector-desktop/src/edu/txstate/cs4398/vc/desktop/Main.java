@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import javax.xml.ws.Endpoint;
 
-import edu.txstate.cs4398.vc.desktop.services.MobileSerivcesImpl;
+import edu.txstate.cs4398.vc.desktop.services.MobileServicesImpl;
 import edu.txstate.cs4398.vc.desktop.utils.DiscoveryListener;
 
 /**
@@ -21,7 +21,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		// start webservice
-		Endpoint.publish("http://localhost:8796/MobileServices", new MobileSerivcesImpl());
+		Endpoint.publish("http://localhost:8796/MobileServices", new MobileServicesImpl());
 		// start discovery listener
 		try {
 			DiscoveryListener listener = new DiscoveryListener();

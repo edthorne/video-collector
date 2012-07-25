@@ -1,53 +1,46 @@
 package edu.txstate.cs4398.vc.model;
 
+import java.util.UUID;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 @XmlRootElement(name = "video")
-
-@XmlType(propOrder = {"videoId", "upc", "title", "director",  "year", "rated", "runtime", "category", "myRating", "notes" })
+@XmlType(propOrder = { "upc", "title", "director", "year", "rated",
+		"runtime", "category", "myRating", "notes" })
 public class Video extends AbstractModel {
-	private int videoId;
+	private UUID videoId;
 	private String title;
 	private int year;
 	private int runtime;
-	private long upc;
+	private String upc;
 	private byte myRating;
 	private String notes;
 	private Person director;
 	private Rating rated;
 	private Category category;
 
-	public Video()
-	{
+	public Video() {
+		// default constructor
 	}
 	
-	public Video(int videoId, String title) {
-		this.videoId = videoId;
+	public Video(String title) {
 		this.title = title;
 	}
-	
-	public Video(int videoId, String title, int year, int runtime, long upc, Person director, Rating rated, Category category)
-	{
-		this.myRating = 0;
-		this.notes = "";
-		this.videoId = videoId;
-		this.title = title;
-		this.year = year;
-		this.runtime = runtime;
-		this.upc = upc;
-		this.director = director;
-		this.rated = rated;
-		this.category = category;	
+
+	@XmlID
+	@XmlAttribute
+	public String getVideoId() {
+		if (videoId == null) {
+			return null;
+		}
+		return videoId.toString();
 	}
 
-	public int getVideoId() {
-		return videoId;
-	}
-
-	public void setVideoId(int videoId) {
-		this.videoId = videoId;
+	public void setVideoId(String videoId) {
+		this.videoId = UUID.fromString(videoId);
 	}
 
 	public String getTitle() {
@@ -74,11 +67,11 @@ public class Video extends AbstractModel {
 		this.runtime = runtime;
 	}
 
-	public long getUpc() {
+	public String getUpc() {
 		return upc;
 	}
 
-	public void setUpc(long upc) {
+	public void setUpc(String upc) {
 		this.upc = upc;
 	}
 
@@ -87,6 +80,9 @@ public class Video extends AbstractModel {
 	}
 
 	public void setMyRating(byte myRating) {
+		if (myRating < 0 || myRating > 5) {
+			throw new IllegalArgumentException();
+		}
 		this.myRating = myRating;
 	}
 
@@ -97,14 +93,12 @@ public class Video extends AbstractModel {
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-	
-	public Person getDirector()
-	{
+
+	public Person getDirector() {
 		return director;
 	}
-	
-	public void setDirector(Person director)
-	{
+
+	public void setDirector(Person director) {
 		this.director = director;
 	}
 

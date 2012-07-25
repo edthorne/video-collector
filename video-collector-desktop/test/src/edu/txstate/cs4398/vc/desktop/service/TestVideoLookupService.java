@@ -53,7 +53,7 @@ public class TestVideoLookupService {
 	@Test
 	public void testDVDLookup() {
 		System.out.println("Name lookup : The Dukes of Hazzard (Unrated Widescreen Edition)");
-		Video video = new Video(0,"");
+		Video video = new Video();
 		try {
 			video = videoLookupService.getVideoByName("The Dukes of Hazzard (Unrated Widescreen Edition)",video);
 			System.out.println("Title: " + video.getTitle());
@@ -81,7 +81,7 @@ public class TestVideoLookupService {
 			fail();
 		}
 		
-		Video video = new Video(0,"");
+		Video video = new Video();
 		
 		try {
 			video = videoLookupService.getVideoByName(videoName, video);
@@ -111,8 +111,8 @@ public class TestVideoLookupService {
 		{
 			System.out.println("UPC: " + upc);
 			try {
-				Video video = new Video(upcList.indexOf(upc), "");
-				video.setUpc(Long.parseLong(upc));
+				Video video = new Video();
+				video.setUpc(upc);
 				video = videoLookupService.getVideoByName(videoLookupService.getProductName(upc), video);
 				printVideo(video);
 				videos.add(video);
@@ -150,7 +150,7 @@ public class TestVideoLookupService {
 	public void testInvalidMovie()
 	{
 		System.out.println("Test invalid movie");
-		Video video = new Video(0,"nothinginthistitle");
+		Video video = new Video("nothinginthistitle");
 		Video video2 = null;
 		try {
 			video = videoLookupService.getVideoByName("invalidmoviesearchstring", video);

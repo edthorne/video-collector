@@ -143,7 +143,7 @@ public class VideoLookupService {
 	    	videoObject.setDirector(getDirectorTomatoes(tomatoResponse.getLong("id")));
 		} catch (Exception e) {
 			//TODO unique.
-			videoObject.setDirector(new Person(0,"",""));
+			videoObject.setDirector(new Person());
 		}
 	    System.out.println();
 	    
@@ -180,11 +180,11 @@ public class VideoLookupService {
 	    	String firstName = nameSplit[0];
 	    	String lastName = nameSplit[1];
 		    //TODO replace with unique ID.
-	    	videoObject.setDirector(new Person(0,lastName, firstName));
+	    	videoObject.setDirector(new Person(lastName, firstName));
 	    }
 	    else
 		    //TODO replace with unique ID.
-	    	videoObject.setDirector(new Person(0,"",""));
+	    	videoObject.setDirector(new Person());
 	    
 	    videoObject.setRuntime(getImdbRuntime(imdbResponse.getString("Runtime")));
 
@@ -215,7 +215,7 @@ public class VideoLookupService {
 	    String firstName = nameSplit[0];
 	    String lastName = nameSplit[1];
 	    //TODO replace with unique ID.
-	    return new Person(0,lastName,firstName);
+	    return new Person(lastName,firstName);
 	}
 	
 	private Rating getRating(String rating)

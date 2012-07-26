@@ -2,37 +2,31 @@ package edu.txstate.cs4398.vc.desktop.services;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * A class to system test the web services client.  The desktop
+ * application must be running for the tests to succeed.
+ * 
+ * @author Ed
+ */
 public class TestServices {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+	private MobileServices services;
 
 	@Before
 	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
+		// get the web service from the default wsdl URL (http://localhost:8796/MobileServices?wsdl)
+		MobileServicesImplService service = new MobileServicesImplService();
+		// get the services implementation from the web service port
+		services = service.getMobileServicesImplPort();
 	}
 
 	@Test
-	public void test() {
-		MobileServicesImplService service = new MobileServicesImplService();
-		MobileServices services = service.getMobileServicesImplPort();
-		String result = services.echo("Now is the time");
-		System.out.println(result);
-		fail("Not yet implemented");
+	public void testEcho() {
+		final String message = "Testing echo service.";
+		String result = services.echo(message);
+		assertEquals(message, result);
 	}
 
 }

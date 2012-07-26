@@ -20,7 +20,7 @@ public class CategoryTest {
 
 	@Before
 	public void setUp() throws Exception {
-		category = new Category(NAME);
+		category = new Category();
 	}
 
 	@Test

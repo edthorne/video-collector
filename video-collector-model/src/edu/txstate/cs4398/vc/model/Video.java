@@ -101,12 +101,12 @@ public class Video extends AbstractModel {
 	public void setDirector(Person director) {
 		// remove prior director if set
 		if (this.director != null) {
-			this.director.removeVideo(this);
+			this.director.removeVideoFromDirector(this);
 		}
 		this.director = director;
 		// add this video to the director
 		if (this.director != null) {
-			this.director.addVideo(this);
+			this.director.addVideoToDirector(this);
 		}
 	}
 
@@ -123,6 +123,14 @@ public class Video extends AbstractModel {
 	}
 
 	public void setCategory(Category category) {
+		// remove prior category if set
+		if (this.category != null) {
+			this.category.removeVideoFromCategory(this);
+		}
 		this.category = category;
+		// add this video to the category
+		if (this.category != null) {
+			this.category.addVideoToCategory(this);
+		}
 	}
 }

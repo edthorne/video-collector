@@ -1,7 +1,9 @@
 package edu.txstate.cs4398.vc.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -54,11 +56,15 @@ public class CategoryTest {
 		// starts empty
 		assertEquals(0, category.getVideos().size());
 		// add video
-		category.addVideo(new Video(TITLE1));
+		final Video VIDEO1 = new Video(TITLE1);
+		category.addVideo(VIDEO1);
 		assertEquals(1, category.getVideos().size());
+		assertEquals(category, VIDEO1.getCategory());
 		// add another
-		category.addVideo(new Video(TITLE2));
+		final Video VIDEO2 = new Video(TITLE2);
+		category.addVideo(VIDEO2);
 		assertEquals(2, category.getVideos().size());
+		assertEquals(category, VIDEO2.getCategory());
 		// get the list
 		List<Video> videos = category.getVideos();
 		assertEquals(2, videos.size());
@@ -73,5 +79,9 @@ public class CategoryTest {
 		// remove video via category
 		category.removeVideo(video);
 		assertEquals(1, videos.size());
+		assertEquals(null, video.getCategory());
+		assertFalse(videos.contains(VIDEO1));
+		assertTrue(videos.contains(VIDEO2));
+
 	}
 }

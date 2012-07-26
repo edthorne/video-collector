@@ -49,12 +49,22 @@ public class Category extends AbstractModel {
 	public List<Video> getVideos() {
 		return Collections.unmodifiableList(videos);
 	}
+	public void addVideo(Video video) {
+		// delegate to video to set the category
+		video.setCategory(this);
+	}
+	public void removeVideo(Video video) {
+		// delegate to video to remove the category
+		video.setCategory(null);
+	}
 
-	void addVideo(Video video) {
+	void addVideoToCategory(Video video) {
+		// called by video.setDirector
 		videos.add(video);
 	}
 
-	void removeVideo(Video video) {
+	void removeVideoFromCategory(Video video) {
+		// called by video.setDirector
 		videos.remove(video);
 	}
 }

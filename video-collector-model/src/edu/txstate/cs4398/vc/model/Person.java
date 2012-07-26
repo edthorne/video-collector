@@ -75,12 +75,12 @@ public class Person extends AbstractModel {
 		video.setDirector(null);
 	}
 
-	void addVideo(Video video) {
+	void addVideoToDirector(Video video) {
 		// called by video.setDirector
 		directedVideos.add(video);
 	}
 
-	void removeVideo(Video video) {
+	void removeVideoFromDirector(Video video) {
 		// called by video.setDirector
 		directedVideos.remove(video);
 	}

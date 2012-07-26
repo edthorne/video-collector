@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "person")
-@XmlType(propOrder = { "lastName", "firstName", "directed" })
+@XmlType(propOrder = { "lastName", "firstName", "directedVideos" })
 public class Person extends AbstractModel {
 	private UUID personId;
 	private String lastName;

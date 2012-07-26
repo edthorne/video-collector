@@ -23,6 +23,15 @@ import edu.txstate.cs4398.vc.model.Video;
  */
 public class TestVideoLookupService {
 
+	private final String UPC_HIMYM = "024543382034";
+	private final String UPC_DUKES = "012569736658";
+	private final String UPC_SEABISCUIT = "025192328824";
+	private final String UPC_HANGOVER = "883929057832";
+	private final String UPC_JOHNNY = "014381126327";
+	private final String UPC_COLDMTN = "786936242164";
+	private final String UPC_ALAMO = "786936242126";
+	
+	
 	VideoLookupService videoLookupService;
 	@Before
 	public void setUp() throws Exception {
@@ -36,95 +45,64 @@ public class TestVideoLookupService {
 	}
 
 	@Test
-	public void testUPCLookup() {
-		System.out.println("UPC 012569736658");
+	public void testUPCLookup() throws Exception {
 		String upcResponse = null;
-		try {
-			upcResponse = videoLookupService.getProductName("012569736658");
-			System.out.println("Response from upc Service: " + upcResponse);
-		} catch (IOException e) {
-			fail();
-		} catch (JSONException e) {
-			fail();
-		}
-	    assertEquals(upcResponse,"The Dukes of Hazzard (Unrated Widescreen Edition)");
+		
+		upcResponse = videoLookupService.getProductName(UPC_DUKES);
+		
+		System.out.println("Response from upc Service: " + upcResponse);
+
+		assertEquals(upcResponse,"The Dukes of Hazzard (Unrated Widescreen Edition)");
 	}
 	
 	@Test
-	public void testDVDLookup() {
+	public void testDVDLookup() throws Exception {
 		System.out.println("Name lookup : The Dukes of Hazzard (Unrated Widescreen Edition)");
 		Video video = new Video();
-		try {
-			video = videoLookupService.getVideoByName("The Dukes of Hazzard (Unrated Widescreen Edition)",video);
-			System.out.println("Title: " + video.getTitle());
-			System.out.println("Runtime: " + video.getRuntime());
-		} catch (IOException e) {
-			fail();
-		} catch (JSONException e) {
-			fail();
-		}
+		
+		video = videoLookupService.getVideoByName("The Dukes of Hazzard (Unrated Widescreen Edition)",video);
+		System.out.println("Title: " + video.getTitle());
+		System.out.println("Runtime: " + video.getRuntime());
 		
 		assertEquals(video.getTitle(),"The Dukes of Hazzard");
 		assertEquals(video.getRuntime(), 104);
 	}
 	
 	@Test
-	public void testTVLookup(){
+	public void testTVLookup() throws Exception {
 		System.out.println("Test upc and Video lookup with TV Series barcode");
-		System.out.println("UPC 024543382034");
 		String videoName = null;;
-		try {
-			videoName = videoLookupService.getProductName("024543382034");
-		} catch (IOException e) {
-			fail();
-		} catch (JSONException e) {
-			fail();
-		}
+		
+		videoName = videoLookupService.getProductName(UPC_HIMYM);
 		
 		Video video = new Video();
 		
-		try {
-			video = videoLookupService.getVideoByName(videoName, video);
-		} catch (IOException e) {
-			fail();
-		} catch (JSONException e) {
-			fail();
-		}
+		video = videoLookupService.getVideoByName(videoName, video);
 		
 		assertEquals(video.getTitle(),"How I Met Your Mother");
 		
 	}
 	
 	@Test
-	public void testList(){
+	public void testList() throws Exception {
 		ArrayList<String> upcList = new ArrayList<String>();
 		ArrayList<Video> videos = new ArrayList<Video>();
-		upcList.add("024543382034");
-		upcList.add("012569736658");
-		upcList.add("025192328824");
-		upcList.add("883929057832");
-		upcList.add("014381126327");
-		upcList.add("786936242164");
-		upcList.add("786936242126");
-		
+		upcList.add(UPC_HIMYM);
+		upcList.add(UPC_DUKES);
+		upcList.add(UPC_SEABISCUIT);
+		upcList.add(UPC_HANGOVER);
+		upcList.add(UPC_JOHNNY);
+		upcList.add(UPC_COLDMTN);
+		upcList.add(UPC_ALAMO);
+
 		for(String upc : upcList)
 		{
 			System.out.println("UPC: " + upc);
-			try {
-				Video video = new Video();
-				video.setUpc(upc);
-				video = videoLookupService.getVideoByName(videoLookupService.getProductName(upc), video);
-				printVideo(video);
-				videos.add(video);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				fail();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				fail();
-			}
+			Video video = new Video();
+			video.setUpc(upc);
+			video = videoLookupService.getVideoByName(videoLookupService.getProductName(upc), video);
+			printVideo(video);
+			videos.add(video);
 		}
 	}
 	
@@ -147,21 +125,13 @@ public class TestVideoLookupService {
 	}
 	
 	@Test
-	public void testInvalidMovie()
+	public void testInvalidMovie() throws Exception
 	{
 		System.out.println("Test invalid movie");
-		Video video = new Video("nothinginthistitle");
-		Video video2 = null;
-		try {
-			video = videoLookupService.getVideoByName("invalidmoviesearchstring", video);
-			video2 = videoLookupService.getVideoByName("invalidmoviesearchstring", video);
-		} catch (IOException e) {
-			fail();
-		} catch (JSONException e) {
-			fail();
-		}
-		assertEquals(video, video2);
-		assertEquals(video.getTitle(),"nothinginthistitle");
+		Video video = new Video();
+		video = videoLookupService.getVideoByName("invalidmoviesearchstring", video);
+		
+		assertNull(video.getTitle());
 	}
 	
 	@Test
@@ -181,7 +151,10 @@ public class TestVideoLookupService {
 		System.out.println("Year:  " + video.getYear());
 		System.out.println("Runtime: " + video.getRuntime());
 		System.out.println("UPC: " + video.getUpc());
-		System.out.println("Director: " + video.getDirector().getFirstName() + " " + video.getDirector().getLastName());
+		if(video.getDirector() != null)
+			System.out.println("Director: " + video.getDirector().getFirstName() + " " + video.getDirector().getLastName());
+		else
+			System.out.println("Director: N/A");
 		System.out.println("Rated: " + video.getRated());
 		System.out.println();
 	}

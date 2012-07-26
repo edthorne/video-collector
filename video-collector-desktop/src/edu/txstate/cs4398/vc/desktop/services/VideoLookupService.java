@@ -98,7 +98,6 @@ public class VideoLookupService {
 			throw new IOException();
 		}
 		
-		//System.out.println(dvdURL.toString());
 		URLConnection upcCon = tomatoURL.openConnection();
 		
 	    BufferedReader in = new BufferedReader(new InputStreamReader(upcCon.getInputStream()));
@@ -142,10 +141,8 @@ public class VideoLookupService {
 	    try {
 	    	videoObject.setDirector(getDirectorTomatoes(tomatoResponse.getLong("id")));
 		} catch (Exception e) {
-			//TODO unique.
-			videoObject.setDirector(new Person());
+			videoObject.setDirector(null);
 		}
-	    System.out.println();
 	    
 	    return videoObject;	    
 	}
@@ -165,11 +162,7 @@ public class VideoLookupService {
 
 	    JSONObject imdbResponse = new JSONObject(builder.toString());
 	    
-	    videoObject.setTitle(imdbResponse.getString("Title"));
-
-	    System.out.println("IMDB Lookup Response:");
-	    videoObject.setTitle(imdbResponse.getString("Title"));
-	    System.out.println(imdbResponse.getString("Rated"));
+	    videoObject.setTitle(imdbResponse.getString("Title"));	    
 	    videoObject.setRated(getRating(imdbResponse.getString("Rated")));
 	    videoObject.setYear(Integer.parseInt(imdbResponse.getString("Year")));
 	    String directorName = imdbResponse.getString("Director");
@@ -179,12 +172,10 @@ public class VideoLookupService {
 	    {
 	    	String firstName = nameSplit[0];
 	    	String lastName = nameSplit[1];
-		    //TODO replace with unique ID.
 	    	videoObject.setDirector(new Person(lastName, firstName));
 	    }
 	    else
-		    //TODO replace with unique ID.
-	    	videoObject.setDirector(new Person());
+	    	videoObject.setDirector(null);
 	    
 	    videoObject.setRuntime(getImdbRuntime(imdbResponse.getString("Runtime")));
 
@@ -214,7 +205,6 @@ public class VideoLookupService {
 	    String[] nameSplit = directorName.split(" ");
 	    String firstName = nameSplit[0];
 	    String lastName = nameSplit[1];
-	    //TODO replace with unique ID.
 	    return new Person(lastName,firstName);
 	}
 	

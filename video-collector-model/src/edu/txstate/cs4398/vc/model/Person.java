@@ -18,7 +18,7 @@ public class Person extends AbstractModel {
 	private UUID personId;
 	private String lastName;
 	private String firstName;
-	private List<Video> directed = new ArrayList<Video>();
+	private List<Video> directedVideos = new ArrayList<Video>();
 
 	public Person() {
 		// default constructor
@@ -61,15 +61,27 @@ public class Person extends AbstractModel {
 	}
 
 	@XmlIDREF
-	public List<Video> getDirected() {
-		return Collections.unmodifiableList(directed);
+	public List<Video> getDirectedVideos() {
+		return Collections.unmodifiableList(directedVideos);
 	}
 
-	void addDirected(Video video) {
-		directed.add(video);
+	public void addDirectedVideo(Video video) {
+		// delegate to video to set the director
+		video.setDirector(this);
 	}
 
-	void removeDirected(Video video) {
-		directed.remove(video);
+	public void removeDirectedVideo(Video video) {
+		// delegate to video to remove the director
+		video.setDirector(null);
+	}
+
+	void addVideo(Video video) {
+		// called by video.setDirector
+		directedVideos.add(video);
+	}
+
+	void removeVideo(Video video) {
+		// called by video.setDirector
+		directedVideos.remove(video);
 	}
 }

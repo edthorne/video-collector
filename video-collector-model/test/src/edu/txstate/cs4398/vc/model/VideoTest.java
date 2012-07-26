@@ -1,8 +1,6 @@
 package edu.txstate.cs4398.vc.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.UUID;
 
@@ -59,7 +57,6 @@ public class VideoTest {
 		assertEquals(0, video.getRuntime());
 		assertNull(video.getUpc());
 		assertNull(video.getNotes());
-		assertNull(video.getDirector());
 		assertNull(video.getRated());
 		assertNull(video.getCategory());
 
@@ -68,8 +65,6 @@ public class VideoTest {
 		video.setRuntime(RUNTIME);
 		video.setUpc(UPC);
 		video.setNotes(NOTES);
-		final Person DIRECTOR = new Person(LAST_NAME, FIRST_NAME);
-		video.setDirector(DIRECTOR);
 		final Rating RATED = Rating.PG13;
 		video.setRated(RATED);
 		final Category CATEGORY = new Category(CATEGORY_NAME);
@@ -80,7 +75,6 @@ public class VideoTest {
 		assertEquals(RUNTIME, video.getRuntime());
 		assertEquals(UPC, video.getUpc());
 		assertEquals(NOTES, video.getNotes());
-		assertEquals(DIRECTOR, video.getDirector());
 		assertEquals(RATED, video.getRated());
 		assertEquals(CATEGORY, video.getCategory());
 	}
@@ -117,5 +111,17 @@ public class VideoTest {
 		assertEquals(5, video.getMyRating());
 		video.setMyRating((byte) 0);
 		assertEquals(0, video.getMyRating());
+	}
+
+	@Test
+	public void testDirector() {
+		assertNull(video.getDirector());
+		final Person DIRECTOR = new Person(LAST_NAME, FIRST_NAME);
+		video.setDirector(DIRECTOR);
+		assertEquals(DIRECTOR, video.getDirector());
+		assertTrue(DIRECTOR.getDirectedVideos().contains(video));
+		video.setDirector(null);
+		assertEquals(null, video.getDirector());
+		assertFalse(DIRECTOR.getDirectedVideos().contains(video));
 	}
 }

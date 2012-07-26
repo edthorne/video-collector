@@ -99,7 +99,15 @@ public class Video extends AbstractModel {
 	}
 
 	public void setDirector(Person director) {
+		// remove prior director if set
+		if (this.director != null) {
+			this.director.removeVideo(this);
+		}
 		this.director = director;
+		// add this video to the director
+		if (this.director != null) {
+			this.director.addVideo(this);
+		}
 	}
 
 	public Rating getRated() {

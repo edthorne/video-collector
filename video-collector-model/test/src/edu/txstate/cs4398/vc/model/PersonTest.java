@@ -1,8 +1,6 @@
 package edu.txstate.cs4398.vc.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,13 +26,13 @@ public class PersonTest {
 		assertNull(person.getLastName());
 		assertNull(person.getFirstName());
 		assertNull(person.getPersonId());
-		assertEquals(0, person.getDirected().size());
+		assertEquals(0, person.getDirectedVideos().size());
 		// name constructor
 		person = new Person(LAST_NAME, FIRST_NAME);
 		assertEquals(LAST_NAME, person.getLastName());
 		assertEquals(FIRST_NAME, person.getFirstName());
 		assertNull(person.getPersonId());
-		assertEquals(0, person.getDirected().size());
+		assertEquals(0, person.getDirectedVideos().size());
 	}
 
 	@Test
@@ -58,15 +56,19 @@ public class PersonTest {
 	@Test
 	public void testDirected() {
 		// starts empty
-		assertEquals(0, person.getDirected().size());
+		assertEquals(0, person.getDirectedVideos().size());
 		// add video
-		person.addDirected(new Video(TITLE1));
-		assertEquals(1, person.getDirected().size());
+		final Video VIDEO1 = new Video(TITLE1);
+		person.addDirectedVideo(VIDEO1);
+		assertEquals(1, person.getDirectedVideos().size());
+		assertEquals(person, VIDEO1.getDirector());
 		// add another
-		person.addDirected(new Video(TITLE2));
-		assertEquals(2, person.getDirected().size());
+		final Video VIDEO2 = new Video(TITLE2);
+		person.addDirectedVideo(VIDEO2);
+		assertEquals(2, person.getDirectedVideos().size());
+		assertEquals(person, VIDEO2.getDirector());
 		// get the list
-		List<Video> directed = person.getDirected();
+		List<Video> directed = person.getDirectedVideos();
 		assertEquals(2, directed.size());
 		Video video = directed.get(0);
 		// try to modify the list
@@ -77,7 +79,10 @@ public class PersonTest {
 			assertEquals(2, directed.size());
 		}
 		// remove video via person
-		person.removeDirected(video);
+		person.removeDirectedVideo(video);
 		assertEquals(1, directed.size());
+		assertEquals(null, video.getDirector());
+		assertFalse(directed.contains(VIDEO1));
+		assertTrue(directed.contains(VIDEO2));
 	}
 }

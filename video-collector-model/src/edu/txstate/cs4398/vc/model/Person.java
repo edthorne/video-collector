@@ -15,6 +15,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "person")
 @XmlType(propOrder = { "lastName", "firstName", "directedVideos" })
 public class Person extends AbstractModel {
+	public static final int PROPERTY_CHANGED = 1;
+	public static final int VIDEO_ADDED = 2;
+	public static final int VIDEO_REMOVED = 3;
+
 	private UUID personId;
 	private String lastName;
 	private String firstName;
@@ -38,7 +42,7 @@ public class Person extends AbstractModel {
 		return personId.toString();
 	}
 
-	public void setPersonId(String personId) {
+	void setPersonId(String personId) {
 		this.personId = UUID.fromString(personId);
 	}
 
@@ -49,6 +53,7 @@ public class Person extends AbstractModel {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "lastName"));
 	}
 
 	@XmlElement
@@ -58,6 +63,7 @@ public class Person extends AbstractModel {
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "firstName"));
 	}
 
 	@XmlIDREF
@@ -78,10 +84,12 @@ public class Person extends AbstractModel {
 	void addVideoToDirector(Video video) {
 		// called by video.setDirector
 		directedVideos.add(video);
+		notifyChanged(new ModelEvent(this, VIDEO_ADDED, video.getTitle()));
 	}
 
 	void removeVideoFromDirector(Video video) {
 		// called by video.setDirector
 		directedVideos.remove(video);
+		notifyChanged(new ModelEvent(this, VIDEO_REMOVED, video.getTitle()));
 	}
 }

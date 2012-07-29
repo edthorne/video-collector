@@ -16,11 +16,15 @@ public class VideoTest {
 	private static final String NOTES = "My movie notes";
 	private static final String FIRST_NAME = "John";
 	private static final String LAST_NAME = "Hughes";
+
 	private Video video;
+	private MockListener listener;
 
 	@Before
 	public void setUp() throws Exception {
 		video = new Video();
+		listener = new MockListener();
+		video.addModelListener(listener);
 	}
 
 	@Test
@@ -58,7 +62,7 @@ public class VideoTest {
 		assertNull(video.getUpc());
 		assertNull(video.getNotes());
 		assertNull(video.getRated());
-		assertNull(video.getCategory());
+		assertFalse(listener.containsEvent(video, Video.PROPERTY_CHANGED));
 
 		video.setTitle(TITLE);
 		video.setYear(YEAR);
@@ -67,8 +71,6 @@ public class VideoTest {
 		video.setNotes(NOTES);
 		final Rating RATED = Rating.PG13;
 		video.setRated(RATED);
-		final Category CATEGORY = new Category(CATEGORY_NAME);
-		video.setCategory(CATEGORY);
 
 		assertEquals(TITLE, video.getTitle());
 		assertEquals(YEAR, video.getYear());
@@ -76,7 +78,8 @@ public class VideoTest {
 		assertEquals(UPC, video.getUpc());
 		assertEquals(NOTES, video.getNotes());
 		assertEquals(RATED, video.getRated());
-		assertEquals(CATEGORY, video.getCategory());
+		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
+		assertEquals(6, listener.countEvents(video, Video.PROPERTY_CHANGED));
 	}
 
 	@Test
@@ -90,8 +93,10 @@ public class VideoTest {
 	@Test
 	public void testMyRating() {
 		assertEquals(0, video.getMyRating());
+		assertFalse(listener.containsEvent(video, Video.PROPERTY_CHANGED));
 		video.setMyRating((byte) 3);
 		assertEquals(3, video.getMyRating());
+		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
 		// valid values 0-5
 		try {
 			video.setMyRating((byte) 6);
@@ -114,14 +119,34 @@ public class VideoTest {
 	}
 
 	@Test
+	public void testCategory() {
+		assertNull(video.getCategory());
+		assertFalse(listener.containsEvent(video, Video.PROPERTY_CHANGED));
+		final Category category = new Category(CATEGORY_NAME);
+		video.setCategory(category);
+		assertEquals(category, video.getCategory());
+		assertTrue(category.getVideos().contains(video));
+		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
+		listener.reset();
+		video.setCategory(null);
+		assertEquals(null, video.getDirector());
+		assertFalse(category.getVideos().contains(video));
+		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
+	}
+
+	@Test
 	public void testDirector() {
 		assertNull(video.getDirector());
+		assertFalse(listener.containsEvent(video, Video.PROPERTY_CHANGED));
 		final Person DIRECTOR = new Person(LAST_NAME, FIRST_NAME);
 		video.setDirector(DIRECTOR);
 		assertEquals(DIRECTOR, video.getDirector());
 		assertTrue(DIRECTOR.getDirectedVideos().contains(video));
+		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
+		listener.reset();
 		video.setDirector(null);
 		assertEquals(null, video.getDirector());
 		assertFalse(DIRECTOR.getDirectedVideos().contains(video));
+		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
 	}
 }

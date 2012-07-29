@@ -12,6 +12,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "category")
 public class Category extends AbstractModel {
+	public static final int PROPERTY_CHANGED = 1;
+	public static final int VIDEO_ADDED = 2;
+	public static final int VIDEO_REMOVED = 3;
+
 	private UUID categoryId;
 	private String name;
 	private List<Video> videos = new ArrayList<Video>();
@@ -33,7 +37,7 @@ public class Category extends AbstractModel {
 		return categoryId.toString();
 	}
 
-	public void setCategoryId(String categoryId) {
+	void setCategoryId(String categoryId) {
 		this.categoryId = UUID.fromString(categoryId);
 	}
 
@@ -44,6 +48,7 @@ public class Category extends AbstractModel {
 
 	public void setName(String name) {
 		this.name = name;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "name"));
 	}
 
 	public List<Video> getVideos() {
@@ -61,10 +66,12 @@ public class Category extends AbstractModel {
 	void addVideoToCategory(Video video) {
 		// called by video.setDirector
 		videos.add(video);
+		notifyChanged(new ModelEvent(this, VIDEO_ADDED, video.getTitle()));
 	}
 
 	void removeVideoFromCategory(Video video) {
 		// called by video.setDirector
 		videos.remove(video);
+		notifyChanged(new ModelEvent(this, VIDEO_REMOVED, video.getTitle()));
 	}
 }

@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "upc", "title", "director", "year", "rated",
 		"runtime", "category", "myRating", "notes" })
 public class Video extends AbstractModel {
+	public static final int PROPERTY_CHANGED = 1;
 	private UUID videoId;
 	private String title;
 	private int year;
@@ -39,7 +40,7 @@ public class Video extends AbstractModel {
 		return videoId.toString();
 	}
 
-	public void setVideoId(String videoId) {
+	void setVideoId(String videoId) {
 		this.videoId = UUID.fromString(videoId);
 	}
 
@@ -49,6 +50,7 @@ public class Video extends AbstractModel {
 
 	public void setTitle(String title) {
 		this.title = title;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "title"));
 	}
 
 	public int getYear() {
@@ -57,6 +59,7 @@ public class Video extends AbstractModel {
 
 	public void setYear(int year) {
 		this.year = year;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "year"));
 	}
 
 	public int getRuntime() {
@@ -65,6 +68,7 @@ public class Video extends AbstractModel {
 
 	public void setRuntime(int runtime) {
 		this.runtime = runtime;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "runtime"));
 	}
 
 	public String getUpc() {
@@ -73,6 +77,7 @@ public class Video extends AbstractModel {
 
 	public void setUpc(String upc) {
 		this.upc = upc;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "upc"));
 	}
 
 	public byte getMyRating() {
@@ -84,6 +89,7 @@ public class Video extends AbstractModel {
 			throw new IllegalArgumentException();
 		}
 		this.myRating = myRating;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "myRating"));
 	}
 
 	public String getNotes() {
@@ -92,6 +98,7 @@ public class Video extends AbstractModel {
 
 	public void setNotes(String notes) {
 		this.notes = notes;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "notes"));
 	}
 
 	public Person getDirector() {
@@ -108,6 +115,7 @@ public class Video extends AbstractModel {
 		if (this.director != null) {
 			this.director.addVideoToDirector(this);
 		}
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "director"));
 	}
 
 	public Rating getRated() {
@@ -116,6 +124,7 @@ public class Video extends AbstractModel {
 
 	public void setRated(Rating rated) {
 		this.rated = rated;
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "rated"));
 	}
 
 	public Category getCategory() {
@@ -132,5 +141,6 @@ public class Video extends AbstractModel {
 		if (this.category != null) {
 			this.category.addVideoToCategory(this);
 		}
+		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "category"));
 	}
 }

@@ -37,7 +37,7 @@ public class Person extends AbstractModel {
 	@XmlAttribute
 	public String getPersonId() {
 		if (personId == null) {
-			return null;
+			return "";
 		}
 		return personId.toString();
 	}

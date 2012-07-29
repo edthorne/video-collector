@@ -26,12 +26,12 @@ public class CategoryTest {
 	public void testConstructors() {
 		// default constructor (from setUp)
 		assertNull(category.getName());
-		assertNull(category.getCategoryId());
+		assertEquals("",category.getCategoryId());
 		assertEquals(0, category.getVideos().size());
 		// name constructor
 		category = new Category(NAME);
 		assertEquals(NAME, category.getName());
-		assertNull(category.getCategoryId());
+		assertEquals("",category.getCategoryId());
 		assertEquals(0, category.getVideos().size());
 	}
 
@@ -46,7 +46,7 @@ public class CategoryTest {
 
 	@Test
 	public void testCategoryId() {
-		assertNull(category.getCategoryId());
+		assertEquals("",category.getCategoryId());
 		UUID id = UUID.randomUUID();
 		category.setCategoryId(id.toString());
 		assertEquals(id.toString(), category.getCategoryId());

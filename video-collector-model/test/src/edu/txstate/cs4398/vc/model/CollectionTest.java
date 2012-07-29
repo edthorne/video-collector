@@ -70,7 +70,7 @@ public class CollectionTest {
 		assertFalse(listener.containsEvent(collection, Collection.CATEGORY_REMOVED));
 		// add category
 		final Category CATEGORY1 = new Category(CATEGORY1_NAME);
-		assertNull(CATEGORY1.getCategoryId()); // blank id
+		assertEquals("",CATEGORY1.getCategoryId()); // blank id
 		Category category = collection.addCategory(CATEGORY1);
 		assertEquals(CATEGORY1, category); // same object
 		assertNotNull(category.getCategoryId()); // id set
@@ -79,7 +79,7 @@ public class CollectionTest {
 		listener.reset();
 		// add another
 		final Category CATEGORY2 = new Category(CATEGORY2_NAME);
-		assertNull(CATEGORY2.getCategoryId()); // blank id
+		assertEquals("",CATEGORY2.getCategoryId()); // blank id
 		category = collection.addCategory(CATEGORY2);
 		assertEquals(CATEGORY2, category); // same object
 		assertNotNull(category.getCategoryId()); // id set
@@ -125,7 +125,7 @@ public class CollectionTest {
 		assertFalse(listener.containsEvent(collection, Collection.PERSON_REMOVED));
 		// add person
 		final Person PERSON1 = new Person(DIRECTOR1_LAST, DIRECTOR1_FIRST);
-		assertNull(PERSON1.getPersonId()); // blank id
+		assertEquals("",PERSON1.getPersonId()); // blank id
 		Person person = collection.addPerson(PERSON1);
 		assertEquals(PERSON1, person); // same object
 		assertNotNull(person.getPersonId()); // id set
@@ -134,7 +134,7 @@ public class CollectionTest {
 		listener.reset();
 		// add another
 		final Person PERSON2 = new Person(DIRECTOR2_LAST, DIRECTOR2_FIRST);
-		assertNull(PERSON2.getPersonId()); // blank id
+		assertEquals("",PERSON2.getPersonId()); // blank id
 		person = collection.addPerson(PERSON2);
 		assertEquals(PERSON2, person); // same object
 		assertNotNull(person.getPersonId()); // id set
@@ -180,7 +180,7 @@ public class CollectionTest {
 		assertFalse(listener.containsEvent(collection, Collection.VIDEO_REMOVED));
 		// add video
 		final Video VIDEO1 = new Video(VIDEO1_TITLE);
-		assertNull(VIDEO1.getVideoId()); // blank id
+		assertEquals("",VIDEO1.getVideoId()); // blank id
 		Video video = collection.addVideo(VIDEO1);
 		assertEquals(VIDEO1, video); // same object
 		assertNotNull(video.getVideoId()); // id set
@@ -189,13 +189,13 @@ public class CollectionTest {
 		listener.reset();
 		// add another with category and director
 		final Video VIDEO2 = new Video(VIDEO2_TITLE);
-		assertNull(VIDEO2.getVideoId()); // blank id
+		assertEquals("",VIDEO2.getVideoId()); // blank id
 		VIDEO2.setCategory(new Category(CATEGORY2_NAME));
 		assertNotNull(VIDEO2.getCategory());
-		assertNull(VIDEO2.getCategory().getCategoryId());
+		assertEquals("",VIDEO2.getCategory().getCategoryId());
 		VIDEO2.setDirector(new Person(DIRECTOR2_LAST, DIRECTOR2_FIRST));
 		assertNotNull(VIDEO2.getDirector());
-		assertNull(VIDEO2.getDirector().getPersonId());
+		assertEquals("",VIDEO2.getDirector().getPersonId());
 		video = collection.addVideo(VIDEO2);
 		assertEquals(VIDEO2, video); // same object
 		assertNotNull(video.getVideoId()); // id set
@@ -223,12 +223,12 @@ public class CollectionTest {
 		}
 		// add a category and director to the first video
 		final Category CATEGORY = new Category(CATEGORY1_NAME);
-		assertNull(CATEGORY.getCategoryId());
+		assertEquals("",CATEGORY.getCategoryId());
 		video.setCategory(CATEGORY);
 		assertEquals(CATEGORY, video.getCategory());
 		assertNotNull(video.getCategory().getCategoryId()); // category id added by collection listener
 		final Person DIRECTOR = new Person(DIRECTOR1_LAST, DIRECTOR1_FIRST);
-		assertNull(DIRECTOR.getPersonId());
+		assertEquals("",DIRECTOR.getPersonId());
 		video.setDirector(DIRECTOR);
 		assertEquals(DIRECTOR, video.getDirector());
 		assertNotNull(video.getDirector().getPersonId()); // person id added by collection listener

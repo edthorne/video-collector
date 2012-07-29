@@ -30,7 +30,7 @@ public class VideoTest {
 	@Test
 	public void testConstructors() {
 		// default constructor (from setUp)
-		assertNull(video.getVideoId());
+		assertEquals("",video.getVideoId());
 		assertNull(video.getTitle());
 		assertEquals(0, video.getYear());
 		assertEquals(0, video.getRuntime());
@@ -42,7 +42,7 @@ public class VideoTest {
 		assertNull(video.getCategory());
 		// title constructor
 		video = new Video(TITLE);
-		assertNull(video.getVideoId());
+		assertEquals("",video.getVideoId());
 		assertEquals(TITLE, video.getTitle());
 		assertEquals(0, video.getYear());
 		assertEquals(0, video.getRuntime());
@@ -84,7 +84,7 @@ public class VideoTest {
 
 	@Test
 	public void testVideoId() {
-		assertNull(video.getVideoId());
+		assertEquals("",video.getVideoId());
 		UUID id = UUID.randomUUID();
 		video.setVideoId(id.toString());
 		assertEquals(id.toString(), video.getVideoId());

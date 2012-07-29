@@ -32,7 +32,7 @@ public class Category extends AbstractModel {
 	@XmlAttribute
 	public String getCategoryId() {
 		if (categoryId == null) {
-			return null;
+			return "";
 		}
 		return categoryId.toString();
 	}

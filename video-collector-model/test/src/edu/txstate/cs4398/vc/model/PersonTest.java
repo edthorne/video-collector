@@ -29,13 +29,13 @@ public class PersonTest {
 		// default constructor (from setUp)
 		assertNull(person.getLastName());
 		assertNull(person.getFirstName());
-		assertNull(person.getPersonId());
+		assertEquals("",person.getPersonId());
 		assertEquals(0, person.getDirectedVideos().size());
 		// name constructor
 		person = new Person(LAST_NAME, FIRST_NAME);
 		assertEquals(LAST_NAME, person.getLastName());
 		assertEquals(FIRST_NAME, person.getFirstName());
-		assertNull(person.getPersonId());
+		assertEquals("",person.getPersonId());
 		assertEquals(0, person.getDirectedVideos().size());
 	}
 
@@ -54,7 +54,7 @@ public class PersonTest {
 
 	@Test
 	public void testPersonId() {
-		assertNull(person.getPersonId());
+		assertEquals("",person.getPersonId());
 		UUID id = UUID.randomUUID();
 		person.setPersonId(id.toString());
 		assertEquals(id.toString(), person.getPersonId());

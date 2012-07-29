@@ -35,7 +35,7 @@ public class Video extends AbstractModel {
 	@XmlAttribute
 	public String getVideoId() {
 		if (videoId == null) {
-			return null;
+			return "";
 		}
 		return videoId.toString();
 	}

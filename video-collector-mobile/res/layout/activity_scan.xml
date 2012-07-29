@@ -1,0 +1,150 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" >
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="wrap_content"
+            android:layout_height="454dp" >
+
+            <Button
+                android:id="@+id/btnScan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:text="Scan" />
+
+            <EditText
+                android:id="@+id/upcText"
+                android:hint="@string/UPC"           
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/btnScan"
+                android:layout_marginTop="5dp"
+                android:ems="10" />
+
+            <EditText
+                android:id="@+id/videoTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/upcText"
+                android:ems="10" />
+
+            <EditText
+                android:id="@+id/videoDirector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/videoTitle"
+                android:ems="10" />
+
+            <TextView
+                android:id="@+id/UPC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/upcText"
+                android:layout_alignBottom="@+id/upcText"
+                android:layout_alignParentLeft="true"
+                android:text="@string/UPC"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoTitle"
+                android:layout_alignBottom="@+id/videoTitle"
+                android:layout_alignParentLeft="true"
+                android:text="@string/title"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/Director"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoDirector"
+                android:layout_alignBottom="@+id/videoDirector"
+                android:layout_alignParentLeft="true"
+                android:text="@string/director"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <Spinner
+                android:id="@+id/ratedSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/videoDirector"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/videoDirector"
+                android:entries="@array/rated" />
+
+            <TextView
+                android:id="@+id/Rated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/ratedSpinner"
+                android:layout_alignBottom="@+id/ratedSpinner"
+                android:layout_alignParentLeft="true"
+                android:text="@string/rated"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <EditText
+                android:id="@+id/videoRuntime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/ratedSpinner"
+                android:ems="10" />
+
+            <TextView
+                android:id="@+id/Runtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoRuntime"
+                android:layout_alignBottom="@+id/videoRuntime"
+                android:layout_alignParentLeft="true"
+                android:text="@string/runtime"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <EditText
+                android:id="@+id/videoYear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/videoRuntime"
+                android:ems="10" />
+
+            <TextView
+                android:id="@+id/Year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoYear"
+                android:layout_alignBottom="@+id/videoYear"
+                android:layout_alignParentLeft="true"
+                android:text="@string/year"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <Button
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/videoYear"
+                android:text="@string/add_video" />
+
+        </RelativeLayout>
+    </ScrollView>
+    
+</RelativeLayout>

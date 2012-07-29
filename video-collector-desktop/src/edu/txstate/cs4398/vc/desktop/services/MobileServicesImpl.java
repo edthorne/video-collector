@@ -2,6 +2,7 @@ package edu.txstate.cs4398.vc.desktop.services;
 
 import javax.jws.WebService;
 
+import edu.txstate.cs4398.vc.model.Collection;
 import edu.txstate.cs4398.vc.model.Video;
 
 @WebService(endpointInterface="edu.txstate.cs4398.vc.desktop.services.MobileServices")
@@ -56,6 +57,19 @@ public class MobileServicesImpl implements MobileServices {
 		} catch(Exception e) {
 			return video;
 		}
+	}
+
+
+	@Override
+	public boolean addVideo(String upc, String title) {
+		Collection collection = new Collection();
+		Video video = new Video(title);
+		video.setUpc(upc);
+		collection.addVideo(video);
+		System.out.println("Added video:");
+		System.out.println(video.getUpc());
+		System.out.println(video.getTitle());
+		return true;
 	}
 
 }

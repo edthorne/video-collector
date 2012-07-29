@@ -4,6 +4,8 @@
 package edu.txstate.cs4398.vc.desktop;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.xml.ws.Endpoint;
 
@@ -21,7 +23,17 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		// start webservice
-		Endpoint.publish("http://localhost:8796/MobileServices", new MobileServicesImpl());
+		String ipAddr = null;
+		try {
+		    InetAddress addr = InetAddress.getLocalHost();
+
+		    // Get IP Address
+		    ipAddr = addr.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.err.println("There was a problem getting localhost ip address");
+		}
+
+		Endpoint.publish("http://"+ipAddr+":8796/MobileServices", new MobileServicesImpl());
 		// start discovery listener
 		try {
 			DiscoveryListener listener = new DiscoveryListener();
@@ -30,6 +42,6 @@ public class Main {
 			System.err.println("There was a problem starting the DiscoveryListener");
 			e.printStackTrace();
 		}
-	}
 
+	}
 }

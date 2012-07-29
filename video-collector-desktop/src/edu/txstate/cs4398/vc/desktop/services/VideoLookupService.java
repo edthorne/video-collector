@@ -78,10 +78,9 @@ public class VideoLookupService {
 	 * @param videoObject - a video object that already has its unique ID assigned
 	 * @return a video object - will be empty title if no result found.
 	 * @throws IOException if there is a problem establishing the connection with the web service
-	 * @throws JSONException
 	 * @throws Exception
 	 */
-	public Video getVideoByName(String videoName, Video videoObject) throws IOException, JSONException
+	public Video getVideoByName(String videoName, Video videoObject) throws IOException
 	{
 		videoName = videoName.toLowerCase();
 		if(videoName.contains("("))

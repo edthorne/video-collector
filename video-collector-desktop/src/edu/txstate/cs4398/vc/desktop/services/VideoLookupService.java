@@ -220,7 +220,7 @@ public class VideoLookupService {
 		else if(rating.equals("NC-17"))
 			return Rating.NC17;
 		else 
-			return Rating.NR;
+			return Rating.UNRATED;
 		
 	}
 	

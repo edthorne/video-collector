@@ -37,4 +37,63 @@ public interface MobileServices {
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0);
 
+    /**
+     * 
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns boolean
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "addVideo", targetNamespace = "http://services.desktop.vc.cs4398.txstate.edu/", className = "edu.txstate.cs4398.vc.desktop.services.AddVideo")
+    @ResponseWrapper(localName = "addVideoResponse", targetNamespace = "http://services.desktop.vc.cs4398.txstate.edu/", className = "edu.txstate.cs4398.vc.desktop.services.AddVideoResponse")
+    public boolean addVideo(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        String arg1);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns edu.txstate.cs4398.vc.desktop.services.Video
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getVideoByUPC", targetNamespace = "http://services.desktop.vc.cs4398.txstate.edu/", className = "edu.txstate.cs4398.vc.desktop.services.GetVideoByUPC")
+    @ResponseWrapper(localName = "getVideoByUPCResponse", targetNamespace = "http://services.desktop.vc.cs4398.txstate.edu/", className = "edu.txstate.cs4398.vc.desktop.services.GetVideoByUPCResponse")
+    public Video getVideoByUPC(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getProductName", targetNamespace = "http://services.desktop.vc.cs4398.txstate.edu/", className = "edu.txstate.cs4398.vc.desktop.services.GetProductName")
+    @ResponseWrapper(localName = "getProductNameResponse", targetNamespace = "http://services.desktop.vc.cs4398.txstate.edu/", className = "edu.txstate.cs4398.vc.desktop.services.GetProductNameResponse")
+    public String getProductName(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns edu.txstate.cs4398.vc.desktop.services.Video
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getVideoByName", targetNamespace = "http://services.desktop.vc.cs4398.txstate.edu/", className = "edu.txstate.cs4398.vc.desktop.services.GetVideoByName")
+    @ResponseWrapper(localName = "getVideoByNameResponse", targetNamespace = "http://services.desktop.vc.cs4398.txstate.edu/", className = "edu.txstate.cs4398.vc.desktop.services.GetVideoByNameResponse")
+    public Video getVideoByName(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0);
+
 }

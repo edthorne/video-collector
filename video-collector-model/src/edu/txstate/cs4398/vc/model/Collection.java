@@ -95,10 +95,10 @@ public class Collection extends AbstractModel implements ModelListener {
 		// else set the video id
 		video.setVideoId(UUID.randomUUID().toString());
 		// if present and new, add category and director
-		if (video.getCategory() != null && video.getCategory().getCategoryId() == null) {
+		if (video.getCategory() != null && video.getCategory().getCategoryId() == "") {
 			addCategory(video.getCategory());
 		}
-		if (video.getDirector() != null && video.getDirector().getPersonId() == null) {
+		if (video.getDirector() != null && video.getDirector().getPersonId() == "") {
 			addPerson(video.getDirector());
 		}
 		// add this video as a new video
@@ -163,7 +163,7 @@ public class Collection extends AbstractModel implements ModelListener {
 					// category changed
 					Category category = video.getCategory();
 					// if the category is set and has no categoryId
-					if (category != null && category.getCategoryId() == null) {
+					if (category != null && category.getCategoryId() == "") {
 						// add the category and set the categoryId
 						addCategory(category);
 					}
@@ -171,7 +171,7 @@ public class Collection extends AbstractModel implements ModelListener {
 					// director changed
 					Person director = video.getDirector();
 					// if the direcor is set and has no personId
-					if (director != null && director.getPersonId() == null) {
+					if (director != null && director.getPersonId() == "") {
 						// add the person and set the personId
 						addPerson(director);
 					}

@@ -81,7 +81,8 @@ public class CategoryTest {
 			fail("Should have thrown exception");
 		} catch (UnsupportedOperationException uoe) {
 			assertEquals(2, videos.size());
-			assertFalse(listener.containsEvent(category, Category.VIDEO_REMOVED));
+			assertFalse(listener
+					.containsEvent(category, Category.VIDEO_REMOVED));
 		}
 		// remove video via category
 		category.removeVideo(video);

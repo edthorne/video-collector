@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,6 +23,9 @@ public class Person extends AbstractModel {
 	private UUID personId;
 	private String lastName;
 	private String firstName;
+	@XmlIDREF
+	@XmlElementWrapper
+	@XmlElement(name = "video")
 	private List<Video> directedVideos = new ArrayList<Video>();
 
 	public Person() {
@@ -66,7 +70,6 @@ public class Person extends AbstractModel {
 		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "firstName"));
 	}
 
-	@XmlIDREF
 	public List<Video> getDirectedVideos() {
 		return Collections.unmodifiableList(directedVideos);
 	}

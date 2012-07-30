@@ -4,12 +4,13 @@ import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "video")
-@XmlType(propOrder = { "upc", "title", "director", "year", "rated",
-		"runtime", "category", "myRating", "notes" })
+@XmlType(propOrder = { "upc", "title", "director", "year", "rated", "runtime",
+		"category", "myRating", "notes" })
 public class Video extends AbstractModel {
 	public static final int PROPERTY_CHANGED = 1;
 	private UUID videoId;
@@ -26,7 +27,7 @@ public class Video extends AbstractModel {
 	public Video() {
 		// default constructor
 	}
-	
+
 	public Video(String title) {
 		this.title = title;
 	}
@@ -101,6 +102,7 @@ public class Video extends AbstractModel {
 		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "notes"));
 	}
 
+	@XmlIDREF
 	public Person getDirector() {
 		return director;
 	}
@@ -127,6 +129,7 @@ public class Video extends AbstractModel {
 		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "rated"));
 	}
 
+	@XmlIDREF
 	public Category getCategory() {
 		return category;
 	}

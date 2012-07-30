@@ -9,5 +9,5 @@ import javax.xml.bind.annotation.XmlEnum;
  */
 @XmlEnum
 public enum Rating {
-	G, PG, PG13, R, NC17, NR;
+	G, PG, PG13, R, NC17, UNRATED;
 }

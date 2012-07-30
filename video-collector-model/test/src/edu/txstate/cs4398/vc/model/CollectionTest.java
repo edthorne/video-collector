@@ -56,18 +56,22 @@ public class CollectionTest {
 	@Test
 	public void testName() {
 		assertNull(collection.getName());
-		assertFalse(listener.containsEvent(collection, Collection.PROPERTY_CHANGED));
+		assertFalse(listener.containsEvent(collection,
+				Collection.PROPERTY_CHANGED));
 		collection.setName(COLLECTION_NAME);
 		assertEquals(COLLECTION_NAME, collection.getName());
-		assertTrue(listener.containsEvent(collection, Collection.PROPERTY_CHANGED));
+		assertTrue(listener.containsEvent(collection,
+				Collection.PROPERTY_CHANGED));
 	}
 
 	@Test
 	public void testCategories() {
 		// starts empty
 		assertEquals(0, collection.getCategories().size());
-		assertFalse(listener.containsEvent(collection, Collection.CATEGORY_ADDED));
-		assertFalse(listener.containsEvent(collection, Collection.CATEGORY_REMOVED));
+		assertFalse(listener.containsEvent(collection,
+				Collection.CATEGORY_ADDED));
+		assertFalse(listener.containsEvent(collection,
+				Collection.CATEGORY_REMOVED));
 		// add category
 		final Category CATEGORY1 = new Category(CATEGORY1_NAME);
 		assertEquals("",CATEGORY1.getCategoryId()); // blank id
@@ -75,7 +79,8 @@ public class CollectionTest {
 		assertEquals(CATEGORY1, category); // same object
 		assertNotNull(category.getCategoryId()); // id set
 		assertEquals(1, collection.getCategories().size());
-		assertTrue(listener.containsEvent(collection, Collection.CATEGORY_ADDED));
+		assertTrue(listener
+				.containsEvent(collection, Collection.CATEGORY_ADDED));
 		listener.reset();
 		// add another
 		final Category CATEGORY2 = new Category(CATEGORY2_NAME);
@@ -84,14 +89,16 @@ public class CollectionTest {
 		assertEquals(CATEGORY2, category); // same object
 		assertNotNull(category.getCategoryId()); // id set
 		assertEquals(2, collection.getCategories().size());
-		assertTrue(listener.containsEvent(collection, Collection.CATEGORY_ADDED));
+		assertTrue(listener
+				.containsEvent(collection, Collection.CATEGORY_ADDED));
 		listener.reset();
 		// add a duplicate (same category name)
 		category = collection.addCategory(new Category(CATEGORY1_NAME));
 		assertEquals(CATEGORY1, category); // same object
 		assertNotNull(category.getCategoryId()); // id set
 		assertEquals(2, collection.getCategories().size());
-		assertFalse(listener.containsEvent(collection, Collection.CATEGORY_ADDED));
+		assertFalse(listener.containsEvent(collection,
+				Collection.CATEGORY_ADDED));
 		// get the list
 		List<Category> categories = collection.getCategories();
 		assertEquals(2, categories.size());
@@ -112,7 +119,8 @@ public class CollectionTest {
 		assertEquals(1, categories.size());
 		assertFalse(categories.contains(CATEGORY1));
 		assertTrue(categories.contains(CATEGORY2));
-		assertTrue(listener.containsEvent(collection, Collection.CATEGORY_REMOVED));
+		assertTrue(listener.containsEvent(collection,
+				Collection.CATEGORY_REMOVED));
 		// category should be nullified
 		assertNull(VIDEO1.getCategory());
 	}
@@ -122,7 +130,8 @@ public class CollectionTest {
 		// starts empty
 		assertEquals(0, collection.getPeople().size());
 		assertFalse(listener.containsEvent(collection, Collection.PERSON_ADDED));
-		assertFalse(listener.containsEvent(collection, Collection.PERSON_REMOVED));
+		assertFalse(listener.containsEvent(collection,
+				Collection.PERSON_REMOVED));
 		// add person
 		final Person PERSON1 = new Person(DIRECTOR1_LAST, DIRECTOR1_FIRST);
 		assertEquals("",PERSON1.getPersonId()); // blank id
@@ -142,7 +151,8 @@ public class CollectionTest {
 		assertTrue(listener.containsEvent(collection, Collection.PERSON_ADDED));
 		listener.reset();
 		// add a duplicate (same last, first name)
-		person = collection.addPerson(new Person(DIRECTOR1_LAST, DIRECTOR1_FIRST));
+		person = collection.addPerson(new Person(DIRECTOR1_LAST,
+				DIRECTOR1_FIRST));
 		assertEquals(PERSON1, person); // same object
 		assertNotNull(person.getPersonId()); // id set
 		assertEquals(2, collection.getPeople().size());
@@ -167,7 +177,8 @@ public class CollectionTest {
 		assertEquals(1, people.size());
 		assertFalse(people.contains(PERSON1));
 		assertTrue(people.contains(PERSON2));
-		assertTrue(listener.containsEvent(collection, Collection.PERSON_REMOVED));
+		assertTrue(listener
+				.containsEvent(collection, Collection.PERSON_REMOVED));
 		// director should be nullified
 		assertNull(VIDEO1.getDirector());
 	}
@@ -177,7 +188,8 @@ public class CollectionTest {
 		// starts empty
 		assertEquals(0, collection.getVideos().size());
 		assertFalse(listener.containsEvent(collection, Collection.VIDEO_ADDED));
-		assertFalse(listener.containsEvent(collection, Collection.VIDEO_REMOVED));
+		assertFalse(listener
+				.containsEvent(collection, Collection.VIDEO_REMOVED));
 		// add video
 		final Video VIDEO1 = new Video(VIDEO1_TITLE);
 		assertEquals("",VIDEO1.getVideoId()); // blank id
@@ -226,12 +238,16 @@ public class CollectionTest {
 		assertEquals("",CATEGORY.getCategoryId());
 		video.setCategory(CATEGORY);
 		assertEquals(CATEGORY, video.getCategory());
-		assertNotNull(video.getCategory().getCategoryId()); // category id added by collection listener
+		assertNotNull(video.getCategory().getCategoryId()); // category id added
+															// by collection
+															// listener
 		final Person DIRECTOR = new Person(DIRECTOR1_LAST, DIRECTOR1_FIRST);
 		assertEquals("",DIRECTOR.getPersonId());
 		video.setDirector(DIRECTOR);
 		assertEquals(DIRECTOR, video.getDirector());
-		assertNotNull(video.getDirector().getPersonId()); // person id added by collection listener
+		assertNotNull(video.getDirector().getPersonId()); // person id added by
+															// collection
+															// listener
 		assertTrue(CATEGORY.getVideos().contains(video));
 		assertTrue(DIRECTOR.getDirectedVideos().contains(video));
 		// remove video

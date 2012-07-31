@@ -12,18 +12,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "person")
 @XmlType(propOrder = { "lastName", "firstName" })
-public class Person extends AbstractModel {
-	/**
-	 * Event identifier for property changes.
-	 */
-	public static final int PROPERTY_CHANGED = 1;
-
+public class Person {
+	@XmlElement( required = true )
 	private String lastName;
+	@XmlElement
 	private String firstName;
 
 	/**
-	 * Creates a new Person. You must set a last name before marshaling the
-	 * person.
+	 * Creates a new Person. Useful only for JAXB marshalling.
 	 */
 	public Person() {
 		// default constructor
@@ -45,20 +41,8 @@ public class Person extends AbstractModel {
 	/**
 	 * @return the last name of the person
 	 */
-	@XmlElement(required = true)
 	public String getLastName() {
 		return lastName;
-	}
-
-	/**
-	 * Sets the last name of the person.
-	 * 
-	 * @param lastName
-	 *            the last name to set
-	 */
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "lastName"));
 	}
 
 	/**
@@ -68,14 +52,55 @@ public class Person extends AbstractModel {
 		return firstName;
 	}
 
-	/**
-	 * Sets the first name of the person.
-	 * 
-	 * @param firstName
-	 *            the first name to set
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "firstName"));
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Person other = (Person) obj;
+		if (firstName == null) {
+			if (other.firstName != null)
+				return false;
+		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
+			return false;
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result
+				+ ((lastName == null) ? 0 : lastName.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(lastName);
+		if (firstName != null) {
+			builder.append(", ").append(firstName);
+		}
+		return builder.toString();
 	}
 }

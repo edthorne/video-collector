@@ -251,8 +251,8 @@ public class Collection extends AbstractModel implements ModelListener {
 
 		public CollectionPerson(Person person) {
 			personId = UUID.randomUUID().toString();
-			this.setFirstName(person.getFirstName());
-			this.setLastName(person.getLastName());
+//			this.setFirstName(person.getFirstName());
+//			this.setLastName(person.getLastName());
 		}
 
 		@XmlID

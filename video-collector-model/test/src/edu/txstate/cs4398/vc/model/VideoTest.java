@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class VideoTest {
-	private static final String CATEGORY_NAME = "Comedy";
+	private static final String CATEGORY = "Comedy";
 	private static final String TITLE = "Ferris Bueller's Day Off";
 	private static final int YEAR = 2001;
 	private static final int RUNTIME = 118;
@@ -30,7 +30,6 @@ public class VideoTest {
 	@Test
 	public void testConstructors() {
 		// default constructor (from setUp)
-		assertEquals("",video.getVideoId());
 		assertNull(video.getTitle());
 		assertEquals(0, video.getYear());
 		assertEquals(0, video.getRuntime());
@@ -42,7 +41,6 @@ public class VideoTest {
 		assertNull(video.getCategory());
 		// title constructor
 		video = new Video(TITLE);
-		assertEquals("",video.getVideoId());
 		assertEquals(TITLE, video.getTitle());
 		assertEquals(0, video.getYear());
 		assertEquals(0, video.getRuntime());
@@ -62,6 +60,7 @@ public class VideoTest {
 		assertNull(video.getUpc());
 		assertNull(video.getNotes());
 		assertNull(video.getRated());
+		assertNull(video.getCategory());
 		assertFalse(listener.containsEvent(video, Video.PROPERTY_CHANGED));
 
 		video.setTitle(TITLE);
@@ -71,6 +70,7 @@ public class VideoTest {
 		video.setNotes(NOTES);
 		final Rating RATED = Rating.PG13;
 		video.setRated(RATED);
+		video.setCategory(CATEGORY);
 
 		assertEquals(TITLE, video.getTitle());
 		assertEquals(YEAR, video.getYear());
@@ -79,15 +79,7 @@ public class VideoTest {
 		assertEquals(NOTES, video.getNotes());
 		assertEquals(RATED, video.getRated());
 		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
-		assertEquals(6, listener.countEvents(video, Video.PROPERTY_CHANGED));
-	}
-
-	@Test
-	public void testVideoId() {
-		assertEquals("",video.getVideoId());
-		UUID id = UUID.randomUUID();
-		video.setVideoId(id.toString());
-		assertEquals(id.toString(), video.getVideoId());
+		assertEquals(7, listener.countEvents(video, Video.PROPERTY_CHANGED));
 	}
 
 	@Test
@@ -119,34 +111,16 @@ public class VideoTest {
 	}
 
 	@Test
-	public void testCategory() {
-		assertNull(video.getCategory());
-		assertFalse(listener.containsEvent(video, Video.PROPERTY_CHANGED));
-		final Category category = new Category(CATEGORY_NAME);
-		video.setCategory(category);
-		assertEquals(category, video.getCategory());
-		assertTrue(category.getVideos().contains(video));
-		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
-		listener.reset();
-		video.setCategory(null);
-		assertEquals(null, video.getDirector());
-		assertFalse(category.getVideos().contains(video));
-		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
-	}
-
-	@Test
 	public void testDirector() {
 		assertNull(video.getDirector());
 		assertFalse(listener.containsEvent(video, Video.PROPERTY_CHANGED));
 		final Person DIRECTOR = new Person(LAST_NAME, FIRST_NAME);
 		video.setDirector(DIRECTOR);
 		assertEquals(DIRECTOR, video.getDirector());
-		assertTrue(DIRECTOR.getDirectedVideos().contains(video));
 		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
 		listener.reset();
 		video.setDirector(null);
 		assertEquals(null, video.getDirector());
-		assertFalse(DIRECTOR.getDirectedVideos().contains(video));
 		assertTrue(listener.containsEvent(video, Video.PROPERTY_CHANGED));
 	}
 }

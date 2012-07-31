@@ -1,6 +1,8 @@
 package edu.txstate.cs4398.vc.desktop.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,9 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.txstate.cs4398.vc.desktop.services.VideoLookupService;
-import edu.txstate.cs4398.vc.model.Category;
-import edu.txstate.cs4398.vc.model.Person;
-import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
 /**

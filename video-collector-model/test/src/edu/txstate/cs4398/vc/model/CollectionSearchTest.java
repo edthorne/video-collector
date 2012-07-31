@@ -6,6 +6,7 @@ package edu.txstate.cs4398.vc.model;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -13,6 +14,7 @@ import org.junit.Test;
  * 
  * @author Ed
  */
+@Ignore
 public class CollectionSearchTest {
 	private Collection collection;
 

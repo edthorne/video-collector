@@ -2,9 +2,6 @@ package edu.txstate.cs4398.vc.mobile;
 
 import java.util.UUID;
 
-import edu.txstate.cs4398.vc.desktop.services.MobileServices;
-import edu.txstate.cs4398.vc.desktop.services.MobileServicesImplService;
-import edu.txstate.cs4398.vc.desktop.services.Video;
 import edu.txstate.cs4398.vc.mobile.utils.IntentIntegrator;
 import edu.txstate.cs4398.vc.mobile.utils.IntentResult;
 import android.os.Bundle;

@@ -3,15 +3,16 @@
  */
 package edu.txstate.cs4398.vc.desktop.utils;
 
+import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
 /**
  * @author Ed
- * 
  */
 public class NetworkUtils {
 	/**
@@ -38,5 +39,22 @@ public class NetworkUtils {
 			e.printStackTrace();
 		}
 		return results;
+	}
+
+	/**
+	 * @return the IP address for the local machine or null if no IP address can
+	 *         be determined
+	 */
+	public static String getIPAddress() {
+		String ipAddress = null;
+		try {
+			// Get IP Address
+			InetAddress addr = InetAddress.getLocalHost();
+			ipAddress = addr.getHostAddress();
+		} catch (UnknownHostException e) {
+			System.err.println("Could not obtain IP address");
+			e.printStackTrace();
+		}
+		return ipAddress;
 	}
 }

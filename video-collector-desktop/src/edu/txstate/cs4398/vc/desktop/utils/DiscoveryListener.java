@@ -32,15 +32,19 @@ public class DiscoveryListener extends Thread {
 	/**
 	 * A boolean flag that indicates if the listener should keep listening.
 	 */
-	private boolean listening = true;
+	private boolean listening;
 	/**
 	 * The multicast socket to communicate with.
 	 */
-	MulticastSocket socket;
+	private MulticastSocket socket;
 	/**
 	 * The multicast address in use by the listener.
 	 */
-	InetAddress address;
+	private InetAddress address;
+	/**
+	 * The web service address.
+	 */
+	private String serviceAddress;
 
 	/**
 	 * Creates a new listener thread.
@@ -50,7 +54,9 @@ public class DiscoveryListener extends Thread {
 	}
 
 	/**
-	 * @param name
+	 * Creates a new listener thread with the given thread name.
+	 * 
+	 * @param name the thread name
 	 */
 	public DiscoveryListener(String name) throws IOException {
 		super(name);
@@ -62,38 +68,37 @@ public class DiscoveryListener extends Thread {
 		socket.setSoTimeout(LISTEN_TIMEOUT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Thread#run()
-	 */
 	@Override
 	public void run() {
 		DatagramPacket packet;
+
+		System.out.println("Starting discovery listener on port " + LISTEN_PORT);
+
+		if (serviceAddress == null) {
+			listening = false;
+			System.err.println("Set service address before starting listener.");
+		} else {
+			listening = true;
+		}
 
 		while (listening) {
 			byte[] buf = new byte[256];
 			packet = new DatagramPacket(buf, buf.length);
 
-			System.out.println("Listening on port " + LISTEN_PORT);
 			try {
 				// wait for client
 				socket.receive(packet);
-				// get data sent from client
-				String received = new String(packet.getData(), 0,
-						packet.getLength());
-				System.out.println("received data: " + received);
+				// get client address and port
 				InetAddress clientAddress = packet.getAddress();
 				int clientPort = packet.getPort();
 				// send client web service address
-				buf = "web service address".getBytes("UTF-8");
+				buf = serviceAddress.getBytes("UTF-8");
 				packet = new DatagramPacket(buf, buf.length,clientAddress,clientPort);
 				packet.setAddress(clientAddress);
-				System.out.println("Sending: " + new String(buf));
 				socket.send(packet);
 			} catch (SocketTimeoutException ste) {
 				// expected after LISTEN_TIMEOUT, used to stop thread with
-				// listening
+				// listening boolean variable
 			} catch (IOException ioe) {
 				// unexpected exception, stop listening
 				ioe.printStackTrace();
@@ -103,11 +108,6 @@ public class DiscoveryListener extends Thread {
 		System.out.println("Shutting down DiscoveryListener");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#finalize()
-	 */
 	@Override
 	protected void finalize() throws Throwable {
 		// clean up
@@ -130,6 +130,10 @@ public class DiscoveryListener extends Thread {
 	 */
 	public void setListening(boolean listening) {
 		this.listening = listening;
+	}
+
+	public void setServiceAddress(String wsURI) {
+		this.serviceAddress = wsURI;
 	}
 
 }

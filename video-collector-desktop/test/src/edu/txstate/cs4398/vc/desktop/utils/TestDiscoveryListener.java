@@ -1,7 +1,6 @@
 package edu.txstate.cs4398.vc.desktop.utils;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -12,11 +11,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestDiscoveryListener {
+	private static final String WS_URI = "http://localhost:8796/MobileServices";
 	DiscoveryListener listener;
 
 	@Before
 	public void setUp() throws Exception {
 		listener = new DiscoveryListener();
+		listener.setServiceAddress(WS_URI);
 		listener.start();
 	}
 
@@ -31,6 +32,7 @@ public class TestDiscoveryListener {
 		// make sure the listener is up and running
 		assertTrue(listener.isAlive());
 		assertTrue(listener.isDaemon());
+		Thread.sleep(50); // pause for listening to go true
 		assertTrue(listener.isListening());
 
 		// send the class name as the data, this should be a client identifier
@@ -49,18 +51,17 @@ public class TestDiscoveryListener {
 		buf = new byte[256];
 		packet = new DatagramPacket(buf, buf.length);
 		socket.setSoTimeout(5000);// wait at most 5 seconds
-		System.out.println("Waiting for response");
 		socket.receive(packet);
 
 		// get the remote IP address from the response packet
 		InetAddress serverAddress = packet.getAddress();
 		assertNotNull(serverAddress.getHostAddress());
-		System.out.println("Server address: " + serverAddress.getHostAddress());
 
 		// get the web service url from the response data
-		String received = new String(packet.getData(), 0, packet.getLength(), "UTF-8");
+		String received = new String(packet.getData(), 0, packet.getLength(),
+				"UTF-8");
 		assertNotNull(received);
-		System.out.println("Test data: " + received);
+		assertEquals(WS_URI, received);
 	}
 
 }

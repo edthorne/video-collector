@@ -62,4 +62,16 @@ public class NetworkUtilsTest {
 		assertTrue(netInt.supportsMulticast());
 	}
 
+	@Test
+	public void testGetIPAddress() {
+		/*
+		 * Because we cannot know the IP address of the system under test we can
+		 * only check to see that an address is returned. This should work in
+		 * all cases because each host should have a loopback adapter
+		 * configured.
+		 */
+		String ipAddress = NetworkUtils.getIPAddress();
+		assertNotNull(ipAddress);
+	}
+
 }

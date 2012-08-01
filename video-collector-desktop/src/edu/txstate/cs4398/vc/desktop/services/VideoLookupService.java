@@ -148,6 +148,12 @@ public class VideoLookupService {
 	
 	private Video imdbLookupService(String videoName, Video videoObject) throws Exception
 	{
+		//video is most likely a tv series at this point
+		// remove season information..
+		int seasonIndex = videoName.indexOf("season");
+		if(seasonIndex > 0)
+			videoName = videoName.substring(0,seasonIndex);
+		
 		URL imdbURL = new URL("http://www.imdbapi.com/?i=&t=" + videoName);
 		URLConnection imdbCon = imdbURL.openConnection();
 	    BufferedReader in = new BufferedReader(new InputStreamReader(imdbCon.getInputStream()));

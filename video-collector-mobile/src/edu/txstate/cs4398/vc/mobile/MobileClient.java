@@ -23,16 +23,11 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 	private TextView progressText;
 	private String serverAddress;
 	private ProgressBar progressCircle;
-	public static final String CONNECT_MESSAGE = "TESTING CONNECTION";
+	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-        .detectDiskReads()
-        .detectDiskWrites()
-        .detectNetwork()   // or .detectAll() for all detectable problems
-        .penaltyLog()
-        .build());
+    	
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.start_menu);
         
@@ -68,16 +63,15 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     /**
      * @param address String containing the IP address of the host.
      */
-    public void onEvent(Task task) {
+    public void onEvent(TaskEvent task) {
     	
-    	String taskResult = task.getTaskResult();
-    	String action = task.getTaskType();
-    	Log.i("Interfaces", "Response: " + taskResult);
+    	TaskEvent.Status taskStatus = task.getStatus();
+    	String action = task.getTask();
     	
     	if("SEARCH".equals(action)){
-			if(taskResult != null){
-				Log.i("Interfaces", "in onComplete with ip address: " + taskResult);	
-				serverAddress = taskResult;
+			if(taskStatus == TaskEvent.Status.SUCCESS){
+				Log.i("Interfaces", "in onComplete with ip address: " + (String)task.getResult());	
+				serverAddress = (String)task.getResult();
 				connect();
 				progressText.setText("Found host: "+ serverAddress +"\nAttempting connection...");
 				
@@ -99,8 +93,10 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 				           }
 				       })
 				       .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				           public void onClick(DialogInterface dialog, int id) {
-				                dialog.cancel();
+				    	   public void onClick(DialogInterface dialog, int id) {
+				    		   progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
+				    		   progressText.setText("Connection Failed!");
+				        	   dialog.cancel();
 				           }
 				       });
 				AlertDialog alert = builder.create();
@@ -109,7 +105,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 			
     	}
     	else if("CONNECT".equals(action)){
-    		if(CONNECT_MESSAGE.equals(taskResult)){
+    		if(taskStatus == TaskEvent.Status.SUCCESS){
     			progressText.setText("Connection Succesful!");
     			progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
     			add.setEnabled(true);		// enable add button

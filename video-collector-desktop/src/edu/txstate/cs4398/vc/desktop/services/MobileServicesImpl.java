@@ -2,13 +2,18 @@ package edu.txstate.cs4398.vc.desktop.services;
 
 import javax.jws.WebService;
 
-import edu.txstate.cs4398.vc.model.Collection;
+import edu.txstate.cs4398.vc.desktop.model.CollectorModel;
 import edu.txstate.cs4398.vc.model.Person;
 import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
 @WebService(endpointInterface="edu.txstate.cs4398.vc.desktop.services.MobileServices")
 public class MobileServicesImpl implements MobileServices {
+	private CollectorModel model;
+
+	public MobileServicesImpl(CollectorModel model) {
+		this.model = model;
+	}
 
 	@Override
 	public String echo(String data) {
@@ -66,7 +71,6 @@ public class MobileServicesImpl implements MobileServices {
 	public String addVideo(String upc, String title, String director,
 			Rating rated, int runtime, int year) {
 		try{
-		Collection collection = new Collection();
 		Video video = new Video(title);
 		video.setUpc(upc);
 		
@@ -87,7 +91,7 @@ public class MobileServicesImpl implements MobileServices {
 		video.setYear(year);
 		
 		
-		collection.addVideo(video);
+		model.getCollection().addVideo(video);
 		System.out.println("Added video:");
 		System.out.println(video.getUpc());
 		System.out.println(video.getTitle());

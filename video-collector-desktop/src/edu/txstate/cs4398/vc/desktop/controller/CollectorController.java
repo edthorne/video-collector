@@ -104,7 +104,7 @@ public class CollectorController extends AbstractController {
 
 	private void startWebService() {
 		// create the web service endpoint
-		wsEndpoint = Endpoint.create(new MobileServicesImpl());
+		wsEndpoint = Endpoint.create(new MobileServicesImpl(getModel()));
 		System.out.println("Publishing webservice at " + wsURI);
 		wsEndpoint.publish(wsURI);
 	}

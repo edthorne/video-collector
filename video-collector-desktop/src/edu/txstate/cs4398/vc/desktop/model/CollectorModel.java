@@ -23,6 +23,15 @@ public class CollectorModel extends AbstractModel {
 	 * The file where the collection is stored.
 	 */
 	private File file;
+	
+
+	/**
+	 * Creates a new application model.
+	 */
+	public CollectorModel() {
+		// start with a fresh collection
+		this.collection = new Collection();
+	}
 
 	/**
 	 * @return the collection

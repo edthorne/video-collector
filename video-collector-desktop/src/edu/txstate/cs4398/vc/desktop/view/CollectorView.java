@@ -33,7 +33,8 @@ public class CollectorView extends JFrameView {
 	private Action saveAsAction;
 	private Action servicesAction;
 	private Action exitAction;
-	
+	private Action ipAddrAction;
+
 	private JCheckBoxMenuItem remoteServices;
 
 	public CollectorView(CollectorModel model, CollectorController controller) {
@@ -60,6 +61,8 @@ public class CollectorView extends JFrameView {
 				"Enable/disable remote services", KeyEvent.VK_R);
 		exitAction = new ExitAction("Exit", "Exits the application",
 				KeyEvent.VK_X);
+		ipAddrAction = new IPAddrAction("IP Address",
+				"Shows the IP address of this computer", KeyEvent.VK_I);
 
 		// create the menu bar
 		JMenuBar menubar = new JMenuBar();
@@ -82,6 +85,10 @@ public class CollectorView extends JFrameView {
 		menu.add(remoteServices);
 		menu.addSeparator();
 		item = new JMenuItem(exitAction);
+		menu.add(item);
+		menubar.add(menu);
+		menu = new JMenu("Help");
+		item = new JMenuItem(ipAddrAction);
 		menu.add(item);
 		menubar.add(menu);
 		this.setJMenuBar(menubar);
@@ -243,4 +250,20 @@ public class CollectorView extends JFrameView {
 		}
 	}
 
+	class IPAddrAction extends AbstractAction {
+		public IPAddrAction(String text, String description, Integer mnemonic) {
+			super(text);
+			putValue(SHORT_DESCRIPTION, description);
+			putValue(MNEMONIC_KEY, mnemonic);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			;
+			JOptionPane.showMessageDialog(CollectorView.this,
+					"This computer's IP address is "
+							+ getController().getIPAddress(), "IP Address",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
 }

@@ -15,7 +15,7 @@
 	<string name="title">Title</string>
 	<string name="director">Director</string>
 	<string name="rated">Rated</string>
-	<string name="runtime">Runtime (minutes)</string>
+	<string name="runtime">Runtime (min)</string>
 	<string name="year">Year</string>
 	<string-array name="rated">
 		<item >G</item>
@@ -23,7 +23,7 @@
 		<item >PG13</item>
 		<item >R</item>
 		<item >NC17</item>
-		<item >NR</item>
+		<item >UNRATED</item>
 	</string-array>
 	<string name="add_video">Add Video</string>
 	<string name="browse_button">Browse</string>

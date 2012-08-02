@@ -144,6 +144,14 @@
                 android:layout_below="@+id/videoYear"
                 android:text="@string/add_video" />
 
+            <ProgressBar
+                android:id="@+id/progressScan"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Director"
+                android:layout_centerHorizontal="true" />
+
         </RelativeLayout>
     </ScrollView>
     

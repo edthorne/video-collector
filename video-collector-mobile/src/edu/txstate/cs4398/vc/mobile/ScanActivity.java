@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 import org.ksoap2.serialization.SoapObject;
@@ -26,7 +27,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 	EditText videoRuntime;
 	Spinner ratedSpinner;
 	private String ipAddress;
-	
+	ProgressBar progressCircle;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +45,8 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
         videoRuntime = (EditText)this.findViewById(R.id.videoRuntime);
         videoTitle = (EditText)this.findViewById(R.id.videoTitle);      
         ratedSpinner = (Spinner)this.findViewById(R.id.ratedSpinner);
-
+        progressCircle = (ProgressBar)this.findViewById(R.id.progressScan);
+        progressCircle.setVisibility(View.INVISIBLE);
     }
 
     
@@ -58,7 +60,9 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     	if(v.equals(addVideoButton))
     	{
     		AddVideoTask addTask = new AddVideoTask(this);
-    		addTask.execute(ipAddress, upcText.getText().toString(), videoTitle.getText().toString());
+    		addTask.execute(ipAddress, upcText.getText().toString(), videoTitle.getText().toString(), videoDirector.getText().toString(),
+    				ratedSpinner.getSelectedItem().toString(), videoRuntime.getText().toString(), videoYear.getText().toString());
+
     	}
 
     }
@@ -74,7 +78,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     					
     					//put whatever you want to do with the code here
     					upcText.setText(upc);
-    					
+    					progressCircle.setVisibility(View.VISIBLE);
     					GetVideoTask getTask = new GetVideoTask(this);
     					getTask.execute(ipAddress, upc);
     			       
@@ -106,7 +110,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 			ratedSpinner.setSelection(3);
 		if(rated.equals("NC17"))
 			ratedSpinner.setSelection(4);
-		if(rated.equals("NR"))
+		if(rated.equals("UNRATED"))
 			ratedSpinner.setSelection(5);
 		videoYear.setText(response.getPropertySafelyAsString("year"));
 		videoRuntime.setText(response.getPropertySafelyAsString("runtime")); 
@@ -117,31 +121,66 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 		TaskEvent.Status taskStatus = task.getStatus();
     	String action = task.getTask();
     	
+		
     	if("GET_VIDEO".equals(action)){
+    		progressCircle.setVisibility(View.INVISIBLE);
     		if(taskStatus == TaskEvent.Status.SUCCESS){
     			Log.i("Interfaces", "GET_VIDEO Success");
     			transformSoapResponse((SoapObject)task.getResult());
-    		}
-    	}
-    	else if("ADD_VIDEO".equals(action)){
-    		if(taskStatus == TaskEvent.Status.SUCCESS){
-    			// Show toast notification
-    	        Toast.makeText(this.getApplicationContext(), 
-    	        		videoTitle.getText().toString() + " succesfully added to collection!", Toast.LENGTH_SHORT).show();
-    		}
-    		else
-    		{
+    		} else {
     			AlertDialog ad = new AlertDialog.Builder(this).create();  
     			ad.setCancelable(false); // This blocks the 'BACK' button  
-    			ad.setMessage("Error sending video to server");  
     			ad.setButton("OK", new DialogInterface.OnClickListener() {  
     			    public void onClick(DialogInterface dialog, int which) {  
     			        dialog.dismiss();                      
     			    }  
     			});
+    			ad.setMessage("No response from video lookup services");  
+    			ad.show();
+    		}
+    	}
+    	else if("ADD_VIDEO".equals(action)){
+    		if(taskStatus == TaskEvent.Status.SUCCESS){
+    			String response = ((SoapObject)task.getResult()).getPropertyAsString(0);
+    			if(!"success".equals(response)){
+    					AlertDialog ad = new AlertDialog.Builder(this).create();  
+    					ad.setCancelable(false); // This blocks the 'BACK' button  
+    					ad.setButton("OK", new DialogInterface.OnClickListener() {  
+    						public void onClick(DialogInterface dialog, int which) {  
+    							dialog.dismiss();                      
+    						}  
+    					});
+    					ad.setMessage(response);
+    					ad.show();
+    			} else {
+    				// Show toast notification
+    				clearAllFields();
+    				Toast.makeText(this.getApplicationContext(), 
+    	        		videoTitle.getText().toString() + " succesfully added to collection!", Toast.LENGTH_SHORT).show();
+    			}
+    		}
+    		else
+    		{
+    			AlertDialog ad = new AlertDialog.Builder(this).create();  
+    			ad.setCancelable(false); // This blocks the 'BACK' button  
+    			ad.setButton("OK", new DialogInterface.OnClickListener() {  
+    			    public void onClick(DialogInterface dialog, int which) {  
+    			        dialog.dismiss();                      
+    			    }  
+    			});
+    			ad.setMessage("Error sending video to server");  
     			ad.show();
     		}
     	}
     	
+	}
+	
+	private void clearAllFields() {
+        upcText.setText("");
+        videoDirector.setText("");
+        videoYear.setText(""); 
+        videoRuntime.setText("");
+        videoTitle.setText("");     
+        ratedSpinner.setSelection(0); 
 	}
 }

@@ -1,10 +1,13 @@
 package edu.txstate.cs4398.vc.desktop.services;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
+import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
-@WebService
+@WebService (serviceName = "MobileServices")
 public interface MobileServices {
 	/**
 	 * Returns the data back to the client.
@@ -22,7 +25,7 @@ public interface MobileServices {
 	public Video getVideoByUPC(String upc);
 	
 	/**
-	 * Returns a produt name given a UPC
+	 * Returns a product name given a UPC
 	 * @param upc
 	 * @return
 	 */
@@ -36,9 +39,17 @@ public interface MobileServices {
 	public Video getVideoByName(String name);
 	
 	/**
-	 * @param upc 
+	 * adds a video to the desktop collection
+	 * @param upc
 	 * @param title
-	 * @return true if added to the collection
+	 * @param Director
+	 * @param rated
+	 * @param runtime
+	 * @param year
+	 * @return
 	 */
-	public boolean addVideo(String upc, String title);
+	@WebMethod (operationName="addVideo")
+	public String addVideo(@WebParam(name="upc") String upc, @WebParam(name="title")String title, 
+							@WebParam(name="director")String director,@WebParam(name="rated") Rating rated, 
+							@WebParam(name="runtime")int runtime,@WebParam(name="year") int year);
 }

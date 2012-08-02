@@ -3,6 +3,8 @@ package edu.txstate.cs4398.vc.desktop.services;
 import javax.jws.WebService;
 
 import edu.txstate.cs4398.vc.model.Collection;
+import edu.txstate.cs4398.vc.model.Person;
+import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
 @WebService(endpointInterface="edu.txstate.cs4398.vc.desktop.services.MobileServices")
@@ -61,15 +63,43 @@ public class MobileServicesImpl implements MobileServices {
 
 
 	@Override
-	public boolean addVideo(String upc, String title) {
+	public String addVideo(String upc, String title, String director,
+			Rating rated, int runtime, int year) {
+		try{
 		Collection collection = new Collection();
 		Video video = new Video(title);
 		video.setUpc(upc);
+		
+		if(title.isEmpty()) throw new IllegalArgumentException("Title can not be blank");
+		
+		if(!director.isEmpty()) {
+			String[] split = director.split(" ");
+			if(split.length > 1) {
+				video.setDirector(new Person(split[1], split[0]));
+			}
+			else {
+				Person videoDirector = new Person("",director);
+				video.setDirector(videoDirector);
+			}
+		}else throw new IllegalArgumentException("Director is required");
+		video.setRated(rated);
+		video.setRuntime(runtime);
+		video.setYear(year);
+		
+		
 		collection.addVideo(video);
 		System.out.println("Added video:");
 		System.out.println(video.getUpc());
 		System.out.println(video.getTitle());
-		return true;
+		System.out.println(video.getDirector());
+		System.out.println(video.getRated());
+		System.out.println(video.getRuntime());
+		System.out.println(video.getYear());
+		
+		return "success";
+		}catch(Exception e) {
+			return e.getMessage();
+		}
 	}
 
 }

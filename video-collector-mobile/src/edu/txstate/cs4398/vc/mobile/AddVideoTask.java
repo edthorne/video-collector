@@ -5,10 +5,6 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.widget.Toast;
-
 
 public class AddVideoTask extends BaseTask<String, Void, SoapObject> {
 
@@ -25,34 +21,31 @@ public class AddVideoTask extends BaseTask<String, Void, SoapObject> {
 	protected SoapObject doInBackground(String... data) {
 		URL = "http://"+data[0]+":8796/MobileServices?WSDL";
 		
-		//ad.show();
-		
-		/*MobileServices services;
-		 * this doesn't work...
-    	MobileServicesImplService service = new MobileServicesImplService();*/
-    	
-    	//services = service.getMobileServicesImplPort();
 		        
         SoapObject request = new SoapObject(NAMESPACE, ADD_VIDEO_METHOD);
         
-        request.addPropertyIfValue("arg0", data[1]);
-        request.addPropertyIfValue("arg1", data[2]);
+        request.addPropertyIfValue("upc", data[1]);
+        request.addPropertyIfValue("title", data[2]);
+        request.addPropertyIfValue("director",data[3]);
+        request.addPropertyIfValue("rated", data[4]);
+        request.addPropertyIfValue("runtime", data[5]);
+        request.addPropertyIfValue("year", data[6]);
        
-       // request.addProperty("arg0",video);
         
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(request);
         HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
        
+        SoapObject addResult = null;
         try {
         	androidHttpTransport.call(ADD_SOAP_ACTION, envelope);
-        	//SoapObject addResult = (SoapObject) envelope.bodyIn;
+        	addResult = (SoapObject) envelope.bodyIn;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
      
-		return null;
+		return addResult;
 	}
 	
 	@Override

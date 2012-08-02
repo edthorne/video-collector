@@ -1,5 +1,8 @@
 package edu.txstate.cs4398.vc.mobile;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -29,9 +32,16 @@ public class GetVideoTask extends BaseTask<String, Void, SoapObject>  {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(request);
 
-        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        final HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
         try {
 			androidHttpTransport.call(GET_SOAP_ACTION, envelope);
+            TimerTask task = new TimerTask( ) { public void run( ) { Log.d("DEBUG",("no service.."));androidHttpTransport.reset(); } };
+
+            new Timer().schedule( task, 5000 );
+				androidHttpTransport.call(GET_SOAP_ACTION, envelope);
+
+			task.cancel( );           // cancel the timeout
+
 			SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
 			return (SoapObject) resultRequestSOAP.getProperty(0);		
 			

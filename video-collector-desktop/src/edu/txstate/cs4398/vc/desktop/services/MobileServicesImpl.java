@@ -1,10 +1,9 @@
 package edu.txstate.cs4398.vc.desktop.services;
 
-import java.util.List;
-
 import javax.jws.WebService;
 
 import edu.txstate.cs4398.vc.desktop.model.CollectorModel;
+import edu.txstate.cs4398.vc.model.Collection;
 import edu.txstate.cs4398.vc.model.Person;
 import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
@@ -110,24 +109,7 @@ public class MobileServicesImpl implements MobileServices {
 
 	@Override
 	public Collection getCollectionVideos() {
-		Collection c = new Collection();
-		Video video = new Video("Hello");
-		video.setDirector(new Person("last","first"));
-		video.setRated(Rating.G);
-		video.setRuntime(125);
-		video.setUpc("123456789012");
-		video.setYear(1995);
-		
-		Video video2 = new Video("Hello");
-		video2.setDirector(new Person("last","first"));
-		video2.setRated(Rating.G);
-		video2.setRuntime(125);
-		video2.setUpc("123456789012");
-		video2.setYear(1995);
-		
-		c.addVideo(video);
-		c.addVideo(video2);
-		return c;
+		return model.getCollection();
 	}
 	
 	

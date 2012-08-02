@@ -55,23 +55,10 @@ public class CollectorController extends AbstractController {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
+	}
 
-		// if we have a URI, get the listener ready
-		if (wsURI != null) {
-			// create the discovery listener
-			try {
-				discoveryListener = new DiscoveryListener();
-				discoveryListener.setServiceAddress(wsURI);
-			} catch (IOException ioe) {
-				System.err.println("Unable to create discovery listener.");
-				ioe.printStackTrace();
-			}
-		}
-		// if we have a listener, get the endpoint ready
-		if (discoveryListener != null) {
-			// create the web service endpoint
-			wsEndpoint = Endpoint.create(new MobileServicesImpl());
-		}
+	public String getIPAddress() {
+		return NetworkUtils.getIPAddress();
 	}
 
 	@Override
@@ -102,11 +89,22 @@ public class CollectorController extends AbstractController {
 		}
 	}
 
-	private synchronized void startListener() {
+	private void startListener() {
+		// create the discovery listener
+		try {
+			discoveryListener = new DiscoveryListener();
+		} catch (IOException ioe) {
+			System.err.println("Unable to create discovery listener.");
+			ioe.printStackTrace();
+			return;
+		}
+		discoveryListener.setServiceAddress(wsURI);
 		discoveryListener.start();
 	}
 
 	private void startWebService() {
+		// create the web service endpoint
+		wsEndpoint = Endpoint.create(new MobileServicesImpl());
 		System.out.println("Publishing webservice at " + wsURI);
 		wsEndpoint.publish(wsURI);
 	}

@@ -16,7 +16,7 @@ public class EventHandler {
 		listeners.remove(listener);
 	}
 	
-	public synchronized void notifyEvent(Task task){
+	public synchronized void notifyEvent(TaskEvent task){
 		Iterator<Listener> i = listeners.iterator();
 		while(i.hasNext())	{
 			((Listener) i.next()).onEvent(task);

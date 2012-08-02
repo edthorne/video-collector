@@ -1,9 +1,12 @@
 package edu.txstate.cs4398.vc.desktop.services;
 
+import java.util.List;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
+import edu.txstate.cs4398.vc.model.Collection;
 import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
@@ -52,4 +55,7 @@ public interface MobileServices {
 	public String addVideo(@WebParam(name="upc") String upc, @WebParam(name="title")String title, 
 							@WebParam(name="director")String director,@WebParam(name="rated") Rating rated, 
 							@WebParam(name="runtime")int runtime,@WebParam(name="year") int year);
+	
+	@WebMethod (operationName="getCollectionVideos")
+	public Collection getCollectionVideos();
 }

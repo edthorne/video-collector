@@ -1,8 +1,7 @@
 package edu.txstate.cs4398.vc.model;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  * Represents a person outside of the <code>Collection</code> for easy
@@ -10,12 +9,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * @author Ed
  */
-@XmlRootElement(name = "person")
-@XmlType(propOrder = { "lastName", "firstName" })
+@Root
 public class Person {
-	@XmlElement( required = true )
+	@Element( required = true )
 	private String lastName;
-	@XmlElement
+	@Element
 	private String firstName;
 
 	/**

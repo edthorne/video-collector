@@ -1,8 +1,7 @@
 package edu.txstate.cs4398.vc.model;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  * Represents a video outside of the <code>Collection</code> for easy marshaling
@@ -10,24 +9,31 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * @author Ed
  */
-@XmlRootElement(name = "video")
-@XmlType(propOrder = { "upc", "title", "director", "year", "rated", "runtime",
-		"category", "myRating", "notes" })
+@Root
 public class Video extends AbstractModel {
 	/**
 	 * Event identifier for property changes.
 	 */
 	public static final int PROPERTY_CHANGED = 1;
 
-	private String title;
-	private int year;
-	private int runtime;
+	@Element(required = false)
 	private String upc;
-	private byte myRating;
-	private String notes;
-	private String category;
+	@Element(required = true)
+	private String title;
+	@Element(required = false)
 	private Person director;
+	@Element
+	private int year;
+	@Element(required = false)
 	private Rating rated;
+	@Element
+	private int runtime;
+	@Element
+	private byte myRating;
+	@Element(required = false)
+	private String notes;
+	@Element(required = false)
+	private String category;
 
 	/**
 	 * Creates a new video. You must set a title before marshaling the video.
@@ -49,7 +55,6 @@ public class Video extends AbstractModel {
 	/**
 	 * @return the video title
 	 */
-	@XmlElement(required = true)
 	public String getTitle() {
 		return title;
 	}

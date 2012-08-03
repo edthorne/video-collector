@@ -7,14 +7,12 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
 
 /**
  * A test fixture for testing video XML marshalling and unmarshalling.
@@ -35,8 +33,7 @@ public class VideoXMLTest {
 	private static final String HEAT_UPC = "085391419228";
 	private static final int HEAT_YEAR = 1995;
 
-	private static Marshaller marshaller;
-	private static Unmarshaller unmarshaller;
+	private static Serializer serializer;
 	private Video video;
 	private File xmlFile;
 
@@ -45,11 +42,8 @@ public class VideoXMLTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		// set up JAXB marshallers
-		JAXBContext context = JAXBContext.newInstance(Video.class);
-		marshaller = context.createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		unmarshaller = context.createUnmarshaller();
+		// set up serializer
+		serializer = new Persister();
 	}
 
 	/**
@@ -81,12 +75,12 @@ public class VideoXMLTest {
 
 	@Test
 	public void testXMLMarshalling() throws Exception {
-		// marshal the video to a temp file
-		marshaller.marshal(video, xmlFile);
-		marshaller.marshal(video, System.out);
+		// write the video to a temp file
+		serializer.write(video, xmlFile);
+		serializer.write(video, System.out);
 
-		// unmarshal the collection from the file
-		Video fVideo = (Video) unmarshaller.unmarshal(xmlFile);
+		// read the collection from the file
+		Video fVideo = (Video) serializer.read(Video.class, xmlFile);
 
 		// compare the created video with the file video
 		Person michaelMann = fVideo.getDirector();
@@ -95,6 +89,30 @@ public class VideoXMLTest {
 
 		assertEquals(HEAT_TITLE, fVideo.getTitle());
 		assertEquals(HEAT_CATEGORY, fVideo.getCategory());
+		assertEquals(HEAT_NOTES, fVideo.getNotes());
+		assertEquals(HEAT_RATED, fVideo.getRated());
+		assertEquals(HEAT_RATING, fVideo.getMyRating());
+		assertEquals(HEAT_RUNTIME, fVideo.getRuntime());
+		assertEquals(HEAT_UPC, fVideo.getUpc());
+		assertEquals(HEAT_YEAR, fVideo.getYear());
+	}
+
+	@Test
+	public void testXMLNullMarshalling() throws Exception {
+		video.setDirector(null);
+		video.setCategory(null);
+		
+		// write the video to a temp file
+		serializer.write(video, xmlFile);
+		serializer.write(video, System.out);
+
+		// read the collection from the file
+		Video fVideo = (Video) serializer.read(Video.class, xmlFile);
+
+		// compare the created video with the file video
+		assertNull(fVideo.getDirector());
+		assertEquals(HEAT_TITLE, fVideo.getTitle());
+		assertNull(fVideo.getCategory());
 		assertEquals(HEAT_NOTES, fVideo.getNotes());
 		assertEquals(HEAT_RATED, fVideo.getRated());
 		assertEquals(HEAT_RATING, fVideo.getMyRating());

@@ -1,5 +1,7 @@
 package edu.txstate.cs4398.vc.desktop.services;
 
+import java.util.Set;
+
 import javax.jws.WebService;
 
 import edu.txstate.cs4398.vc.desktop.model.CollectorModel;
@@ -30,7 +32,7 @@ public class MobileServicesImpl implements MobileServices {
 	}
 
 	@Override
-	public Video getVideoByUPC(String upc)
+	public Video lookupVideoByUPC(String upc)
 	{
 		Video video = new Video();
 		
@@ -49,27 +51,16 @@ public class MobileServicesImpl implements MobileServices {
 		return video;
 	}
 	
-	@Override
-	public String getProductName(String upc)
-	{
-		try{
-		VideoLookupService service = new VideoLookupService();
-
-		return service.getProductName(upc);
-		} catch(Exception e) {
-			return "";
-		}
-	}
 	
 	@Override
-	public Video getVideoByName(String name)
+	public Video lookupVideoByTitle(String title)
 	{
 		Video video = new Video();
 		
 		try{
 		VideoLookupService service = new VideoLookupService();
 
-		return service.getVideoByName(name,video);
+		return service.getVideoByName(title,video);
 		} catch(Exception e) {
 			return video;
 		}
@@ -116,10 +107,19 @@ public class MobileServicesImpl implements MobileServices {
 	}
 
 	@Override
-	public Collection getCollectionVideos() {
+	public Collection getCollection() {
 		return model.getCollection();
 	}
 	
+	@Override
+	public Set<String> getCategories() {
+		return model.getCollection().getCategories();
+	}
+	
+	@Override
+	public Set<Person> getPeople() {
+		return model.getCollection().getPeople();
+	}
 	
 
 }

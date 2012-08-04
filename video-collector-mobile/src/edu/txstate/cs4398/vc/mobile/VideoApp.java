@@ -1,12 +1,15 @@
 package edu.txstate.cs4398.vc.mobile;
 
-import edu.txstate.cs4398.vc.model.Collection;
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.txstate.cs4398.vc.model.Video;
 import android.app.Application;
 
 public class VideoApp extends Application {
 
 	private String webServiceAddress;
-	private Collection videoCollection;
+	private List<Video> videoList = new ArrayList<Video>();
 	
 	public String getWebServiceAddress() {
 		return webServiceAddress;
@@ -16,12 +19,12 @@ public class VideoApp extends Application {
 		this.webServiceAddress = webServiceAddress;
 	}
 
-	public Collection getVideoCollection() {
-		return videoCollection;
+	public List<Video> getVideoList() {
+		return videoList;
 	}
 
-	public void setVideoCollection(Collection videoCollection) {
-		this.videoCollection = videoCollection;
+	public void setVideoList(List<Video> videoList) {
+		this.videoList = videoList;
 	}
 	
 }

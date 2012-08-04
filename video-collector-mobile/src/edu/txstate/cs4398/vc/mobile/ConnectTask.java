@@ -13,7 +13,7 @@ public class ConnectTask extends BaseTask<String, Void, SoapObject> {
 
 	private static String URL;
 	private final String ECHO_METHOD = "echo";
-	private final String ECHO_SOAP_ACTION =  "http://services.desktop.vc.cs4398.txstate.edu/echo";
+	private final String ECHO_SOAP_ACTION =  "\"http://services.desktop.vc.cs4398.txstate.edu/echo\"";
 	private final String CONNECT_MESSAGE = "TESTING CONNECTION";
 	
 

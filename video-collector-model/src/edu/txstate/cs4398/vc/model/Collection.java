@@ -66,6 +66,9 @@ public class Collection extends AbstractModel implements ModelListener {
 	}
 
 	public void addCategory(String category) {
+		if (category == null) {
+			throw new IllegalArgumentException("Cannot add a null category!");
+		}
 		// add this category as a new category
 		boolean added = categories.add(category);
 		if (added) {
@@ -74,6 +77,9 @@ public class Collection extends AbstractModel implements ModelListener {
 	}
 
 	public void addPerson(Person person) {
+		if (person == null) {
+			throw new IllegalArgumentException("Cannot add a null person!");
+		}
 		// add this person as a new person
 		boolean added = people.add(person);
 		if (added) {
@@ -82,6 +88,9 @@ public class Collection extends AbstractModel implements ModelListener {
 	}
 
 	public void addVideo(Video video) {
+		if (video == null) {
+			throw new IllegalArgumentException("Cannot add a null video!");
+		}
 		// add this video as a new video
 		videos.add(video);
 		// listen for changes
@@ -89,10 +98,12 @@ public class Collection extends AbstractModel implements ModelListener {
 		// notify our listeners of the new video
 		notifyChanged(new ModelEvent(this, VIDEO_ADDED, video.getTitle()));
 		// if the category or director aren't in our sets, add them
-		if (!categories.contains(video.getCategory())) {
+		if (video.getCategory() != null
+				&& !categories.contains(video.getCategory())) {
 			addCategory(video.getCategory());
 		}
-		if (!people.contains(video.getDirector())) {
+		if (video.getDirector() != null
+				&& !people.contains(video.getDirector())) {
 			addPerson(video.getDirector());
 		}
 	}
@@ -125,9 +136,15 @@ public class Collection extends AbstractModel implements ModelListener {
 	}
 
 	public void removeVideo(Video video) {
-		removeModelListener(this);
-		videos.remove(video);
-		notifyChanged(new ModelEvent(this, VIDEO_REMOVED, video.getTitle()));
+		// on the off chance someone hands in a null
+		if (video == null) {
+			return; // simply exit
+		}
+		video.removeModelListener(this);
+		boolean removed = videos.remove(video);
+		if (removed) {
+			notifyChanged(new ModelEvent(this, VIDEO_REMOVED, video.getTitle()));
+		}
 	}
 
 	public List<Video> searchVideos(SearchCriteria criteria) {
@@ -145,12 +162,14 @@ public class Collection extends AbstractModel implements ModelListener {
 				// check the action for the property that changed
 				if ("category".equals(event.getActionCommand())) {
 					// category changed, possible add
-					if (!categories.contains(video.getCategory())) {
+					if (video.getCategory() != null
+							&& !categories.contains(video.getCategory())) {
 						addCategory(video.getCategory());
 					}
 				} else if ("director".equals(event.getActionCommand())) {
 					// director changed, possible add
-					if (!people.contains(video.getDirector())) {
+					if (video.getDirector() != null
+							&& !people.contains(video.getDirector())) {
 						addPerson(video.getDirector());
 					}
 				}

@@ -5,6 +5,7 @@ package edu.txstate.cs4398.vc.model;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -138,8 +139,7 @@ public class CollectionTest {
 		assertTrue(listener.containsEvent(collection, Collection.PERSON_ADDED));
 		listener.reset();
 		// add a duplicate (same last, first name)
-		collection.addPerson(new Person(DIRECTOR1_LAST,
-				DIRECTOR1_FIRST));
+		collection.addPerson(new Person(DIRECTOR1_LAST, DIRECTOR1_FIRST));
 		assertEquals(2, collection.getPeople().size());
 		assertFalse(listener.containsEvent(collection, Collection.PERSON_ADDED));
 		// get the list
@@ -165,8 +165,8 @@ public class CollectionTest {
 		assertEquals(1, people.size());
 		assertTrue(people.contains(person1));
 		assertFalse(people.contains(person2));
-		assertFalse(listener
-				.containsEvent(collection, Collection.PERSON_REMOVED));
+		assertFalse(listener.containsEvent(collection,
+				Collection.PERSON_REMOVED));
 	}
 
 	@Test
@@ -177,10 +177,60 @@ public class CollectionTest {
 		assertFalse(listener
 				.containsEvent(collection, Collection.VIDEO_REMOVED));
 		// add video
+		final Video video1 = new Video(VIDEO1_TITLE);
+		collection.addVideo(video1);
+		assertEquals(1, collection.getVideos().size());
+		assertTrue(listener.containsEvent(collection, Collection.VIDEO_ADDED));
+		listener.reset();
 		// add another with category and director
-		// add a duplicate (same video title)
+		final Video video2 = new Video(VIDEO2_TITLE);
+		final Person director2 = new Person(DIRECTOR2_LAST, DIRECTOR2_FIRST);
+		video2.setDirector(director2);
+		video2.setCategory(CATEGORY2_NAME);
+		collection.addVideo(video2);
+		assertEquals(2, collection.getVideos().size());
+		assertTrue(listener.containsEvent(collection, Collection.VIDEO_ADDED));
+		assertEquals(1, collection.getCategories().size());
+		assertTrue(collection.getCategories().contains(CATEGORY2_NAME));
+		assertTrue(listener
+				.containsEvent(collection, Collection.CATEGORY_ADDED));
+		assertEquals(1, collection.getPeople().size());
+		assertTrue(collection.getPeople().contains(director2));
+		assertTrue(listener.containsEvent(collection, Collection.PERSON_ADDED));
+		listener.reset();
 		// get the list
+		List<Video> videos = collection.getVideos();
+		assertEquals(2, videos.size());
 		// try to modify the list
+		try {
+			videos.remove(video2);
+			fail("Should have thrown exception");
+		} catch (UnsupportedOperationException uoe) {
+			assertEquals(2, videos.size());
+		}
+		// update video1 to add director and category
+		final Person director1 = new Person(DIRECTOR1_LAST, DIRECTOR1_FIRST);
+		video1.setCategory(CATEGORY1_NAME);
+		assertEquals(2, collection.getCategories().size());
+		assertTrue(listener
+				.containsEvent(collection, Collection.CATEGORY_ADDED));
+		video1.setDirector(director1);
+		assertEquals(2, collection.getPeople().size());
+		assertTrue(listener.containsEvent(collection, Collection.PERSON_ADDED));
+		listener.reset();
 		// remove video
+		collection.removeVideo(video2);
+		assertEquals(1, videos.size());
+		assertTrue(videos.contains(video1));
+		assertFalse(videos.contains(video2));
+		assertTrue(listener.containsEvent(collection, Collection.VIDEO_REMOVED));
+		listener.reset();
+		// remove video again
+		collection.removeVideo(video2);
+		assertEquals(1, videos.size());
+		assertTrue(videos.contains(video1));
+		assertFalse(videos.contains(video2));
+		assertFalse(listener
+				.containsEvent(collection, Collection.VIDEO_REMOVED));
 	}
 }

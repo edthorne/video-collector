@@ -94,6 +94,34 @@ public class VideoXMLTest {
 		// unmarshal the collection from the file using JAXB
 		Video fVideo = (Video) unmarshaller.unmarshal(xmlFile);
 
+		checkFullVideo(fVideo);
+	}
+
+	@Test
+	public void testJAXB2Simple() throws Exception {
+		// marshal the video to a temp file using JAXB
+		marshaller.marshal(video, xmlFile);
+		marshaller.marshal(video, System.out);
+	
+		// read the collection from the file using simple
+		Video fVideo = (Video) serializer.read(Video.class, xmlFile);
+	
+		checkFullVideo(fVideo);
+	}
+
+	@Test
+	public void testSimple2JAXB() throws Exception {
+		// write the video to a temp file using simple
+		serializer.write(video, xmlFile);
+		serializer.write(video, System.out);
+	
+		// unmarshal the collection from the file using JAXB
+		Video fVideo = (Video) unmarshaller.unmarshal(xmlFile);
+	
+		checkFullVideo(fVideo);
+	}
+
+	private void checkFullVideo(Video fVideo) {
 		// compare the created video with the file video
 		Person michaelMann = fVideo.getDirector();
 		assertEquals(MANN_NAME, michaelMann.getLastName());
@@ -118,19 +146,7 @@ public class VideoXMLTest {
 		// read the collection from the file
 		Video fVideo = (Video) serializer.read(Video.class, xmlFile);
 
-		// compare the created video with the file video
-		Person michaelMann = fVideo.getDirector();
-		assertEquals(MANN_NAME, michaelMann.getLastName());
-		assertEquals(MICHAEL_NAME, michaelMann.getFirstName());
-
-		assertEquals(HEAT_TITLE, fVideo.getTitle());
-		assertEquals(HEAT_CATEGORY, fVideo.getCategory());
-		assertEquals(HEAT_NOTES, fVideo.getNotes());
-		assertEquals(HEAT_RATED, fVideo.getRated());
-		assertEquals(HEAT_RATING, fVideo.getMyRating());
-		assertEquals(HEAT_RUNTIME, fVideo.getRuntime());
-		assertEquals(HEAT_UPC, fVideo.getUpc());
-		assertEquals(HEAT_YEAR, fVideo.getYear());
+		checkFullVideo(fVideo);
 	}
 
 	@Test
@@ -145,16 +161,7 @@ public class VideoXMLTest {
 		// unmarshal the collection from the file using JAXB
 		Video fVideo = (Video) unmarshaller.unmarshal(xmlFile);
 
-		// compare the created video with the file video
-		assertEquals(HEAT_TITLE, fVideo.getTitle());
-		assertNull(fVideo.getCategory());
-		assertNull(fVideo.getDirector());
-		assertNull(fVideo.getNotes());
-		assertNull(fVideo.getRated());
-		assertNull(fVideo.getUpc());
-		assertEquals(0, fVideo.getMyRating());
-		assertEquals(0, fVideo.getRuntime());
-		assertEquals(0, fVideo.getYear());
+		checkMinimalVideo(fVideo);
 
 		// write the video to a temp file using simple
 		serializer.write(video, xmlFile);
@@ -163,6 +170,10 @@ public class VideoXMLTest {
 		// read the collection from the file using simple
 		fVideo = (Video) serializer.read(Video.class, xmlFile);
 
+		checkMinimalVideo(fVideo);
+	}
+
+	private void checkMinimalVideo(Video fVideo) {
 		// compare the created video with the file video
 		assertEquals(HEAT_TITLE, fVideo.getTitle());
 		assertNull(fVideo.getCategory());
@@ -173,53 +184,5 @@ public class VideoXMLTest {
 		assertEquals(0, fVideo.getMyRating());
 		assertEquals(0, fVideo.getRuntime());
 		assertEquals(0, fVideo.getYear());
-	}
-
-	@Test
-	public void testJAXB2Simple() throws Exception {
-		// marshal the video to a temp file using JAXB
-		marshaller.marshal(video, xmlFile);
-		marshaller.marshal(video, System.out);
-
-		// read the collection from the file using simple
-		Video fVideo = (Video) serializer.read(Video.class, xmlFile);
-
-		// compare the created video with the file video
-		Person michaelMann = fVideo.getDirector();
-		assertEquals(MANN_NAME, michaelMann.getLastName());
-		assertEquals(MICHAEL_NAME, michaelMann.getFirstName());
-
-		assertEquals(HEAT_TITLE, fVideo.getTitle());
-		assertEquals(HEAT_CATEGORY, fVideo.getCategory());
-		assertEquals(HEAT_NOTES, fVideo.getNotes());
-		assertEquals(HEAT_RATED, fVideo.getRated());
-		assertEquals(HEAT_RATING, fVideo.getMyRating());
-		assertEquals(HEAT_RUNTIME, fVideo.getRuntime());
-		assertEquals(HEAT_UPC, fVideo.getUpc());
-		assertEquals(HEAT_YEAR, fVideo.getYear());
-	}
-
-	@Test
-	public void testSimple2JAXB() throws Exception {
-		// write the video to a temp file using simple
-		serializer.write(video, xmlFile);
-		serializer.write(video, System.out);
-
-		// unmarshal the collection from the file using JAXB
-		Video fVideo = (Video) unmarshaller.unmarshal(xmlFile);
-
-		// compare the created video with the file video
-		Person michaelMann = fVideo.getDirector();
-		assertEquals(MANN_NAME, michaelMann.getLastName());
-		assertEquals(MICHAEL_NAME, michaelMann.getFirstName());
-
-		assertEquals(HEAT_TITLE, fVideo.getTitle());
-		assertEquals(HEAT_CATEGORY, fVideo.getCategory());
-		assertEquals(HEAT_NOTES, fVideo.getNotes());
-		assertEquals(HEAT_RATED, fVideo.getRated());
-		assertEquals(HEAT_RATING, fVideo.getMyRating());
-		assertEquals(HEAT_RUNTIME, fVideo.getRuntime());
-		assertEquals(HEAT_UPC, fVideo.getUpc());
-		assertEquals(HEAT_YEAR, fVideo.getYear());
 	}
 }

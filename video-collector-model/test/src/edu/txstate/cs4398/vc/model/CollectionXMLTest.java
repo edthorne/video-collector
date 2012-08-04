@@ -14,15 +14,15 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
 
 /**
  * A test fixture for testing collection XML marshalling and unmarshalling.
  * 
  * @author Ed
  */
-@Ignore
 public class CollectionXMLTest {
 	// test data
 	private static final String ACTION_CATEGORY = "Action";
@@ -73,8 +73,10 @@ public class CollectionXMLTest {
 	private static final String PERF_STORM_UPC = "085391858423";
 	private static final int PERF_STORM_YEAR = 2000;
 
+	private static Serializer serializer;
 	private static Marshaller marshaller;
 	private static Unmarshaller unmarshaller;
+
 	private Collection collection;
 	private File xmlFile;
 
@@ -83,6 +85,8 @@ public class CollectionXMLTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		// set up simple XML serializer
+		serializer = new Persister();
 		// set up JAXB marshallers
 		JAXBContext context = JAXBContext.newInstance(Collection.class);
 		marshaller = context.createMarshaller();
@@ -165,7 +169,7 @@ public class CollectionXMLTest {
 	}
 
 	@Test
-	public void testXMLMarshalling() throws Exception {
+	public void testJAXBMarshalling() throws Exception {
 		// marshal the collection to a temp file
 		marshaller.marshal(collection, xmlFile);
 		marshaller.marshal(collection, System.out);
@@ -173,18 +177,64 @@ public class CollectionXMLTest {
 		// unmarshal the collection from the file
 		Collection fCollection = (Collection) unmarshaller.unmarshal(xmlFile);
 
+		verifyCollection(fCollection);
+	}
+
+	@Test
+	public void testSimpleMarshalling() throws Exception {
+		// write the collection to a temp file
+		serializer.write(collection, xmlFile);
+		serializer.write(collection, System.out);
+
+		// read the collection from the file
+		Collection fCollection = (Collection) serializer.read(Collection.class,
+				xmlFile);
+
+		verifyCollection(fCollection);
+	}
+
+	@Test
+	public void testJAXB2Simple() throws Exception {
+		// marshal the collection to a temp file
+		marshaller.marshal(collection, xmlFile);
+		marshaller.marshal(collection, System.out);
+
+		// read the collection from the file
+		Collection fCollection = (Collection) serializer.read(Collection.class,
+				xmlFile);
+
+		verifyCollection(fCollection);
+	}
+
+	@Test
+	public void testSimple2JAXB() throws Exception {
+		// write the collection to a temp file
+		serializer.write(collection, xmlFile);
+		serializer.write(collection, System.out);
+
+		// unmarshal the collection from the file
+		Collection fCollection = (Collection) unmarshaller.unmarshal(xmlFile);
+
+		verifyCollection(fCollection);
+	}
+
+	private void verifyCollection(Collection fCollection) {
 		// compare the created collection with the file collection
-//		assertEquals(2, fCollection.getCategories().size());
+		assertEquals(2, fCollection.getCategories().size());
 		assertEquals(2, fCollection.getPeople().size());
 		assertEquals(5, fCollection.getVideos().size());
 
-		Person michaelMann = fCollection.getPeople().get(0);
-		assertEquals(MANN_NAME, michaelMann.getLastName());
-		assertEquals(MICHAEL_NAME, michaelMann.getFirstName());
-		Person wolfgangPetersen = fCollection.getPeople().get(1);
-		assertEquals(PETERSEN_NAME, wolfgangPetersen.getLastName());
-		assertEquals(WOLFGANG_NAME, wolfgangPetersen.getFirstName());
+		// check categories
+		assertTrue(fCollection.getCategories().contains(ACTION_CATEGORY));
+		assertTrue(fCollection.getCategories().contains(THRILLER_CATEGORY));
 
+		// check people
+		Person michaelMann = new Person(MANN_NAME, MICHAEL_NAME);
+		assertTrue(fCollection.getPeople().contains(michaelMann));
+		Person wolfgangPetersen = new Person(PETERSEN_NAME, WOLFGANG_NAME);
+		assertTrue(fCollection.getPeople().contains(wolfgangPetersen));
+
+		// check videos
 		Video heat = fCollection.getVideos().get(0);
 		assertEquals(HEAT_TITLE, heat.getTitle());
 		assertEquals(HEAT_NOTES, heat.getNotes());

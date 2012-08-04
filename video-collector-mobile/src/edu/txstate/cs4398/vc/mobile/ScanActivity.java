@@ -2,6 +2,9 @@ package edu.txstate.cs4398.vc.mobile;
 
 import edu.txstate.cs4398.vc.mobile.utils.IntentIntegrator;
 import edu.txstate.cs4398.vc.mobile.utils.IntentResult;
+import edu.txstate.cs4398.vc.model.Person;
+import edu.txstate.cs4398.vc.model.Rating;
+import edu.txstate.cs4398.vc.model.Video;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 import org.ksoap2.serialization.SoapObject;
 
 
+
 public class ScanActivity extends Activity implements View.OnClickListener, Listener {
 	Button scanButton;
 	Button addVideoButton;
@@ -28,11 +32,14 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 	Spinner ratedSpinner;
 	private String ipAddress;
 	ProgressBar progressCircle;
+	Video video;
+	VideoApp appState;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
-        VideoApp appState = ((VideoApp)getApplicationContext());
+        appState = ((VideoApp)getApplicationContext());
         ipAddress = appState.getWebServiceAddress();
 
         scanButton = (Button)this.findViewById(R.id.btnScan);
@@ -47,6 +54,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
         ratedSpinner = (Spinner)this.findViewById(R.id.ratedSpinner);
         progressCircle = (ProgressBar)this.findViewById(R.id.progressScan);
         progressCircle.setVisibility(View.INVISIBLE);
+        video = new Video();
     }
 
     
@@ -89,31 +97,51 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     }
     
     private void transformSoapResponse(SoapObject response) {
+
 		String title = response.getPropertySafelyAsString("title");
 		videoTitle.setText(title);
+		video.setTitle(title);
+		
 		SoapObject director = (SoapObject) response.getProperty("director");
 		
-		StringBuilder directorName = new StringBuilder();
-		directorName.append(director.getPropertySafelyAsString("firstName"));
-		directorName.append(" ");
-		directorName.append(director.getPropertySafelyAsString("lastName"));
-		videoDirector.setText(directorName.toString());
+		String first = director.getPropertySafelyAsString("firstName");
+		String last = director.getPropertySafelyAsString("lastName");
+		videoDirector.setText(first + " " + last);
+		video.setDirector(new Person(last,first));
 		
 		String rated = response.getPropertySafelyAsString("rated");
-		if(rated.equals("G"))
+		if(rated.equals("G")) {
 			ratedSpinner.setSelection(0);
-		if(rated.equals("PG"))
+			video.setRated(Rating.G);
+		}			
+		if(rated.equals("PG")) {
 			ratedSpinner.setSelection(1);
-		if(rated.equals("PG13"))
+			video.setRated(Rating.PG);
+		}
+		if(rated.equals("PG13")) {
 			ratedSpinner.setSelection(2);
-		if(rated.equals("R"))
+			video.setRated(Rating.PG13);
+		}
+		if(rated.equals("R")) {
 			ratedSpinner.setSelection(3);
-		if(rated.equals("NC17"))
+			video.setRated(Rating.R);
+		}
+		if(rated.equals("NC17")) {
 			ratedSpinner.setSelection(4);
-		if(rated.equals("UNRATED"))
+			video.setRated(Rating.NC17);
+		}
+		if(rated.equals("UNRATED")) {
 			ratedSpinner.setSelection(5);
-		videoYear.setText(response.getPropertySafelyAsString("year"));
-		videoRuntime.setText(response.getPropertySafelyAsString("runtime")); 
+			video.setRated(Rating.UNRATED);
+		}
+		int year = Integer.parseInt(response.getPropertySafelyAsString("year"));
+		videoYear.setText(String.valueOf(year));
+		video.setYear(year);
+		int runtime = Integer.parseInt(response.getPropertySafelyAsString("runtime"));
+		videoRuntime.setText(String.valueOf(runtime)); 
+		video.setRuntime(runtime);
+		
+		
     }
 
 	public void onEvent(TaskEvent task) {
@@ -154,6 +182,8 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     					ad.show();
     			} else {
     				// Show toast notification
+    				
+    				appState.getVideoList().add(video);
     				clearAllFields();
     				Toast.makeText(this.getApplicationContext(), 
     	        		videoTitle.getText().toString() + " succesfully added to collection!", Toast.LENGTH_SHORT).show();

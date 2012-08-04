@@ -9,7 +9,7 @@ import org.ksoap2.transport.HttpTransportSE;
 public class AddVideoTask extends BaseTask<String, Void, SoapObject> {
 
 	private static final String ADD_VIDEO_METHOD = "addVideo";
-	private static final String ADD_SOAP_ACTION =  "http://services.desktop.vc.cs4398.txstate.edu/addVideo";
+	private static final String ADD_SOAP_ACTION =  "\"http://services.desktop.vc.cs4398.txstate.edu/addVideo\"";
 	private static String URL;
 	
 	public AddVideoTask(Listener listener){

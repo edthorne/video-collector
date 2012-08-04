@@ -1,13 +1,15 @@
 package edu.txstate.cs4398.vc.model;
 
-import java.awt.event.ActionEvent;
-
 /**
  * Used to notify interested objects of changes in the state of a model.
  * 
  * @author John Hunt, Planet Java
  */
-public class ModelEvent extends ActionEvent {
+public class ModelEvent  {
+
+	protected int id;
+	protected transient Object  source;
+	String actionCommand;
 
 	/**
 	 * Creates a new <code>ModelEvent</code> with the identified values.
@@ -21,8 +23,23 @@ public class ModelEvent extends ActionEvent {
 	 *            associated with the event
 	 */
 	public ModelEvent(Object source, int id, String command) {
-		super(source, id, command);
-		// TODO Auto-generated constructor stub
+		this.source = source;
+		this.id = id;
+		this.actionCommand = command;
+
 	}
+
+	public int getID() {
+		return id;
+	}
+
+	public String getActionCommand() {
+		return actionCommand;
+	}
+
+	public Object getSource() {
+		return source;
+	}
+
 
 }

@@ -1,10 +1,13 @@
 package edu.txstate.cs4398.vc.desktop.services;
 
+import java.util.Set;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import edu.txstate.cs4398.vc.model.Collection;
+import edu.txstate.cs4398.vc.model.Person;
 import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
@@ -23,21 +26,15 @@ public interface MobileServices {
 	 * @param UPC code as String
 	 * @return video with as much info as available
 	 */
-	public Video getVideoByUPC(String upc);
+	public Video lookupVideoByUPC(String upc);
 	
-	/**
-	 * Returns a product name given a UPC
-	 * @param upc
-	 * @return
-	 */
-	public String getProductName(String upc);
 	
 	/**
 	 * Returns a Video given a video title
 	 * @param name
 	 * @return
 	 */
-	public Video getVideoByName(String name);
+	public Video lookupVideoByTitle(String title);
 	
 	/**
 	 * adds a video to the desktop collection
@@ -54,6 +51,13 @@ public interface MobileServices {
 							@WebParam(name="director")String director,@WebParam(name="rated") Rating rated, 
 							@WebParam(name="runtime")int runtime,@WebParam(name="year") int year);
 	
-	@WebMethod (operationName="getCollectionVideos")
-	public Collection getCollectionVideos();
+	@WebMethod (operationName="getCollection")
+	public Collection getCollection();
+	
+	@WebMethod (operationName="getCategories")
+	public Set<String> getCategories();
+
+	@WebMethod (operationName="getPeople")
+	public Set<Person> getPeople();
+
 }

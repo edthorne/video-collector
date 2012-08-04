@@ -13,8 +13,8 @@ import android.util.Log;
 public class GetVideoTask extends BaseTask<String, Void, SoapObject>  {
 
 	private static String URL;
-	private static final String GET_VIDEO_METHOD = "getVideoByUPC";
-	private static final String GET_SOAP_ACTION =  "http://services.desktop.vc.cs4398.txstate.edu/getVideoByUPC";
+	private static final String GET_VIDEO_METHOD = "lookupVideoByUPC";
+	private static final String GET_SOAP_ACTION =  "\"http://services.desktop.vc.cs4398.txstate.edu/lookupVideoByUPC\"";
 	
 	public GetVideoTask(Listener listener){
 		event = new EventHandler();

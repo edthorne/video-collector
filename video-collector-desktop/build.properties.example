@@ -1,0 +1,5 @@
+# This file contains build properties you want to set or overwrite.
+# The jdk.home property should point to the root directory of your JDK install.
+# You cannot point to a JRE, and it must be JDK 6 or higher that includes the
+# wsgen executable.
+jdk.home=C:\\dev\\jdk1.6.0_29

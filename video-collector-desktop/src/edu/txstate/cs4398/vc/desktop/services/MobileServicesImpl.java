@@ -8,11 +8,19 @@ import edu.txstate.cs4398.vc.model.Person;
 import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
-@WebService(endpointInterface="edu.txstate.cs4398.vc.desktop.services.MobileServices")
+@WebService(endpointInterface="edu.txstate.cs4398.vc.desktop.services.MobileServices", serviceName="MobileServices")
 public class MobileServicesImpl implements MobileServices {
 	private CollectorModel model;
 
+	public MobileServicesImpl() {
+		
+	}
+	
 	public MobileServicesImpl(CollectorModel model) {
+		this.model = model;
+	}
+	
+	public void setCollectorModel(CollectorModel model) {
 		this.model = model;
 	}
 

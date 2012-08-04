@@ -1,0 +1,46 @@
+<project name="video-collector-desktop" basedir=".">
+	<target name="init">
+		<!-- try to read the JDK home from the build.properties file -->
+		<property file="build.properties" />
+
+		<!-- Set relevant paths -->
+		<property name="bin.dir" location="${basedir}/bin" />
+		<property name="src.dir" location="${basedir}/src" />
+		<property name="gen.src.dir" location="${basedir}/gensrc" />
+		<property name="wsdl.dir" location="${basedir}/wsdl" />
+		<property name="sei.class" value="edu.txstate.cs4398.vc.desktop.services.MobileServicesImpl" />
+		<path id="classpath">
+			<pathelement location="${bin.dir}" />
+			<pathelement location="../video-collector-model/bin" />
+			<pathelement location="../video-collector-model/lib/simple-xml-2.6.6.jar" />
+		</path>
+
+		<mkdir dir="${gen.src.dir}" />
+		<mkdir dir="${wsdl.dir}" />
+	</target>
+
+	<!-- display a warning message if jdk.home isn't set -->
+	<target name="check_jdk_home" depends="init" unless="jdk.home">
+		<echo>Please set jdk.home in build.properties!</echo>
+		<echo>See build.properties.example for detailed instructions.</echo>
+	</target>
+
+	<!-- will only build if jdk.home is set -->
+	<target name="wsgen" depends="check_jdk_home" if="jdk.home">
+		<echo>Running wsgen from ${jdk.home}\bin</echo>
+
+		<exec executable="${jdk.home}\bin\wsgen">
+			<arg value="-keep" />
+			<arg value="-wsdl" />
+			<arg value="-classpath" />
+			<arg pathref="classpath" />
+			<arg value="-d" />
+			<arg path="${bin.dir}" />
+			<arg value="-r" />
+			<arg path="${wsdl.dir}" />
+			<arg value="-s" />
+			<arg path="${gen.src.dir}" />
+			<arg value="${sei.class}" />
+		</exec>
+	</target>
+</project>

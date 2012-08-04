@@ -1,5 +1,10 @@
 package edu.txstate.cs4398.vc.model;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -10,6 +15,9 @@ import org.simpleframework.xml.Root;
  * @author Ed
  */
 @Root
+@XmlRootElement(name = "video")
+@XmlType(propOrder = { "upc", "title", "director", "year", "rated", "runtime",
+		"category", "myRating", "notes" })
 public class Video extends AbstractModel {
 	/**
 	 * Event identifier for property changes.
@@ -19,6 +27,7 @@ public class Video extends AbstractModel {
 	@Element(required = false)
 	private String upc;
 	@Element(required = true)
+	@XmlElement(required = true)
 	private String title;
 	@Element(required = false)
 	private Person director;
@@ -55,6 +64,7 @@ public class Video extends AbstractModel {
 	/**
 	 * @return the video title
 	 */
+	@XmlTransient
 	public String getTitle() {
 		return title;
 	}

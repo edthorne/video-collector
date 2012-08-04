@@ -1,7 +1,5 @@
 package edu.txstate.cs4398.vc.desktop.services;
 
-import java.util.List;
-
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -10,7 +8,7 @@ import edu.txstate.cs4398.vc.model.Collection;
 import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
-@WebService (serviceName = "MobileServices")
+@WebService
 public interface MobileServices {
 	/**
 	 * Returns the data back to the client.

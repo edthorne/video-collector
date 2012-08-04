@@ -1,3 +1,6 @@
 bin
 test/bin
 config/token.properties
+gensrc
+wsdl
+build.properties

@@ -105,7 +105,8 @@ public class CollectorView extends JFrameView {
 
 	@Override
 	public void modelChanged(ModelEvent event) {
-		// TODO Auto-generated method stub
+		// we're listening to the collector model for property changes
+		setWindowTitle();
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class CollectorView extends JFrameView {
 	}
 
 	class CollectorViewWindowAdapter extends WindowAdapter {
-		public void windowClosing(WindowEvent arg0) {
+		public void windowClosing(WindowEvent event) {
 			// if the model is dirty, prompt to save
 			if (getModel().isDirty()) {
 				int answer = JOptionPane
@@ -145,7 +146,11 @@ public class CollectorView extends JFrameView {
 								"Unsaved Changes", JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE);
 				if (answer == JOptionPane.YES_OPTION) {
-					getController().save();
+					if (getModel().getFile() != null) {
+						getController().save();
+					} else {
+						getController().saveAs();
+					}
 				}
 			}
 		}
@@ -160,9 +165,8 @@ public class CollectorView extends JFrameView {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-
+		public void actionPerformed(ActionEvent event) {
+			getController().newCollection();
 		}
 	}
 
@@ -174,9 +178,8 @@ public class CollectorView extends JFrameView {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-
+		public void actionPerformed(ActionEvent event) {
+			getController().newVideo();
 		}
 	}
 
@@ -188,9 +191,8 @@ public class CollectorView extends JFrameView {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-
+		public void actionPerformed(ActionEvent event) {
+			getController().open();
 		}
 	}
 
@@ -202,9 +204,8 @@ public class CollectorView extends JFrameView {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-
+		public void actionPerformed(ActionEvent event) {
+			getController().save();
 		}
 	}
 
@@ -216,9 +217,8 @@ public class CollectorView extends JFrameView {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-
+		public void actionPerformed(ActionEvent event) {
+			getController().saveAs();
 		}
 	}
 
@@ -244,7 +244,7 @@ public class CollectorView extends JFrameView {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent event) {
 			dispatchEvent(new WindowEvent(CollectorView.this,
 					WindowEvent.WINDOW_CLOSING));
 		}
@@ -258,11 +258,10 @@ public class CollectorView extends JFrameView {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			;
+		public void actionPerformed(ActionEvent event) {
 			JOptionPane.showMessageDialog(CollectorView.this,
 					"This computer's IP address is "
-							+ getController().getIPAddress(), "IP Address",
+							+ getModel().getIPAddress(), "IP Address",
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}

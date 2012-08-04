@@ -1,11 +1,18 @@
 package edu.txstate.cs4398.vc.desktop.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.ws.Endpoint;
 
 import edu.txstate.cs4398.vc.desktop.model.CollectorModel;
@@ -30,17 +37,29 @@ public class CollectorController extends AbstractController {
 	private Endpoint wsEndpoint;
 	private String wsURI = null;
 	private DiscoveryListener discoveryListener;
+	private Marshaller marshaller;
+	private Unmarshaller unmarshaller;
 
 	/**
 	 * Creates a new application controller.
 	 */
 	public CollectorController() {
-		// set the application model
-		setModel(new CollectorModel());
-
-		// create the view and make it visible
-		setView(new CollectorView(getModel(), this));
-		getView().setVisible(true);
+		try {
+			JAXBContext context = JAXBContext.newInstance(CollectorModel.class);
+			marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+					Boolean.TRUE);
+			unmarshaller = context.createUnmarshaller();
+		} catch (PropertyException pe) {
+			// thrown if property can't be set
+			pe.printStackTrace();
+		} catch (JAXBException jaxbe) {
+			// thrown if the context or marshallers can't be created.
+			// if this happens we can't run!
+			System.err.println("Unable to initialize JAXB, shutting down!");
+			jaxbe.printStackTrace();
+			System.exit(1);
+		}
 
 		// create our file chooser
 		fileChooser = new JFileChooser();
@@ -55,10 +74,13 @@ public class CollectorController extends AbstractController {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-	}
 
-	public String getIPAddress() {
-		return NetworkUtils.getIPAddress();
+		// set the application model
+		setModel(new CollectorModel());
+
+		// create the view and make it visible
+		setView(new CollectorView(getModel(), this));
+		getView().setVisible(true);
 	}
 
 	@Override
@@ -71,12 +93,83 @@ public class CollectorController extends AbstractController {
 		return (CollectorView) super.getView();
 	}
 
+	public void newCollection() {
+		// if the model is dirty offer the user a chance to save it
+		if (!checkDirtySave()) {
+			return; // user canceled the dialog
+		}
+		// create the new model
+		setModel(new CollectorModel());
+	}
+
+	public void newVideo() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void open() {
+		// if the model is dirty offer the user a chance to save it
+		if (!checkDirtySave()) {
+			return; // user canceled the dialog
+		}
+		// use fileChooser to select our file
+		int choice = fileChooser.showOpenDialog(getView());
+		switch (choice) {
+		case JFileChooser.APPROVE_OPTION:
+			// get file from chooser
+			File file = fileChooser.getSelectedFile();
+			CollectorModel model;
+			try {
+				// unmarshal the collector model from the file
+				model = (CollectorModel) unmarshaller.unmarshal(file);
+			} catch (JAXBException jaxbe) {
+				// unexpected errors, validation, or binding problems
+				JOptionPane.showMessageDialog(getView(), jaxbe.getMessage(),
+						"Error opening file", JOptionPane.ERROR_MESSAGE);
+				jaxbe.printStackTrace();
+				return;
+			}
+			// record where we opened the file from in the model
+			model.setFile(file);
+			// set the new model
+			setModel(model);
+
+			break;
+		case JFileChooser.CANCEL_OPTION:
+			// user canceled or closed without selection
+			break;
+		}
+	}
+
 	/**
 	 * Saves the collection. If no file is selected, the user is presented a
 	 * file selection dialog to pick the save file.
 	 */
 	public void save() {
+		try {
+			marshaller.marshal(getModel(), getModel().getFile());
+		} catch (JAXBException jaxbe) {
+			// unexpected errors, validation, or binding problems
+			JOptionPane.showMessageDialog(getView(), jaxbe.getMessage(),
+					"Error opening file", JOptionPane.ERROR_MESSAGE);
+			jaxbe.printStackTrace();
+			return;
+		}
+	}
 
+	public void saveAs() {
+		// have the user select the file
+		int choice = fileChooser.showSaveDialog(getView());
+		switch (choice) {
+		case JFileChooser.APPROVE_OPTION:
+			// get file from chooser
+			getModel().setFile(fileChooser.getSelectedFile());
+			save();
+			break;
+		case JFileChooser.CANCEL_OPTION:
+			// user canceled or closed without selection
+			break;
+		}
 	}
 
 	public void setRemoteServiceState(boolean enabled) {
@@ -87,6 +180,40 @@ public class CollectorController extends AbstractController {
 			stopListener();
 			stopWebService();
 		}
+	}
+
+	/**
+	 * Checks if the model is dirty and offers to save it. If the user cancels
+	 * the dialog, this method returns false as a signal to the caller to not
+	 * proceed.
+	 * 
+	 * @return true if the user saves or skips save, false if they cancel
+	 */
+	private boolean checkDirtySave() {
+		// if the existing model is dirty we should prompt to save it
+		if (getModel().isDirty()) {
+			int choice = JOptionPane.showConfirmDialog(getView(),
+					"Do you want to save your recent changes?",
+					"Unsaved changes", JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+			switch (choice) {
+			case JOptionPane.YES_OPTION:
+				if (getModel().getFile() != null) {
+					save();
+				} else {
+					saveAs();
+				}
+				break;
+			case JOptionPane.NO_OPTION:
+				// no operation required
+				break;
+			case JOptionPane.CANCEL_OPTION:
+				// user elected to cancel, stop create process
+				return false;
+			}
+		}
+		// clean model, or user skipped save
+		return true;
 	}
 
 	private void startListener() {

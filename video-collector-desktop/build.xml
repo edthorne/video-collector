@@ -19,6 +19,13 @@
 		<mkdir dir="${wsdl.dir}" />
 	</target>
 
+	<target name="clean" depends="init" description="Cleans up generated files">
+		<delete>
+			<fileset dir="${gen.src.dir}" />
+			<fileset dir="${wsdl.dir}" />
+		</delete>
+	</target>
+
 	<!-- display a warning message if jdk.home isn't set -->
 	<target name="check_jdk_home" depends="init" unless="jdk.home">
 		<echo>Please set jdk.home in build.properties!</echo>
@@ -26,7 +33,7 @@
 	</target>
 
 	<!-- will only build if jdk.home is set -->
-	<target name="wsgen" depends="check_jdk_home" if="jdk.home">
+	<target name="wsgen" depends="check_jdk_home" if="jdk.home" description="Executes wsgen">
 		<echo>Running wsgen from ${jdk.home}\bin</echo>
 
 		<exec executable="${jdk.home}\bin\wsgen">

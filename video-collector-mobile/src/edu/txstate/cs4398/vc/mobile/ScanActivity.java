@@ -23,6 +23,9 @@ import org.ksoap2.serialization.SoapObject;
 public class ScanActivity extends Activity implements View.OnClickListener, Listener {
 	Button scanButton;
 	Button addVideoButton;
+	Button lookupUpcButton;
+	Button lookupTitleButton;
+	Button clearButton;
 	EditText upcText;
 	EditText videoTitle;
 	EditText videoDirector;
@@ -32,6 +35,8 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 	private String ipAddress;
 	ProgressBar progressCircle;
 	VideoApp appState;
+	private static final String UPC = "UPC";
+	private static final String TITLE = "TITLE";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,10 +61,21 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
         ratedSpinner.setSelection(5);
         progressCircle = (ProgressBar)this.findViewById(R.id.progressScan);
         progressCircle.setVisibility(View.INVISIBLE);
+        lookupUpcButton = (Button)this.findViewById(R.id.lookupUpc);
+        lookupUpcButton.setOnClickListener(this);
+        lookupTitleButton = (Button)this.findViewById(R.id.lookupTitle);
+        lookupTitleButton.setOnClickListener(this);
+        clearButton = (Button)this.findViewById(R.id.clearAll);
+        clearButton.setOnClickListener(this);        
     }
 
     
     public void onClick(View v) {
+    	if(v.equals(clearButton))
+    	{
+    		clearAllFields();
+    	}
+    	
     	if(v.equals(scanButton))
     	{
     		System.out.println("In onClick dunction");
@@ -71,7 +87,44 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     		AddVideoTask addTask = new AddVideoTask(this);
     		addTask.execute(ipAddress, upcText.getText().toString(), videoTitle.getText().toString(), videoDirector.getText().toString(),
     				ratedSpinner.getSelectedItem().toString(), videoRuntime.getText().toString(), videoYear.getText().toString());
+    	}
+    	
+    	if(v.equals(lookupUpcButton)) {
+			if(upcText.getText().toString().length() != 12 && !isFinishing()) {
+				AlertDialog ad = new AlertDialog.Builder(this).create();  
+				ad.setCancelable(false); // This blocks the 'BACK' button  
+				ad.setButton("OK", new DialogInterface.OnClickListener() {  
+					public void onClick(DialogInterface dialog, int which) {  
+						dialog.dismiss();                      
+					}  
+				});
+				ad.setMessage("UPC must be 12 digits");  
+				ad.show();
+			} else {
+				GetVideoTask getTask = new GetVideoTask(this);
+				progressCircle.setVisibility(View.VISIBLE);
+				getTask.execute(ipAddress, UPC, upcText.getText().toString());
+			}
 
+    	}
+    	
+    	if(v.equals(lookupTitleButton)) {
+			if(videoTitle.getText().toString().length() < 1 && !isFinishing()) {
+				AlertDialog ad = new AlertDialog.Builder(this).create();  
+				ad.setCancelable(false); // This blocks the 'BACK' button  
+				ad.setButton("OK", new DialogInterface.OnClickListener() {  
+					public void onClick(DialogInterface dialog, int which) {  
+						dialog.dismiss();                      
+					}  
+				});
+				ad.setMessage("Title can not be blank");  
+				ad.show();
+			} else {
+				GetVideoTask getTask = new GetVideoTask(this);
+			
+				progressCircle.setVisibility(View.VISIBLE);
+				getTask.execute(ipAddress, TITLE, videoTitle.getText().toString());
+			}
     	}
 
     }
@@ -89,7 +142,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     					upcText.setText(upc);
     					progressCircle.setVisibility(View.VISIBLE);
     					GetVideoTask getTask = new GetVideoTask(this);
-    					getTask.execute(ipAddress, upc);
+    					getTask.execute(ipAddress, UPC, upc);
     			       
     				}
     			}
@@ -110,6 +163,8 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 				String last = director.getPropertySafelyAsString("lastName","");
 				if(!(last.isEmpty() && first.isEmpty())) {
 				    videoDirector.setText(first + " " + last);
+				} else {
+					videoDirector.setText("");
 				}
 					
 			}
@@ -120,15 +175,15 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 			String rated = response.getPropertySafelyAsString("rated","UNRATED");
 			if(rated.equals("G")) 
 				ratedSpinner.setSelection(0);	
-			if(rated.equals("PG")) 
+			else if(rated.equals("PG")) 
 				ratedSpinner.setSelection(1);
-			if(rated.equals("PG13"))
+			else if(rated.equals("PG13"))
 				ratedSpinner.setSelection(2);
-			if(rated.equals("R")) 
+			else if(rated.equals("R")) 
 				ratedSpinner.setSelection(3);
-			if(rated.equals("NC17")) 
+			else if(rated.equals("NC17")) 
 				ratedSpinner.setSelection(4);
-			if(rated.equals("UNRATED")) 
+			else
 				ratedSpinner.setSelection(5);
 			
 			videoYear.setText(response.getPropertySafelyAsString("year",""));
@@ -217,7 +272,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
         videoYear.setText(""); 
         videoRuntime.setText("");
         videoTitle.setText("");     
-        ratedSpinner.setSelection(0); 
+        ratedSpinner.setSelection(5); 
 	}
 	
 	private VideoMobile getVideoFromFields() {

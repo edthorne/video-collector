@@ -20,6 +20,7 @@ import edu.txstate.cs4398.vc.desktop.services.MobileServicesImpl;
 import edu.txstate.cs4398.vc.desktop.utils.DiscoveryListener;
 import edu.txstate.cs4398.vc.desktop.utils.NetworkUtils;
 import edu.txstate.cs4398.vc.desktop.view.CollectorView;
+import edu.txstate.cs4398.vc.model.Video;
 
 /**
  * The primary application controller for the desktop application.
@@ -95,6 +96,13 @@ public class CollectorController extends AbstractController {
 	}
 
 	/**
+	 * Edits a video displayed in the UI.
+	 */
+	public void edit(Video video) {
+		new VideoController(video, getModel().getCollection());
+	}
+
+	/**
 	 * Creates a new collection. If the current collection is dirty the user is
 	 * prompted to save it.
 	 */
@@ -112,11 +120,10 @@ public class CollectorController extends AbstractController {
 	}
 
 	/**
-	 * Causes a new window to be presented
+	 * Causes a new video editor window to be presented.
 	 */
 	public void newVideo() {
-		// TODO Auto-generated method stub
-
+		new VideoController(null, getModel().getCollection());
 	}
 
 	/**
@@ -178,6 +185,7 @@ public class CollectorController extends AbstractController {
 				jaxbe.printStackTrace();
 				return;
 			}
+			getModel().setDirty(false);
 		}
 	}
 

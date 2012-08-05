@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.AbstractAction;
@@ -15,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
 import edu.txstate.cs4398.vc.desktop.controller.CollectorController;
@@ -104,6 +107,18 @@ public class CollectorView extends JFrameView {
 
 		// create the table of videos
 		videos = new JTable(new VideoTableModel(getModel().getCollection()));
+		videos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		videos.setColumnSelectionAllowed(false);
+		videos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// on double click, open video editor
+				if (e.getClickCount() == 2) {
+					VideoTableModel tableModel = (VideoTableModel) videos.getModel();
+					getController().edit(tableModel.getVideo(videos.getSelectedRow()));
+				}
+			}
+		});
 		JScrollPane videoScroll = new JScrollPane(videos);
 		getContentPane().add(videoScroll, BorderLayout.CENTER);
 

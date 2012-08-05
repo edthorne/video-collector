@@ -38,7 +38,7 @@ public class CollectorModel extends AbstractModel implements ModelListener {
 	 */
 	public CollectorModel() {
 		// start with a fresh collection
-		this.collection = new Collection();
+		setCollection(new Collection());
 	}
 
 	/**

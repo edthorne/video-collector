@@ -89,6 +89,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 			else{
 				ipAddress = new EditText(this);
 				Log.i("Interfaces", "Address is not valid");
+				if(!isFinishing()) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage("Please enter your computer IP address:")
 				       .setCancelable(false)
@@ -111,6 +112,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 				       });
 				AlertDialog alert = builder.create();
 				alert.show();
+				}
 			}
 			
     	}
@@ -145,6 +147,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     }
     
     public void onStop() {
+    	super.onStop();
 		CollectionReadWriter rw = new CollectionReadWriter();
 		rw.writeVideosToXml(this);
     }

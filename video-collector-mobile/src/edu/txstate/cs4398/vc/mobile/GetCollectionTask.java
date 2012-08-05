@@ -62,7 +62,7 @@ public class GetCollectionTask extends BaseTask<String, Void, List<VideoMobile>>
 	@Override
 	protected void onPostExecute(List<VideoMobile> list){		// If we reach this method then it's guaranteed we have a successful result
 		TaskEvent<List<VideoMobile>> task = new TaskEvent<List<VideoMobile>>("GET_COLLECTION");
-		if(list.size() > 0)
+		if(list != null && list.size() > 0)
 			task.setStatus(TaskEvent.Status.SUCCESS);
 		else
 			task.setStatus(TaskEvent.Status.FAIL);

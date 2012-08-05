@@ -1,11 +1,11 @@
 package edu.txstate.cs4398.vc.desktop.view;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
@@ -13,10 +13,17 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import edu.txstate.cs4398.vc.desktop.controller.CollectorController;
 import edu.txstate.cs4398.vc.desktop.model.CollectorModel;
+import edu.txstate.cs4398.vc.model.Collection;
+import edu.txstate.cs4398.vc.model.Model;
 import edu.txstate.cs4398.vc.model.ModelEvent;
+import edu.txstate.cs4398.vc.model.ModelListener;
+import edu.txstate.cs4398.vc.model.Video;
 
 /**
  * The primary appication view.
@@ -34,6 +41,8 @@ public class CollectorView extends JFrameView {
 	private Action servicesAction;
 	private Action exitAction;
 	private Action ipAddrAction;
+
+	private JTable videos;
 
 	private JCheckBoxMenuItem remoteServices;
 
@@ -93,7 +102,12 @@ public class CollectorView extends JFrameView {
 		menubar.add(menu);
 		this.setJMenuBar(menubar);
 
-		// add the
+		// create the table of videos
+		videos = new JTable(new VideoTableModel(getModel().getCollection()));
+		JScrollPane videoScroll = new JScrollPane(videos);
+		getContentPane().add(videoScroll, BorderLayout.CENTER);
+
+		// set the preferred application size
 		this.setPreferredSize(new Dimension(800, 600));
 
 		// size everything accordingly
@@ -117,6 +131,20 @@ public class CollectorView extends JFrameView {
 	@Override
 	public CollectorModel getModel() {
 		return (CollectorModel) super.getModel();
+	}
+
+	@Override
+	public void setModel(Model model) {
+		super.setModel(model);
+
+		if (this.isVisible()) {
+			setWindowTitle();
+		}
+		// update the table model with the new collection
+		if (videos != null) {
+			videos.setModel(new VideoTableModel(((CollectorModel) model)
+					.getCollection()));
+		}
 	}
 
 	private void setWindowTitle() {
@@ -263,6 +291,87 @@ public class CollectorView extends JFrameView {
 					"This computer's IP address is "
 							+ getModel().getIPAddress(), "IP Address",
 					JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	class VideoTableModel extends AbstractTableModel implements ModelListener {
+		private final String[] COLUMN_HEADERS = new String[] { "Title",
+				"Director", "Rated", "Runtime", "Year", "My Rating" };
+		// column constants
+		private final int TITLE = 0;
+		private final int DIRECTOR = 1;
+		private final int RATED = 2;
+		private final int RUNTIME = 3;
+		private final int YEAR = 4;
+		private final int MYRATING = 5;
+
+		private Collection collection;
+
+		/**
+		 * Creates a VideoTableModel for the given collection.
+		 * 
+		 * @param collection
+		 *            the list of videos to create the model for
+		 */
+		public VideoTableModel(Collection collection) {
+			collection.addModelListener(this);
+			this.collection = collection;
+		}
+
+		@Override
+		public int getColumnCount() {
+			return COLUMN_HEADERS.length;
+		}
+
+		@Override
+		public String getColumnName(int columnIndex) {
+			return COLUMN_HEADERS[columnIndex];
+		}
+
+		@Override
+		public int getRowCount() {
+			return collection.getVideos().size();
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			Video video = getVideo(rowIndex);
+			switch (columnIndex) {
+			case TITLE:
+				return video.getTitle();
+			case DIRECTOR:
+				return video.getDirector();
+			case RATED:
+				return video.getRated();
+			case RUNTIME:
+				return video.getRuntime();
+			case YEAR:
+				return video.getYear();
+			case MYRATING:
+				return video.getMyRating();
+			}
+			// unknown column
+			return null;
+		}
+
+		/**
+		 * Returns the video at the selected row.
+		 * 
+		 * @param selectedRow
+		 *            the row to return
+		 * @return the selected video
+		 */
+		public Video getVideo(int selectedRow) {
+			return collection.getVideos().get(selectedRow);
+		}
+
+		@Override
+		public void modelChanged(ModelEvent event) {
+			if ((event.getSource() == collection)
+					&& (event.getID() == Collection.VIDEO_ADDED || event
+							.getID() == Collection.VIDEO_REMOVED)) {
+				this.fireTableDataChanged();
+			}
 		}
 	}
 }

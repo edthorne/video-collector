@@ -109,7 +109,6 @@ public class CollectorController extends AbstractController {
 		// create the new model
 		setModel(new CollectorModel()); // controller
 		getView().setModel(getModel()); // view
-		getModel().setFile(null);// property change triggers UI update
 	}
 
 	/**
@@ -148,12 +147,11 @@ public class CollectorController extends AbstractController {
 				jaxbe.printStackTrace();
 				return;
 			}
+			// record where we opened the file from in the model
+			model.setFile(file);
 			// set the new model
 			setModel(model); // controller
 			getView().setModel(model); // view
-
-			// record where we opened the file from in the model
-			model.setFile(file);// property change triggers UI update
 
 			break;
 		case JFileChooser.CANCEL_OPTION:

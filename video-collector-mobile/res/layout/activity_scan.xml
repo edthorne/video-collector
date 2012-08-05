@@ -22,33 +22,37 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
-                android:text="Scan" />
+                android:text="@string/scan_barcode" />
 
             <EditText
                 android:id="@+id/upcText"
-                android:hint="@string/UPC"           
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/videoTitle"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/btnScan"
                 android:layout_marginTop="5dp"
-                android:ems="10" />
+                android:ems="10"
+                android:hint="@string/UPC" />
 
             <EditText
                 android:id="@+id/videoTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/videoRuntime"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/upcText"
-                android:ems="10" />
+                android:layout_below="@+id/lookupUpc"
+                android:ems="10"
+                android:hint="@string/title" />
 
             <EditText
                 android:id="@+id/videoDirector"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/videoTitle"
-                android:ems="10" />
+                android:layout_below="@+id/lookupTitle"
+                android:ems="10"
+                android:hint="@string/director" />
 
             <TextView
                 android:id="@+id/UPC"
@@ -58,7 +62,15 @@
                 android:layout_alignBottom="@+id/upcText"
                 android:layout_alignParentLeft="true"
                 android:text="@string/UPC"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Button
+                android:id="@+id/lookupUpc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/upcText"
+                android:text="@string/lookup_by_upc" />
 
             <TextView
                 android:id="@+id/Title"
@@ -68,7 +80,16 @@
                 android:layout_alignBottom="@+id/videoTitle"
                 android:layout_alignParentLeft="true"
                 android:text="@string/title"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Button
+                android:id="@+id/lookupTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/lookupUpc"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/Title"
+                android:text="@string/lookup_by_title" />
 
             <TextView
                 android:id="@+id/Director"
@@ -78,7 +99,7 @@
                 android:layout_alignBottom="@+id/videoDirector"
                 android:layout_alignParentLeft="true"
                 android:text="@string/director"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Spinner
                 android:id="@+id/ratedSpinner"
@@ -89,33 +110,15 @@
                 android:layout_below="@+id/videoDirector"
                 android:entries="@array/rated" />
 
-            <TextView
-                android:id="@+id/Rated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/ratedSpinner"
-                android:layout_alignBottom="@+id/ratedSpinner"
-                android:layout_alignParentLeft="true"
-                android:text="@string/rated"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
             <EditText
                 android:id="@+id/videoRuntime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignLeft="@+id/videoYear"
                 android:layout_below="@+id/ratedSpinner"
-                android:ems="10" />
-
-            <TextView
-                android:id="@+id/Runtime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/videoRuntime"
-                android:layout_alignBottom="@+id/videoRuntime"
-                android:layout_alignParentLeft="true"
-                android:text="@string/runtime"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:layout_toLeftOf="@+id/lookupTitle"
+                android:ems="10"
+                android:hint="@string/runtime" />
 
             <EditText
                 android:id="@+id/videoYear"
@@ -123,7 +126,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/videoRuntime"
-                android:ems="10" />
+                android:ems="10"
+                android:hint="@string/year" />
 
             <TextView
                 android:id="@+id/Year"
@@ -133,13 +137,13 @@
                 android:layout_alignBottom="@+id/videoYear"
                 android:layout_alignParentLeft="true"
                 android:text="@string/year"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Button
                 android:id="@+id/btnAdd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignLeft="@+id/videoYear"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/videoYear"
                 android:text="@string/add_video" />
@@ -149,10 +153,49 @@
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/Director"
+                android:layout_above="@+id/Director"
                 android:layout_centerHorizontal="true" />
 
+            <Button
+                android:id="@+id/clearAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:text="Clear All" />
+
+            <TextView
+                android:id="@+id/Runtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoRuntime"
+                android:layout_alignBottom="@+id/videoRuntime"
+                android:layout_alignParentLeft="true"
+                android:text="@string/runtime"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/minutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoRuntime"
+                android:layout_alignBottom="@+id/videoRuntime"
+                android:layout_alignLeft="@+id/lookupTitle"
+                android:text="@string/minutes"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/Rated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/ratedSpinner"
+                android:layout_alignBottom="@+id/ratedSpinner"
+                android:layout_alignParentLeft="true"
+                android:text="@string/rated"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
         </RelativeLayout>
+
     </ScrollView>
     
 </RelativeLayout>

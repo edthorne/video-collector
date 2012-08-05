@@ -13,8 +13,10 @@ import android.util.Log;
 public class GetVideoTask extends BaseTask<String, Void, SoapObject>  {
 
 	private static String URL;
-	private static final String GET_VIDEO_METHOD = "lookupVideoByUPC";
-	private static final String GET_SOAP_ACTION =  "\"http://services.desktop.vc.cs4398.txstate.edu/lookupVideoByUPC\"";
+	private static final String GET_VIDEO_UPC = "lookupVideoByUPC";
+	private static final String GET_VIDEO_TITLE = "lookupVideoByTitle";
+	private static final String GET_SOAP_ACTION_UPC =  "\"http://services.desktop.vc.cs4398.txstate.edu/lookupVideoByUPC\"";
+	private static final String GET_SOAP_ACTION_TITLE =  "\"http://services.desktop.vc.cs4398.txstate.edu/lookupVideoByTitle\"";
 	
 	public GetVideoTask(Listener listener){
 		event = new EventHandler();
@@ -25,20 +27,30 @@ public class GetVideoTask extends BaseTask<String, Void, SoapObject>  {
 	protected SoapObject doInBackground(String... data) {
 		URL = "http://"+data[0]+":8796/MobileServices?WSDL";
 		
-		SoapObject request = new SoapObject(NAMESPACE, GET_VIDEO_METHOD);
+		String name = null;
+		String action = null;
+		
+		if(data[1].equals("UPC")) {
+			name = GET_VIDEO_UPC;
+			action = GET_SOAP_ACTION_UPC;
+		} else if(data[1].equals("TITLE")) {
+			name = GET_VIDEO_TITLE;
+			action = GET_SOAP_ACTION_TITLE;
+		}
+		SoapObject request = new SoapObject(NAMESPACE, name);
 
-        request.addPropertyIfValue("arg0", data[1]);
+        request.addPropertyIfValue("arg0", data[2]);
         
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(request);
 
         final HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
         try {
-			androidHttpTransport.call(GET_SOAP_ACTION, envelope);
+			androidHttpTransport.call(action, envelope);
             TimerTask task = new TimerTask( ) { public void run( ) { Log.d("DEBUG",("no service.."));androidHttpTransport.reset(); } };
 
             new Timer().schedule( task, 5000 );
-				androidHttpTransport.call(GET_SOAP_ACTION, envelope);
+				androidHttpTransport.call(action, envelope);
 
 			task.cancel( );           // cancel the timeout
 

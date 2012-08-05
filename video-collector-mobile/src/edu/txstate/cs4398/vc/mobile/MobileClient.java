@@ -1,17 +1,20 @@
 package edu.txstate.cs4398.vc.mobile;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import edu.txstate.cs4398.vc.mobile.controller.CollectionReadWriter;
+import edu.txstate.cs4398.vc.model.mobile.VideoMobile;
 
 
 public class MobileClient extends Activity implements View.OnClickListener, Listener{
@@ -23,7 +26,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 	private TextView progressText;
 	private String serverAddress;
 	private ProgressBar progressCircle;
-	
+	private Button sync;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,9 @@ public class MobileClient extends Activity implements View.OnClickListener, List
         add.setOnClickListener(this);
         add.setEnabled(false);
         
+        sync = (Button)this.findViewById(R.id.sync_button);
+        sync.setOnClickListener(this);
+        
         progressText = (TextView)this.findViewById(R.id.status_text);
         appState = (VideoApp)this.getApplicationContext();
         
@@ -50,7 +56,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     
     public void onClick(View v) {
 		if(v.equals(browse)){
-		    		
+		
 		}
 		else if(v.equals(add)){
 			Log.i("Interfaces", "Switching activity with address: " + serverAddress);
@@ -59,6 +65,10 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 			this.startActivity(next);
 			
     	}
+		else if(v.equals(sync)) {
+	        GetCollectionTask task = new GetCollectionTask(this);
+	    	task.execute(serverAddress);
+		}
 	}
     /**
      * @param address String containing the IP address of the host.
@@ -111,12 +121,32 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     			add.setEnabled(true);		// enable add button
     		}
     	}
+    	else if("GET_COLLECTION".equals(action)) {
+    		if(taskStatus == TaskEvent.Status.SUCCESS){
+    			List<VideoMobile> list = (List<VideoMobile>) task.getResult();
+    			appState.setVideoList(list);
+    			CollectionReadWriter rw = new CollectionReadWriter();
+    			rw.writeVideosToXml(this);
+    			Log.i("WRITTEN", "Videos were written to XML");
+    			List<VideoMobile> vm = rw.getVideosFromXml(this);
+    			for(VideoMobile vid : vm) {
+    				Log.i("XML:", vid.getTitle());
+    				
+    			}
+    				
+    		}
+    	}
 		
     }
     
     private void connect(){
     	ConnectTask service = new ConnectTask(this);
 		service.execute(serverAddress);
+    }
+    
+    public void onStop() {
+		CollectionReadWriter rw = new CollectionReadWriter();
+		rw.writeVideosToXml(this);
     }
 
 }

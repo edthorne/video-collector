@@ -2,14 +2,13 @@ package edu.txstate.cs4398.vc.mobile;
 
 import edu.txstate.cs4398.vc.mobile.utils.IntentIntegrator;
 import edu.txstate.cs4398.vc.mobile.utils.IntentResult;
-import edu.txstate.cs4398.vc.model.Person;
-import edu.txstate.cs4398.vc.model.Rating;
-import edu.txstate.cs4398.vc.model.Video;
+import edu.txstate.cs4398.vc.model.mobile.VideoMobile;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +31,6 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 	Spinner ratedSpinner;
 	private String ipAddress;
 	ProgressBar progressCircle;
-	Video video;
 	VideoApp appState;
 	
     @Override
@@ -47,14 +45,17 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
         addVideoButton = (Button)this.findViewById(R.id.btnAdd);
         addVideoButton.setOnClickListener(this);
         upcText = (EditText)this.findViewById(R.id.upcText);
+        upcText.setInputType(InputType.TYPE_CLASS_NUMBER);
         videoDirector = (EditText)this.findViewById(R.id.videoDirector);
         videoYear = (EditText)this.findViewById(R.id.videoYear);
+        videoYear.setInputType(InputType.TYPE_CLASS_NUMBER);
         videoRuntime = (EditText)this.findViewById(R.id.videoRuntime);
-        videoTitle = (EditText)this.findViewById(R.id.videoTitle);      
+        videoRuntime.setInputType(InputType.TYPE_CLASS_NUMBER);
+        videoTitle = (EditText)this.findViewById(R.id.videoTitle);     
         ratedSpinner = (Spinner)this.findViewById(R.id.ratedSpinner);
+        ratedSpinner.setSelection(5);
         progressCircle = (ProgressBar)this.findViewById(R.id.progressScan);
         progressCircle.setVisibility(View.INVISIBLE);
-        video = new Video();
     }
 
     
@@ -98,49 +99,52 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     
     private void transformSoapResponse(SoapObject response) {
 
-		String title = response.getPropertySafelyAsString("title");
-		videoTitle.setText(title);
-		video.setTitle(title);
+		String title = response.getPropertySafelyAsString("title","");
+		if(!title.isEmpty()) {
+			videoTitle.setText(title);
+			
+			// if Director doesn't exist... leave it empty
+			SoapObject director = (SoapObject) response.getPropertySafely("director",new SoapObject("", ""));
+			if(!director.toString().isEmpty()) {
+				String first = director.getPropertySafelyAsString("firstName","");
+				String last = director.getPropertySafelyAsString("lastName","");
+				if(!(last.isEmpty() && first.isEmpty())) {
+				    videoDirector.setText(first + " " + last);
+				}
+					
+			}
+			else {
+				videoDirector.setText("");
+			}
 		
-		SoapObject director = (SoapObject) response.getProperty("director");
-		
-		String first = director.getPropertySafelyAsString("firstName");
-		String last = director.getPropertySafelyAsString("lastName");
-		videoDirector.setText(first + " " + last);
-		video.setDirector(new Person(last,first));
-		
-		String rated = response.getPropertySafelyAsString("rated");
-		if(rated.equals("G")) {
-			ratedSpinner.setSelection(0);
-			video.setRated(Rating.G);
-		}			
-		if(rated.equals("PG")) {
-			ratedSpinner.setSelection(1);
-			video.setRated(Rating.PG);
+			String rated = response.getPropertySafelyAsString("rated","UNRATED");
+			if(rated.equals("G")) 
+				ratedSpinner.setSelection(0);	
+			if(rated.equals("PG")) 
+				ratedSpinner.setSelection(1);
+			if(rated.equals("PG13"))
+				ratedSpinner.setSelection(2);
+			if(rated.equals("R")) 
+				ratedSpinner.setSelection(3);
+			if(rated.equals("NC17")) 
+				ratedSpinner.setSelection(4);
+			if(rated.equals("UNRATED")) 
+				ratedSpinner.setSelection(5);
+			
+			videoYear.setText(response.getPropertySafelyAsString("year",""));
+			videoRuntime.setText(response.getPropertySafelyAsString("runtime","")); 
+		} else {
+			AlertDialog ad = new AlertDialog.Builder(this).create();  
+			ad.setCancelable(false); // This blocks the 'BACK' button  
+			ad.setButton("OK", new DialogInterface.OnClickListener() {  
+			    public void onClick(DialogInterface dialog, int which) {  
+			        dialog.dismiss();                      
+			    }  
+			});
+			ad.setMessage("No results found");  
+			ad.show();
+
 		}
-		if(rated.equals("PG13")) {
-			ratedSpinner.setSelection(2);
-			video.setRated(Rating.PG13);
-		}
-		if(rated.equals("R")) {
-			ratedSpinner.setSelection(3);
-			video.setRated(Rating.R);
-		}
-		if(rated.equals("NC17")) {
-			ratedSpinner.setSelection(4);
-			video.setRated(Rating.NC17);
-		}
-		if(rated.equals("UNRATED")) {
-			ratedSpinner.setSelection(5);
-			video.setRated(Rating.UNRATED);
-		}
-		int year = Integer.parseInt(response.getPropertySafelyAsString("year"));
-		videoYear.setText(String.valueOf(year));
-		video.setYear(year);
-		int runtime = Integer.parseInt(response.getPropertySafelyAsString("runtime"));
-		videoRuntime.setText(String.valueOf(runtime)); 
-		video.setRuntime(runtime);
-		
 		
     }
 
@@ -182,11 +186,10 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     					ad.show();
     			} else {
     				// Show toast notification
-    				
-    				appState.getVideoList().add(video);
-    				clearAllFields();
+    				appState.getVideoList().add(getVideoFromFields());
     				Toast.makeText(this.getApplicationContext(), 
     	        		videoTitle.getText().toString() + " succesfully added to collection!", Toast.LENGTH_SHORT).show();
+    				clearAllFields();
     			}
     		}
     		else
@@ -212,5 +215,35 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
         videoRuntime.setText("");
         videoTitle.setText("");     
         ratedSpinner.setSelection(0); 
+	}
+	
+	private VideoMobile getVideoFromFields() {
+		VideoMobile video = new VideoMobile();
+		AlertDialog ad = new AlertDialog.Builder(this).create();  
+		ad.setCancelable(false); // This blocks the 'BACK' button  
+		ad.setButton("OK", new DialogInterface.OnClickListener() {  
+		    public void onClick(DialogInterface dialog, int which) {  
+		        dialog.dismiss();                      
+		    }  
+		});
+		
+		ad.setMessage("Error sending video to server");  
+
+		if(!videoTitle.getText().toString().isEmpty()) 
+			video.setTitle(videoTitle.getText().toString());
+		else {
+			ad.setMessage("Title must be Entered");
+			ad.show();
+			return null;
+		}
+			
+		video.setDirector(videoDirector.getText().toString());
+		video.setRated(ratedSpinner.getSelectedItem().toString());
+		if(videoYear.getText().toString().length() > 0)
+		video.setYear(Integer.parseInt(videoYear.getText().toString()));
+		if(videoRuntime.getText().toString().length() > 0)
+		video.setRuntime(Integer.parseInt(videoRuntime.getText().toString()));
+
+		return video;
 	}
 }

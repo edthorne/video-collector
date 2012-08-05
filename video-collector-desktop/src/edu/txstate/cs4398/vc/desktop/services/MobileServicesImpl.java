@@ -85,7 +85,7 @@ public class MobileServicesImpl implements MobileServices {
 				Person videoDirector = new Person("",director);
 				video.setDirector(videoDirector);
 			}
-		}else throw new IllegalArgumentException("Director is required");
+		}
 		video.setRated(rated);
 		video.setRuntime(runtime);
 		video.setYear(year);

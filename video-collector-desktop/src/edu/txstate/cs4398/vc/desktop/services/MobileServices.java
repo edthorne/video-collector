@@ -44,19 +44,31 @@ public interface MobileServices {
 	 * @param rated
 	 * @param runtime
 	 * @param year
-	 * @return
+	 * @return "success" if there are no errors
 	 */
 	@WebMethod (operationName="addVideo")
 	public String addVideo(@WebParam(name="upc") String upc, @WebParam(name="title")String title, 
 							@WebParam(name="director")String director,@WebParam(name="rated") Rating rated, 
 							@WebParam(name="runtime")int runtime,@WebParam(name="year") int year);
 	
+	/**
+	 * returns the collection from the desktop application
+	 * @return
+	 */
 	@WebMethod (operationName="getCollection")
 	public Collection getCollection();
 	
+	/**
+	 * returns the categories from the desktop application
+	 * @return
+	 */
 	@WebMethod (operationName="getCategories")
 	public Set<String> getCategories();
 
+	/**
+	 * returns the "people" (directors) from the desktop application
+	 * @return
+	 */
 	@WebMethod (operationName="getPeople")
 	public Set<Person> getPeople();
 

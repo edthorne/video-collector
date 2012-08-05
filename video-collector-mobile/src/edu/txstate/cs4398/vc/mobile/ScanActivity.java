@@ -133,7 +133,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 			
 			videoYear.setText(response.getPropertySafelyAsString("year",""));
 			videoRuntime.setText(response.getPropertySafelyAsString("runtime","")); 
-		} else {
+		} else if(!isFinishing()){
 			AlertDialog ad = new AlertDialog.Builder(this).create();  
 			ad.setCancelable(false); // This blocks the 'BACK' button  
 			ad.setButton("OK", new DialogInterface.OnClickListener() {  
@@ -159,7 +159,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     		if(taskStatus == TaskEvent.Status.SUCCESS){
     			Log.i("Interfaces", "GET_VIDEO Success");
     			transformSoapResponse((SoapObject)task.getResult());
-    		} else {
+    		} else if(!isFinishing()){
     			AlertDialog ad = new AlertDialog.Builder(this).create();  
     			ad.setCancelable(false); // This blocks the 'BACK' button  
     			ad.setButton("OK", new DialogInterface.OnClickListener() {  
@@ -175,6 +175,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     		if(taskStatus == TaskEvent.Status.SUCCESS){
     			String response = ((SoapObject)task.getResult()).getPropertyAsString(0);
     			if(!"success".equals(response)){
+    				if(!isFinishing()) {
     					AlertDialog ad = new AlertDialog.Builder(this).create();  
     					ad.setCancelable(false); // This blocks the 'BACK' button  
     					ad.setButton("OK", new DialogInterface.OnClickListener() {  
@@ -184,6 +185,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     					});
     					ad.setMessage(response);
     					ad.show();
+    				}
     			} else {
     				// Show toast notification
     				appState.getVideoList().add(getVideoFromFields());
@@ -192,8 +194,9 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     				clearAllFields();
     			}
     		}
-    		else
+    		else if(!isFinishing())
     		{
+    			
     			AlertDialog ad = new AlertDialog.Builder(this).create();  
     			ad.setCancelable(false); // This blocks the 'BACK' button  
     			ad.setButton("OK", new DialogInterface.OnClickListener() {  

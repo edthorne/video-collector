@@ -44,6 +44,7 @@ public class CollectorController extends AbstractController {
 	 * Creates a new application controller.
 	 */
 	public CollectorController() {
+		// make sure we can use JAXB for reading/writing application data
 		try {
 			JAXBContext context = JAXBContext.newInstance(CollectorModel.class);
 			marshaller = context.createMarshaller();
@@ -93,25 +94,43 @@ public class CollectorController extends AbstractController {
 		return (CollectorView) super.getView();
 	}
 
+	/**
+	 * Creates a new collection. If the current collection is dirty the user is
+	 * prompted to save it.
+	 */
 	public void newCollection() {
 		// if the model is dirty offer the user a chance to save it
 		if (!checkDirtySave()) {
 			return; // user canceled the dialog
 		}
+
+		// TODO: if the services are running stop them!
+
 		// create the new model
-		setModel(new CollectorModel());
+		setModel(new CollectorModel()); // controller
+		getView().setModel(getModel()); // view
+		getModel().setFile(null);// property change triggers UI update
 	}
 
+	/**
+	 * Causes a new window to be presented
+	 */
 	public void newVideo() {
 		// TODO Auto-generated method stub
 
 	}
 
+	/**
+	 * Loads the application model from a file selected by the user.
+	 */
 	public void open() {
 		// if the model is dirty offer the user a chance to save it
 		if (!checkDirtySave()) {
 			return; // user canceled the dialog
 		}
+
+		// TODO: if the services are running stop them!
+
 		// use fileChooser to select our file
 		int choice = fileChooser.showOpenDialog(getView());
 		switch (choice) {
@@ -129,10 +148,12 @@ public class CollectorController extends AbstractController {
 				jaxbe.printStackTrace();
 				return;
 			}
-			// record where we opened the file from in the model
-			model.setFile(file);
 			// set the new model
-			setModel(model);
+			setModel(model); // controller
+			getView().setModel(model); // view
+
+			// record where we opened the file from in the model
+			model.setFile(file);// property change triggers UI update
 
 			break;
 		case JFileChooser.CANCEL_OPTION:
@@ -146,17 +167,26 @@ public class CollectorController extends AbstractController {
 	 * file selection dialog to pick the save file.
 	 */
 	public void save() {
-		try {
-			marshaller.marshal(getModel(), getModel().getFile());
-		} catch (JAXBException jaxbe) {
-			// unexpected errors, validation, or binding problems
-			JOptionPane.showMessageDialog(getView(), jaxbe.getMessage(),
-					"Error opening file", JOptionPane.ERROR_MESSAGE);
-			jaxbe.printStackTrace();
-			return;
+		// if we don't have a file, ask the user to pick one
+		if (getModel().getFile() == null) {
+			saveAs();
+		} else {
+			try {
+				marshaller.marshal(getModel(), getModel().getFile());
+			} catch (JAXBException jaxbe) {
+				// unexpected errors, validation, or binding problems
+				JOptionPane.showMessageDialog(getView(), jaxbe.getMessage(),
+						"Error opening file", JOptionPane.ERROR_MESSAGE);
+				jaxbe.printStackTrace();
+				return;
+			}
 		}
 	}
 
+	/**
+	 * Prompts the user to select a file to save the collection to and then
+	 * saves the collection.
+	 */
 	public void saveAs() {
 		// have the user select the file
 		int choice = fileChooser.showSaveDialog(getView());

@@ -143,6 +143,9 @@ public class VideoLookupService {
 			videoObject.setDirector(null);
 		}
 	    
+	    JSONObject images = tomatoResponse.getJSONObject("posters");
+	    videoObject.setImageURL(images.getString("profile"));
+	    	    
 	    return videoObject;	    
 	}
 	
@@ -183,7 +186,7 @@ public class VideoLookupService {
 	    	videoObject.setDirector(null);
 	    
 	    videoObject.setRuntime(getImdbRuntime(imdbResponse.getString("Runtime")));
-
+	    videoObject.setImageURL(imdbResponse.getString("Poster"));
 
 		return videoObject;
 	}

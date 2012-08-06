@@ -69,7 +69,7 @@ public class MobileServicesImpl implements MobileServices {
 
 	@Override
 	public String addVideo(String upc, String title, String director,
-			Rating rated, int runtime, int year) {
+			Rating rated, int runtime, int year, String imgUrl) {
 		try{
 		Video video = new Video(title);
 		video.setUpc(upc);
@@ -89,6 +89,7 @@ public class MobileServicesImpl implements MobileServices {
 		video.setRated(rated);
 		video.setRuntime(runtime);
 		video.setYear(year);
+		video.setImageURL(imgUrl);
 		
 		
 		model.getCollection().addVideo(video);

@@ -155,6 +155,7 @@ public class TestVideoLookupService {
 		else
 			System.out.println("Director: N/A");
 		System.out.println("Rated: " + video.getRated());
+		System.out.println("ImgURL: " + video.getImageURL());
 		System.out.println();
 	}
 }

@@ -10,7 +10,7 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import edu.txstate.cs4398.vc.model.mobile.VideoMobile;
+import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
 
 import android.util.Log;
 
@@ -75,7 +75,6 @@ public class GetCollectionTask extends BaseTask<String, Void, List<VideoMobile>>
 		Log.d("DEBUG", "in transform list..");
 
 		soap = (SoapObject) soap.getProperty("videos");
-		Log.d("SOAP", soap.toString());
 		int size = soap.getPropertyCount();
 		
 		for(int i = 0; i < size; i++) {
@@ -106,6 +105,8 @@ public class GetCollectionTask extends BaseTask<String, Void, List<VideoMobile>>
 		int runtime = Integer.parseInt(response.getPropertySafelyAsString("runtime"));
 		video.setRuntime(runtime);
 		Log.d("adding video", video.getTitle());
+		video.setImageURL(response.getPropertySafelyAsString("imageURL",""));
+		video.setImageByURL();
 		return video;
 	}
 

@@ -7,8 +7,8 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" >
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
 
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,22 +16,14 @@
             android:layout_width="wrap_content"
             android:layout_height="454dp" >
 
-            <Button
-                android:id="@+id/btnScan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:text="@string/scan_barcode" />
-
             <EditText
                 android:id="@+id/upcText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/videoTitle"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/btnScan"
                 android:layout_marginTop="5dp"
+                android:layout_below="@+id/btnScan"                
                 android:ems="10"
                 android:hint="@string/UPC" />
 
@@ -139,15 +131,6 @@
                 android:text="@string/year"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <Button
-                android:id="@+id/btnAdd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/videoYear"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/videoYear"
-                android:text="@string/add_video" />
-
             <ProgressBar
                 android:id="@+id/progressScan"
                 style="?android:attr/progressBarStyleLarge"
@@ -160,7 +143,8 @@
                 android:id="@+id/clearAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
+                android:layout_alignBaseline="@+id/btnAdd"
+                
                 android:layout_alignParentLeft="true"
                 android:text="Clear All" />
 
@@ -193,6 +177,32 @@
                 android:layout_alignParentLeft="true"
                 android:text="@string/rated"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <Button
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/videoYear"
+                android:text="@string/add_video" />
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/btnAdd"
+                android:layout_below="@+id/videoYear"
+                android:layout_alignParentBottom="true"                
+                android:src="@drawable/blank" />
+
+            <Button
+                android:id="@+id/btnScan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/scan_barcode" />
 
         </RelativeLayout>
 

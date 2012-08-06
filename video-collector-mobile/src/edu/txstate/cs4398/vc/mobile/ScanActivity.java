@@ -2,17 +2,20 @@ package edu.txstate.cs4398.vc.mobile;
 
 import edu.txstate.cs4398.vc.mobile.utils.IntentIntegrator;
 import edu.txstate.cs4398.vc.mobile.utils.IntentResult;
-import edu.txstate.cs4398.vc.model.mobile.VideoMobile;
+import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -32,7 +35,9 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 	EditText videoYear;
 	EditText videoRuntime;
 	Spinner ratedSpinner;
+	ImageView image;
 	private String ipAddress;
+	private String imgUrl;
 	ProgressBar progressCircle;
 	VideoApp appState;
 	private static final String UPC = "UPC";
@@ -66,7 +71,8 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
         lookupTitleButton = (Button)this.findViewById(R.id.lookupTitle);
         lookupTitleButton.setOnClickListener(this);
         clearButton = (Button)this.findViewById(R.id.clearAll);
-        clearButton.setOnClickListener(this);        
+        clearButton.setOnClickListener(this); 
+        image = (ImageView)this.findViewById(R.id.image);
     }
 
     
@@ -86,7 +92,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
     	{
     		AddVideoTask addTask = new AddVideoTask(this);
     		addTask.execute(ipAddress, upcText.getText().toString(), videoTitle.getText().toString(), videoDirector.getText().toString(),
-    				ratedSpinner.getSelectedItem().toString(), videoRuntime.getText().toString(), videoYear.getText().toString());
+    				ratedSpinner.getSelectedItem().toString(), videoRuntime.getText().toString(), videoYear.getText().toString(), imgUrl);
     	}
     	
     	if(v.equals(lookupUpcButton)) {
@@ -188,6 +194,16 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 			
 			videoYear.setText(response.getPropertySafelyAsString("year",""));
 			videoRuntime.setText(response.getPropertySafelyAsString("runtime","")); 
+			
+			imgUrl = response.getPropertySafelyAsString("imageURL","");
+			if(!imgUrl.isEmpty()) {
+				try {
+					Bitmap bmp = BitmapFactory.decodeStream(new java.net.URL(imgUrl).openStream());
+					image.setImageBitmap(bmp);
+				} catch (Exception e) {
+					image.setImageResource(R.drawable.blank);
+				} 
+			}
 		} else if(!isFinishing()){
 			AlertDialog ad = new AlertDialog.Builder(this).create();  
 			ad.setCancelable(false); // This blocks the 'BACK' button  
@@ -272,7 +288,8 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
         videoYear.setText(""); 
         videoRuntime.setText("");
         videoTitle.setText("");     
-        ratedSpinner.setSelection(5); 
+        ratedSpinner.setSelection(5);
+        image.setImageResource(R.drawable.blank);
 	}
 	
 	private VideoMobile getVideoFromFields() {
@@ -301,7 +318,8 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 		video.setYear(Integer.parseInt(videoYear.getText().toString()));
 		if(videoRuntime.getText().toString().length() > 0)
 		video.setRuntime(Integer.parseInt(videoRuntime.getText().toString()));
-
+		video.setImageURL(imgUrl);
+		video.setImageByURL();
 		return video;
 	}
 }

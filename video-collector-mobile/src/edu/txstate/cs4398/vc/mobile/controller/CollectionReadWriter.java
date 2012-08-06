@@ -8,8 +8,8 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import edu.txstate.cs4398.vc.mobile.VideoApp;
-import edu.txstate.cs4398.vc.model.mobile.VideoMobile;
-import edu.txstate.cs4398.vc.model.mobile.VideoMobileList;
+import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
+import edu.txstate.cs4398.vc.mobile.video.VideoMobileList;
 
 import android.content.Context;
 import android.util.Log;

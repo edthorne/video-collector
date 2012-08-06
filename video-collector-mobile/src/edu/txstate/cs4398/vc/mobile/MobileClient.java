@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import edu.txstate.cs4398.vc.mobile.controller.CollectionReadWriter;
-import edu.txstate.cs4398.vc.model.mobile.VideoMobile;
+import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
 
 
 public class MobileClient extends Activity implements View.OnClickListener, Listener{
@@ -124,7 +124,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     		}
     	}
     	else if("GET_COLLECTION".equals(action)) {
-    		if(taskStatus == TaskEvent.Status.SUCCESS){
+    		if(taskStatus == TaskEvent.Status.SUCCESS && !isFinishing()){
     			List<VideoMobile> list = (List<VideoMobile>) task.getResult();
     			appState.setVideoList(list);
     			CollectionReadWriter rw = new CollectionReadWriter();
@@ -133,7 +133,6 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     			List<VideoMobile> vm = rw.getVideosFromXml(this);
     			for(VideoMobile vid : vm) {
     				Log.i("XML:", vid.getTitle());
-    				
     			}
     				
     		}

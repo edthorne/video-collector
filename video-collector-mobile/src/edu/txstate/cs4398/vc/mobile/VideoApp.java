@@ -3,7 +3,7 @@ package edu.txstate.cs4398.vc.mobile;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.txstate.cs4398.vc.model.mobile.VideoMobile;
+import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
 import android.app.Application;
 
 public class VideoApp extends Application {

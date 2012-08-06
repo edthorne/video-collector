@@ -30,6 +30,7 @@ public class AddVideoTask extends BaseTask<String, Void, SoapObject> {
         request.addPropertyIfValue("rated", data[4]);
         request.addPropertyIfValue("runtime", data[5]);
         request.addPropertyIfValue("year", data[6]);
+        request.addPropertyIfValue("imgUrl", data[7]);
        
         
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);

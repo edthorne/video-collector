@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,6 +21,7 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import edu.txstate.cs4398.vc.desktop.controller.VideoController;
 import edu.txstate.cs4398.vc.desktop.model.VideoModel;
@@ -137,8 +139,19 @@ public class VideoView extends JFrameView {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		fieldPanel.add(new JLabel("Year"), gbc);
 
-		year = new JSpinner();
-		year.setValue(video.getYear());
+		// limit the year spinner
+		int thisYear = Calendar.getInstance().get(Calendar.YEAR);
+		int yearValue = video.getYear();
+		if (yearValue == 0) {
+			yearValue = thisYear; // default for new video
+		} else if (yearValue < 1900) {
+			yearValue = 1900; // were there videos before 1900?
+		} else if (yearValue > thisYear + 1) {
+			yearValue = thisYear + 1; // can't collect things that don't exist
+		}
+
+		year = new JSpinner(new SpinnerNumberModel(yearValue, 1900, thisYear+1, 1));
+		year.setEditor(new JSpinner.NumberEditor(year, "####")); // no comma!
 		gbc = new GridBagConstraints();
 		gbc.insets = insets;
 		gbc.gridx = 1; gbc.gridy = 5;

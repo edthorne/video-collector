@@ -3,6 +3,10 @@
  */
 package edu.txstate.cs4398.vc.desktop.controller;
 
+import java.text.ParseException;
+
+import javax.swing.JOptionPane;
+
 import edu.txstate.cs4398.vc.desktop.model.VideoModel;
 import edu.txstate.cs4398.vc.desktop.view.VideoView;
 import edu.txstate.cs4398.vc.model.Collection;
@@ -57,26 +61,30 @@ public class VideoController extends AbstractController {
 	 */
 	public void save() {
 		VideoView view = getView();
+		try {
+			// update model video with field values
+			Video video = getModel().getVideo();
+			video.setCategory(view.getCategory());
+			video.setDirector(view.getDirector());
+			video.setMyRating(view.getMyRating());
+			video.setNotes(view.getNotes());
+			video.setRated(view.getRated());
+			video.setRuntime(view.getRuntime());
+			video.setTitle(view.getTitle());
+			video.setUpc(view.getUpc());
+			video.setYear(view.getYear());
 
-		// update model video with field values
-		Video video = getModel().getVideo();
-		video.setCategory(view.getCategory());
-		video.setDirector(view.getDirector());
-		video.setMyRating(view.getMyRating());
-		video.setNotes(view.getNotes());
-		video.setRated(view.getRated());
-		video.setRuntime(view.getRuntime());
-		video.setTitle(view.getTitle());
-		video.setUpc(view.getUpc());
-		video.setYear(view.getYear());
+			// if it's a new video
+			if (getModel().isNew()) {
+				// add it to the collection
+				collection.addVideo(getModel().getVideo());
+			}
 
-		// if it's a new video
-		if (getModel().isNew()) {
-			// add it to the collection
-			collection.addVideo(getModel().getVideo());
+			// finally, close the view
+			close();
+		} catch (ParseException e) {
+			JOptionPane.showMessageDialog(view, "Director is invalid",
+					"Invalid Director", JOptionPane.ERROR_MESSAGE);
 		}
-
-		// finally, close the view
-		close();
 	}
 }

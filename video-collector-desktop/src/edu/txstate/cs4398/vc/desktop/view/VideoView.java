@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -234,14 +235,14 @@ public class VideoView extends JFrameView {
 
 	/**
 	 * @return the director
+	 * @throws ParseException 
 	 */
-	public Person getDirector() {
+	public Person getDirector() throws ParseException {
 		// see if the user selected a value
 		if (director.getSelectedIndex() == -1) {
 			// user didn't select a value, there may be an entry to parse
 			String text = (String) director.getSelectedItem();
-			// TODO: implement logic
-			return null;
+			return Person.fromString(text);
 		} else {
 			// user selected a value
 			return (Person) director.getSelectedItem();

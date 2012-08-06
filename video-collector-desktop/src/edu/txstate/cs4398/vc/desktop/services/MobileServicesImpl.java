@@ -76,16 +76,9 @@ public class MobileServicesImpl implements MobileServices {
 		
 		if(title.isEmpty()) throw new IllegalArgumentException("Title can not be blank");
 		
-		if(!director.isEmpty()) {
-			String[] split = director.split(" ");
-			if(split.length > 1) {
-				video.setDirector(new Person(split[1], split[0]));
-			}
-			else {
-				Person videoDirector = new Person("",director);
-				video.setDirector(videoDirector);
-			}
-		}
+		if(!director.isEmpty())
+			video.setDirector(Person.fromString(director));
+		
 		video.setRated(rated);
 		video.setRuntime(runtime);
 		video.setYear(year);

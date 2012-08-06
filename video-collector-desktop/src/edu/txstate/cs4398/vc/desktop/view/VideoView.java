@@ -15,6 +15,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -181,12 +182,15 @@ public class VideoView extends JFrameView {
 
 		notes = new JTextArea(video.getNotes());
 		notes.setRows(4);
+		notes.setLineWrap(true);
+		notes.setWrapStyleWord(true);
+		JScrollPane notesScroll = new JScrollPane(notes);
 		gbc = new GridBagConstraints();
 		gbc.insets = insets;
 		gbc.gridx = 1; gbc.gridy = 8;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.anchor = GridBagConstraints.PAGE_START;
-		fieldPanel.add(notes, gbc);
+		fieldPanel.add(notesScroll, gbc);
 
 		add(fieldPanel, BorderLayout.CENTER);
 

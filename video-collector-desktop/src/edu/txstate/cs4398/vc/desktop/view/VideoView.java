@@ -167,6 +167,9 @@ public class VideoView extends JFrameView {
 		fieldPanel.add(new JLabel("My Rating"), gbc);
 
 		myRating = new JSlider(0, 5, video.getMyRating());
+		myRating.setMajorTickSpacing(1);
+		myRating.setPaintTicks(true);
+		myRating.setSnapToTicks(true);
 		gbc = new GridBagConstraints();
 		gbc.insets = insets;
 		gbc.gridx = 1; gbc.gridy = 7;

@@ -1,5 +1,7 @@
 package edu.txstate.cs4398.vc.model;
 
+import java.text.ParseException;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -15,9 +17,10 @@ import org.simpleframework.xml.Root;
  */
 @Root
 @XmlRootElement(name = "person")
-@XmlType(propOrder = { "lastName", "firstName" })public class Person {
-	@Element( required = true )
-	@XmlElement( required = true )
+@XmlType(propOrder = { "lastName", "firstName" })
+public class Person {
+	@Element(required = true)
+	@XmlElement(required = true)
 	private String lastName;
 	@Element
 	@XmlElement
@@ -57,7 +60,9 @@ import org.simpleframework.xml.Root;
 		return firstName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -82,7 +87,9 @@ import org.simpleframework.xml.Root;
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -96,7 +103,9 @@ import org.simpleframework.xml.Root;
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -107,5 +116,64 @@ import org.simpleframework.xml.Root;
 			builder.append(", ").append(firstName);
 		}
 		return builder.toString();
+	}
+
+	/**
+	 * Parses a string to create a Person. Supported formats are:
+	 * <ul>
+	 * <li>Last, First</li>
+	 * <li>First Last</li>
+	 * <li>Last</li>
+	 * </ul>
+	 * 
+	 * @param value
+	 *            the value to parse
+	 * @return a Person with the given name
+	 * @throws ParseException
+	 *             if the text doesn't conform to a supported format
+	 */
+	public static Person fromString(String value) throws ParseException {
+		if (value == null) {
+			throw new IllegalArgumentException();
+		}
+		if (value.trim().length() == 0) {
+			throw new ParseException("Empty string not parsable", 0);
+		}
+		String[] parts;
+		boolean hasComma = value.contains(",");
+		if (hasComma) {
+			parts = value.split(",");
+		} else {
+			// greedy space matching
+			parts = value.split(" +");
+		}
+		String last, first;
+		switch (parts.length) {
+		case 0:
+			throw new ParseException("Empty string not parsable", 0);
+		case 1:
+			last = parts[0].trim();
+			return new Person(last, null);
+		case 2:
+			if (hasComma) {
+				last = parts[0].trim();
+				first = parts[1].trim();
+			} else {
+				last = parts[1].trim();
+				first = parts[0].trim();
+			}
+			return new Person(last, first);
+		default:
+			// too many tokens
+			int errorOffset;
+			char token;
+			if (hasComma) {
+				token = ',';
+			} else {
+				token = ' ';
+			}
+			errorOffset = value.indexOf(token, parts[0].length() + parts[1].length());
+			throw new ParseException("Too many tokens to parse", errorOffset);
+		}
 	}
 }

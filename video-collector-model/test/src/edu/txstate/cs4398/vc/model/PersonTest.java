@@ -2,6 +2,8 @@ package edu.txstate.cs4398.vc.model;
 
 import static org.junit.Assert.*;
 
+import java.text.ParseException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,5 +40,55 @@ public class PersonTest {
 		assertTrue(person2.equals(person1));
 		assertEquals(person1, person2);
 		assertTrue(person1.hashCode() == person2.hashCode());
+	}
+
+	@Test
+	public void testFromString() throws Exception {
+		Person p = Person.fromString(LAST_NAME + ", " + FIRST_NAME);
+		assertEquals(LAST_NAME, p.getLastName());
+		assertEquals(FIRST_NAME, p.getFirstName());
+		p = Person.fromString(LAST_NAME + "," + FIRST_NAME);
+		assertEquals(LAST_NAME, p.getLastName());
+		assertEquals(FIRST_NAME, p.getFirstName());
+		p = Person.fromString(FIRST_NAME + " " + LAST_NAME);
+		assertEquals(LAST_NAME, p.getLastName());
+		assertEquals(FIRST_NAME, p.getFirstName());
+		p = Person.fromString(FIRST_NAME + "   " + LAST_NAME);
+		assertEquals(LAST_NAME, p.getLastName());
+		assertEquals(FIRST_NAME, p.getFirstName());
+		p = Person.fromString(LAST_NAME);
+		assertEquals(LAST_NAME, p.getLastName());
+		assertEquals(null, p.getFirstName());
+		try {
+			p = Person.fromString(LAST_NAME + ", " + LAST_NAME + ", "
+					+ FIRST_NAME);
+			fail("Invalid text should have ParseExcepion");
+		} catch (ParseException pe) {
+			assertNotNull(pe);
+			assertEquals(LAST_NAME.length() + 2 + LAST_NAME.length(),
+					pe.getErrorOffset());
+		}
+		try {
+			p = Person.fromString(LAST_NAME + " " + LAST_NAME + " "
+					+ FIRST_NAME);
+			fail("Invalid text should have ParseExcepion");
+		} catch (ParseException pe) {
+			assertNotNull(pe);
+			assertEquals(LAST_NAME.length() + 1 + LAST_NAME.length(),
+					pe.getErrorOffset());
+		}
+		try {
+			p = Person.fromString("");
+			fail("Empty string should have ParseExcepion");
+		} catch (ParseException pe) {
+			assertNotNull(pe);
+			assertEquals(0, pe.getErrorOffset());
+		}
+		try {
+			p = Person.fromString(null);
+			fail("Null should have IllegalArgumentException");
+		} catch (IllegalArgumentException iae) {
+			assertNotNull(iae);
+		}
 	}
 }

@@ -43,7 +43,7 @@ public class VideoMobile extends AbstractModel {
 	private String category;
 	@Element(required = false)
 	private String imageURL;
-	@Element(required = false)
+
 	private Bitmap image;
 
 

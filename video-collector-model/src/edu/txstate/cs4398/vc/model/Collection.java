@@ -176,4 +176,10 @@ public class Collection extends AbstractModel implements ModelListener {
 			}
 		}
 	}
+	
+	public void startAllListeners() {
+		for(Video v : videos) {
+			v.addModelListener(this);
+		}
+	}
 }

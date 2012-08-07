@@ -107,6 +107,8 @@ public class GetCollectionTask extends BaseTask<String, Void, List<VideoMobile>>
 		Log.d("adding video", video.getTitle());
 		video.setImageURL(response.getPropertySafelyAsString("imageURL",""));
 		video.setImageByURL();
+		
+		video.setCategory(response.getPropertySafelyAsString("category"));
 		return video;
 	}
 

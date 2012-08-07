@@ -16,7 +16,7 @@ import java.net.MulticastSocket;
  * If no connection is established it returns null.
  */
 
-public class SearchTask extends BaseTask<TextView, TextView, String> {
+public class SearchTask extends BaseTask<TextView, TextView, InetAddress> {
 	/**
 	 * SearchTask constructor takes a listener and adds it to the EventHandler pool
 	 * @param listener listener to be notified of any changes made
@@ -28,7 +28,7 @@ public class SearchTask extends BaseTask<TextView, TextView, String> {
 	}
 
 	@Override
-	protected String doInBackground(TextView... text) {
+	protected InetAddress doInBackground(TextView... text) {
 		try {
 			// Send the class name
 			byte[] buf = SearchTask.class.getName().getBytes("UTF-8");
@@ -47,21 +47,15 @@ public class SearchTask extends BaseTask<TextView, TextView, String> {
 			socket.setSoTimeout(5000);// wait at most 5 seconds
 			publishProgress(text);
 			Log.i("Interfaces", "Waiting for response");
-		//	try{
-				socket.receive(packet);
-			//}catch(IOException e){
-			//	socket.close();
-			//	return null;
-			//}
+			socket.receive(packet);
 			InetAddress serverAddress = packet.getAddress();
 			socket.close();
 			
-			return serverAddress.getHostAddress();
+			return serverAddress;
     	} catch (IOException e) {
-    		
-    		Log.i("Interfaces", "Exception occurred, server time out: " +e.getMessage());
+    		return null;
 		}
-		return null;
+		
 	}
 	@Override
 	protected void onProgressUpdate(TextView... text){
@@ -69,14 +63,17 @@ public class SearchTask extends BaseTask<TextView, TextView, String> {
 	}
 
 	@Override
-	protected void onPostExecute(String address){
+	protected void onPostExecute(InetAddress address){
 		TaskEvent<String> task = new TaskEvent<String>("SEARCH");
-		if(address != null)
+		if(address != null){
 			task.setStatus(TaskEvent.Status.SUCCESS);
-		else
+			task.setResult(address.getHostAddress());
+		}
+		else{
 			task.setStatus(TaskEvent.Status.FAIL);
+			task.setResult(null);
+		}
 		
-		task.setResult(address);
 	    event.notifyEvent(task);
 	}
 

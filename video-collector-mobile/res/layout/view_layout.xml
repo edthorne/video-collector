@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/thumb_img"
+        android:layout_width="116dp"
+        android:layout_height="98dp"
+        android:layout_gravity="center"
+        android:adjustViewBounds="false"
+        android:src="@drawable/ic_action_search" />
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="306dp"
+            android:layout_height="380dp"
+            android:layout_gravity="bottom|center" >
+
+            <TextView
+                android:id="@+id/videoTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/category"
+                android:background="@android:drawable/edit_text"
+                android:editable="false"
+                android:ems="10"
+                android:enabled="false"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/videoDirector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/videoTitle"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/videoTitle"
+                android:background="@android:drawable/edit_text"
+                android:editable="false"
+                android:ems="10"
+                android:enabled="false"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoTitle"
+                android:layout_alignBottom="@+id/videoTitle"
+                android:layout_alignParentLeft="true"
+                android:text="@string/title"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/Director"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoDirector"
+                android:layout_alignBottom="@+id/videoDirector"
+                android:layout_alignParentLeft="true"
+                android:text="@string/director"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/videoRated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/videoDirector"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/videoDirector"
+                android:background="@android:drawable/edit_text"
+                android:editable="false"
+                android:enabled="false"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/Rated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoRated"
+                android:layout_alignBottom="@+id/videoRated"
+                android:layout_alignParentLeft="true"
+                android:text="@string/rated"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/videoRuntime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/videoRated"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/videoRated"
+                android:background="@android:drawable/edit_text"
+                android:editable="false"
+                android:ems="10"
+                android:enabled="false"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/Runtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoRuntime"
+                android:layout_alignBottom="@+id/videoRuntime"
+                android:layout_alignParentLeft="true"
+                android:text="@string/runtime"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/videoYear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/videoRuntime"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/videoRuntime"
+                android:background="@android:drawable/edit_text"
+                android:editable="false"
+                android:ems="10"
+                android:enabled="false"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/Year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoYear"
+                android:layout_alignBottom="@+id/videoYear"
+                android:layout_alignParentLeft="true"
+                android:text="@string/year"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/videoCat"
+                android:layout_alignBottom="@+id/videoCat"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="false"
+                android:text="Category"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/videoCat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/videoYear"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="false"
+                android:layout_below="@+id/videoYear"
+                android:background="@android:drawable/edit_text"
+                android:editable="false"
+                android:ems="10"
+                android:enabled="false"
+                android:text="TextView" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</LinearLayout>

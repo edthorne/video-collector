@@ -28,6 +28,16 @@
             android:label="@string/scan_activity" 
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".BrowseActivity"
+            android:label="BrowseActivity" 
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".ViewActivity"
+            android:label="ViewActivity" 
+            android:screenOrientation="portrait">
+        </activity>
         
     </application>
 

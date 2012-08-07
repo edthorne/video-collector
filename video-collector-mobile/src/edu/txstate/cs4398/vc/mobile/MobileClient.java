@@ -1,18 +1,23 @@
 package edu.txstate.cs4398.vc.mobile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.txstate.cs4398.vc.mobile.controller.CollectionReadWriter;
 import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
 
@@ -27,6 +32,13 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 	private String serverAddress;
 	private ProgressBar progressCircle;
 	private Button sync;
+	private String status;
+	private Button retry;
+	private View custom;
+	private DialogList current;
+	private enum DialogList{
+		FIRST, SECOND, THIRD, FOURTH
+	}
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,34 +57,156 @@ public class MobileClient extends Activity implements View.OnClickListener, List
         
         sync = (Button)this.findViewById(R.id.sync_button);
         sync.setOnClickListener(this);
+        sync.setEnabled(false);
+        
+        retry = (Button)findViewById(R.id.retry_button);
+        retry.setOnClickListener(this);
         
         progressText = (TextView)this.findViewById(R.id.status_text);
         appState = (VideoApp)this.getApplicationContext();
         
-        Log.i("Interfaces", "Starting SearchTask...");
-        SearchTask task = new SearchTask(this);
+        current = DialogList.FIRST;
+        
+        searchForHost();
+        
+    }
+    
+    private DialogList nextOnList(DialogList temp){
+    	if(temp == DialogList.FIRST)
+    		temp = DialogList.SECOND;
+    	else if(temp == DialogList.SECOND)
+    		temp = DialogList.THIRD;
+    	else if(temp == DialogList.THIRD)
+    		temp = DialogList.FOURTH;
+    	else
+    		temp = DialogList.FIRST;
+    	
+    	return temp;
+    }
+    
+    private void searchForHost(){
+    	progressCircle.setVisibility(View.VISIBLE);
+    	retry.setVisibility(View.INVISIBLE);
+    	SearchTask task = new SearchTask(this);
     	task.execute(progressText);
+    }
+    
+    private void connectToHost(){
+    	ConnectTask service = new ConnectTask(this);
+		service.execute(serverAddress);
     }
     
     public void onClick(View v) {
 		if(v.equals(browse)){
-		
+			CollectionReadWriter rw = new CollectionReadWriter();
+			List<VideoMobile> vm = rw.getVideosFromXml(this);
+			Log.i("Interfaces", "In browse onClick");
+			if(!vm.isEmpty()){
+				Intent next = new Intent(this, BrowseActivity.class);
+				this.startActivity(next);
+			}
+			else
+				Toast.makeText(this.getApplicationContext(), "No entries, please Sync or Add a video." , Toast.LENGTH_SHORT).show();
 		}
 		else if(v.equals(add)){
-			Log.i("Interfaces", "Switching activity with address: " + serverAddress);
 			appState.setWebServiceAddress(serverAddress);
 			Intent next = new Intent(this, ScanActivity.class);
 			this.startActivity(next);
 			
     	}
 		else if(v.equals(sync)) {
-	        GetCollectionTask task = new GetCollectionTask(this);
-	    	task.execute(serverAddress);
+			GetCollectionTask task = new GetCollectionTask(this);
+			task.execute(serverAddress);
+		}
+		else if(v.equals(retry)){
+			searchForHost();
 		}
 	}
-    /**
-     * @param address String containing the IP address of the host.
-     */
+    
+    private boolean checkIpAddress(String ip){
+    	if(ip.equals(""))
+    		return false;
+    	boolean pass = false, doubleDots = false;
+    	char[] myString = ip.toCharArray();
+    	int len = myString.length;
+    	if(myString[0] != '.' && myString[len-1] != '.'){
+    		int dot = 0, prevDot = -1;;
+	    	for(int i = 0; i < len; i++){
+	    		if(myString[i] == '.'){
+	    			dot++;
+	    			if(dot > 3 || prevDot == i-1){
+	    	    		pass = false;
+	    	    		doubleDots = true;
+	    	    		break;
+	    			}
+	    			prevDot = i;
+	    		}
+	    	}
+	    	if((dot > 0 && dot < 4) && !doubleDots)
+	    		pass = true;
+	    	else
+	    		pass = false;
+    	}
+    	
+    	return pass;
+    }
+    
+    private void ipDialog(){
+    	custom = getLayoutInflater().inflate(R.layout.dialog_layout, null);
+    	ipAddress = (EditText) custom.findViewById(R.id.ip_text);
+    	
+    	SharedPreferences settings = getSharedPreferences("PrefsFile", 0);
+	    Spinner sp;
+	    DialogList dl = DialogList.FIRST;
+    	sp = (Spinner) custom.findViewById(R.id.ip_list);
+    	ArrayList<String> sArr = new ArrayList<String>();
+    	String s = settings.getString(dl.toString(), null);
+    	int i = 0;
+    	while(s != null && dl != DialogList.FOURTH){
+    		sArr.add(s);
+    		dl = nextOnList(dl);
+    		s = settings.getString(dl.toString(), null);
+    		i++;
+    	}
+    	if(i == 0)
+    		sArr.add("");
+    	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, sArr);
+    	sp.setAdapter(adapter);
+    	
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(status)
+		       .setCancelable(false)
+		       .setTitle("Could not find host!")
+		       .setView(custom)
+		       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   boolean validIp = checkIpAddress(ipAddress.getText().toString());
+		        	   if(validIp == true){
+			        	   serverAddress = ipAddress.getText().toString();
+			        	   progressText.setText("Attempting connection...");
+			        	   connectToHost();
+		        	   }
+		        	   else{
+		        		   if(!isFinishing()) {
+			        		   status = "Incorrect IP Address, please try again:";
+			        		   ipDialog();
+		        		   }
+		        	   }
+		           }
+		       })
+		       .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		    	   public void onClick(DialogInterface dialog, int id) {      
+		    		   progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
+		    		   progressText.setText("Connection Failed!");
+		    		   retry.setVisibility(View.VISIBLE);
+		        	   dialog.cancel();
+		           }
+		       });
+		       
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
     public void onEvent(TaskEvent task) {
     	
     	TaskEvent.Status taskStatus = task.getStatus();
@@ -80,71 +214,52 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     	
     	if("SEARCH".equals(action)){
 			if(taskStatus == TaskEvent.Status.SUCCESS){
-				Log.i("Interfaces", "in onComplete with ip address: " + (String)task.getResult());	
 				serverAddress = (String)task.getResult();
-				connect();
+				connectToHost();
 				progressText.setText("Found host: "+ serverAddress +"\nAttempting connection...");
-				
 			}
 			else{
-				ipAddress = new EditText(this);
-				Log.i("Interfaces", "Address is not valid");
-				if(!isFinishing()) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage("Please enter your computer IP address:")
-				       .setCancelable(false)
-				       .setTitle("Cannot find host!")
-				       .setView(ipAddress)
-				       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				           public void onClick(DialogInterface dialog, int id) {
-				        	   Log.i("Interfaces", "Edit is: " + ipAddress.getText().toString());
-				        	   serverAddress = ipAddress.getText().toString();
-				        	   connect();
-				        	   progressText.setText("Attempting connection...");
-				           }
-				       })
-				       .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				    	   public void onClick(DialogInterface dialog, int id) {
-				    		   progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
-				    		   progressText.setText("Connection Failed!");
-				        	   dialog.cancel();
-				           }
-				       });
-				AlertDialog alert = builder.create();
-				alert.show();
-				}
+				status = "Please enter your computer IP address: ";
+				ipDialog();
 			}
 			
     	}
     	else if("CONNECT".equals(action)){
+    		// On successful connection, save that address.
     		if(taskStatus == TaskEvent.Status.SUCCESS){
     			progressText.setText("Connection Succesful!");
     			progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
     			add.setEnabled(true);		// enable add button
+    			sync.setEnabled(true);
+    			SharedPreferences settings = getSharedPreferences("PrefsFile", 0);
+	        	SharedPreferences.Editor editor = settings.edit();
+	        	editor.putString(current.toString(), serverAddress);
+	        	editor.commit();
+	        	current = nextOnList(current);
+    		}
+    		else{
+    			 progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
+	    		 progressText.setText("Connection Failed!");
+	    		 retry.setVisibility(View.VISIBLE);
     		}
     	}
     	else if("GET_COLLECTION".equals(action)) {
-    		if(taskStatus == TaskEvent.Status.SUCCESS && !isFinishing()){
+    		if(taskStatus == TaskEvent.Status.SUCCESS){
     			List<VideoMobile> list = (List<VideoMobile>) task.getResult();
     			appState.setVideoList(list);
     			CollectionReadWriter rw = new CollectionReadWriter();
     			rw.writeVideosToXml(this);
-    			Log.i("WRITTEN", "Videos were written to XML");
     			List<VideoMobile> vm = rw.getVideosFromXml(this);
     			for(VideoMobile vid : vm) {
-    				Log.i("XML:", vid.getTitle());
+    				Log.i("Interfaces", vid.getTitle());
     			}
-    				
+    			Toast.makeText(this.getApplicationContext(), "Sync successful!" , Toast.LENGTH_SHORT).show();
     		}
+    			
     	}
 		
     }
-    
-    private void connect(){
-    	ConnectTask service = new ConnectTask(this);
-		service.execute(serverAddress);
-    }
-    
+        
     public void onStop() {
     	super.onStop();
 		CollectionReadWriter rw = new CollectionReadWriter();

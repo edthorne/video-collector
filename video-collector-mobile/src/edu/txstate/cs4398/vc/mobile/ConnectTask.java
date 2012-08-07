@@ -36,7 +36,7 @@ public class ConnectTask extends BaseTask<String, Void, SoapObject> {
         	androidHttpTransport.call(ECHO_SOAP_ACTION, envelope);
         	addResult = (SoapObject) envelope.bodyIn;
 		} catch (Exception e) {
-			e.printStackTrace();
+			return null;
 		}
 		return addResult;
 	}
@@ -44,9 +44,10 @@ public class ConnectTask extends BaseTask<String, Void, SoapObject> {
 	@Override
 	protected void onPostExecute(SoapObject result){
 		TaskEvent<String> task = new TaskEvent<String>("CONNECT");
-		
-		if(CONNECT_MESSAGE.equals(result.getProperty(0).toString()))
-			task.setStatus(TaskEvent.Status.SUCCESS);
+		if(result != null){
+			if(CONNECT_MESSAGE.equals(result.getProperty(0).toString()))
+				task.setStatus(TaskEvent.Status.SUCCESS);
+		}
 		else
 			task.setStatus(TaskEvent.Status.FAIL);
 		

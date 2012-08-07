@@ -39,7 +39,7 @@ import edu.txstate.cs4398.vc.model.Video;
 public class VideoView extends JFrameView {
 
 	private JFormattedTextField upc;
-	private JTextField title;
+	private JTextField videoTitle;
 	private JComboBox director;
 	private JComboBox rated;
 	private JFormattedTextField runtime;
@@ -85,12 +85,12 @@ public class VideoView extends JFrameView {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		fieldPanel.add(new JLabel("Title"), gbc);
 
-		title = new JTextField(video.getTitle());
+		videoTitle = new JTextField(video.getTitle());
 		gbc = new GridBagConstraints();
 		gbc.insets = insets;
 		gbc.gridx = 1; gbc.gridy = 1;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		fieldPanel.add(title, gbc);
+		fieldPanel.add(videoTitle, gbc);
 
 		gbc = new GridBagConstraints();
 		gbc.insets = insets;
@@ -303,8 +303,8 @@ public class VideoView extends JFrameView {
 	/**
 	 * @return the title
 	 */
-	public String getTitle() {
-		return title.getText();
+	public String getVideoTitle() {
+		return videoTitle.getText();
 	}
 
 	/**

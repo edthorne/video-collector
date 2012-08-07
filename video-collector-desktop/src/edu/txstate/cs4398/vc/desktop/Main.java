@@ -26,6 +26,6 @@ public class Main {
 		}
 
 		// start the application by creating a controller
-		new CollectorController();
+		CollectorController.getInstance();
 	}
 }

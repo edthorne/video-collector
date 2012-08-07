@@ -28,6 +28,22 @@ import edu.txstate.cs4398.vc.model.Video;
  * @author Ed
  */
 public class CollectorController extends AbstractController {
+
+	/**
+	 * The private instance for the singleton interface.
+	 */
+	private static CollectorController instance;
+	
+	/**
+	 * @return the singleton instance of the application controller
+	 */
+	public static synchronized CollectorController getInstance() {
+		if (instance == null) {
+			instance = new CollectorController();
+		}
+		return instance;
+	}
+
 	/**
 	 * A shared instance of the file chooser used to select a file to open or
 	 * save. Since there's one instance the controller essentially remembers the
@@ -44,7 +60,7 @@ public class CollectorController extends AbstractController {
 	/**
 	 * Creates a new application controller.
 	 */
-	public CollectorController() {
+	private CollectorController() {
 		// make sure we can use JAXB for reading/writing application data
 		try {
 			JAXBContext context = JAXBContext.newInstance(CollectorModel.class);

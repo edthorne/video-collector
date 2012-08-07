@@ -255,14 +255,17 @@ public class VideoView extends JFrameView {
 
 	/**
 	 * @return the director
-	 * @throws ParseException 
+	 * @throws ParseException if director is in invalid format
 	 */
 	public Person getDirector() throws ParseException {
 		// see if the user selected a value
 		if (director.getSelectedIndex() == -1) {
 			// user didn't select a value, there may be an entry to parse
 			String text = (String) director.getSelectedItem();
-			return Person.fromString(text);
+			if(text != null)
+				return Person.fromString(text);
+			else
+				return null;
 		} else {
 			// user selected a value
 			return (Person) director.getSelectedItem();

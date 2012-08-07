@@ -101,7 +101,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 			CollectionReadWriter rw = new CollectionReadWriter();
 			List<VideoMobile> vm = rw.getVideosFromXml(this);
 			Log.i("Interfaces", "In browse onClick");
-			if(!vm.isEmpty()){
+			if(vm!=null && !vm.isEmpty()){
 				Intent next = new Intent(this, BrowseActivity.class);
 				this.startActivity(next);
 			}

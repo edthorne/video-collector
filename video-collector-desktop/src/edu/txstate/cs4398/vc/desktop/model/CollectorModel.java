@@ -61,6 +61,7 @@ public class CollectorModel extends AbstractModel implements ModelListener {
 		this.collection = collection;
 		notifyChanged(new ModelEvent(this, PROPERTY_CHANGED, "collection"));
 		this.collection.addModelListener(this);
+		this.collection.startAllListeners();;
 	}
 
 	/**

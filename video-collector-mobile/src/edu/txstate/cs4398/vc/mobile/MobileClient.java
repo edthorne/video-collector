@@ -65,7 +65,10 @@ public class MobileClient extends Activity implements View.OnClickListener, List
         
         progressText = (TextView)this.findViewById(R.id.status_text);
         appState = (VideoApp)this.getApplicationContext();
-        
+        CollectionReadWriter rw = new CollectionReadWriter();
+        List<VideoMobile> xmlList = rw.getVideosFromXml(this);
+        if (xmlList != null)
+        	appState.setVideoList(xmlList);
         current = DialogList.FIRST;
         
         searchForHost();
@@ -99,8 +102,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     
     public void onClick(View v) {
 		if(v.equals(browse)){
-			CollectionReadWriter rw = new CollectionReadWriter();
-			List<VideoMobile> vm = rw.getVideosFromXml(this);
+			List<VideoMobile> vm = appState.getVideoList();
 			Log.i("Interfaces", "In browse onClick");
 			if(vm!=null && !vm.isEmpty()){
 				Intent next = new Intent(this, BrowseActivity.class);

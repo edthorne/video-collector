@@ -6,6 +6,7 @@ package edu.txstate.cs4398.vc.desktop.model;
 import java.util.Set;
 
 import edu.txstate.cs4398.vc.model.AbstractModel;
+import edu.txstate.cs4398.vc.model.ModelEvent;
 import edu.txstate.cs4398.vc.model.Person;
 import edu.txstate.cs4398.vc.model.Video;
 
@@ -15,6 +16,8 @@ import edu.txstate.cs4398.vc.model.Video;
  * @author Ed
  */
 public class VideoModel extends AbstractModel {
+	public static final int VIDEO_CHANGED = 1;
+
 	/**
 	 * The set of categories for the editor.
 	 */
@@ -92,6 +95,7 @@ public class VideoModel extends AbstractModel {
 	 */
 	public void setVideo(Video video) {
 		this.video = video;
+		notifyChanged(new ModelEvent(this, VIDEO_CHANGED, null));
 	}
 
 }

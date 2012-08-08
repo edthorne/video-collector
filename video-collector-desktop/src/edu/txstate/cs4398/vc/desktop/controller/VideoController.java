@@ -8,6 +8,7 @@ import java.text.ParseException;
 import javax.swing.JOptionPane;
 
 import edu.txstate.cs4398.vc.desktop.model.VideoModel;
+import edu.txstate.cs4398.vc.desktop.services.MobileServices;
 import edu.txstate.cs4398.vc.desktop.view.VideoView;
 import edu.txstate.cs4398.vc.model.Collection;
 import edu.txstate.cs4398.vc.model.Video;
@@ -43,6 +44,9 @@ public class VideoController extends AbstractController {
 	 * Closes the view.
 	 */
 	public void close() {
+		// remove the view as a listener
+		getModel().removeModelListener(getView());
+		// get rid of the view
 		getView().dispose();
 	}
 
@@ -54,6 +58,11 @@ public class VideoController extends AbstractController {
 	@Override
 	public VideoView getView() {
 		return (VideoView) super.getView();
+	}
+	public void lookupUPC(String upc) {
+		MobileServices ms = CollectorController.getInstance().getMobileServices();
+		Video result = ms.lookupVideoByUPC(upc);
+		getModel().setVideo(result);
 	}
 
 	/**

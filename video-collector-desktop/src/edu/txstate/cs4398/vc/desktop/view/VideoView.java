@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -50,6 +51,7 @@ public class VideoView extends JFrameView {
 
 	public VideoView(VideoModel model, VideoController controller) {
 		super(model, controller);
+		registerWithModel();
 
 		// close the application when the frame closes
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -59,6 +61,7 @@ public class VideoView extends JFrameView {
 
 		// get the video being edited from the model
 		Video video = getModel().getVideo();
+		video.addModelListener(this);
 
 		// create the fields
 		JPanel fieldPanel = new JPanel(new GridBagLayout());
@@ -72,6 +75,21 @@ public class VideoView extends JFrameView {
 		fieldPanel.add(new JLabel("UPC"), gbc);
 
 		upc = new JFormattedTextField(video.getUpc());
+		if (getModel().isNew()) {
+			// for new videos we can perform a UPC lookup
+			upc.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					// user pressed enter
+					String upc = ae.getActionCommand();
+					if (!upc.matches("\\d{12}")) {
+						JOptionPane.showMessageDialog(VideoView.this, "Valid UPC should contain 12 digits", "Invalid UPC", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					getController().lookupUPC(upc);
+				}
+			});
+		}
 		gbc = new GridBagConstraints();
 		gbc.insets = insets;
 		gbc.gridx = 1; gbc.gridy = 0;
@@ -261,6 +279,11 @@ public class VideoView extends JFrameView {
 		// see if the user selected a value
 		if (director.getSelectedIndex() == -1) {
 			// user didn't select a value, there may be an entry to parse
+			Object dirObj = director.getSelectedItem();
+			if (dirObj instanceof Person) {
+				return (Person) dirObj;
+			}
+			// not a person, assume String
 			String text = (String) director.getSelectedItem();
 			if(text != null)
 				return Person.fromString(text);
@@ -323,7 +346,19 @@ public class VideoView extends JFrameView {
 
 	@Override
 	public void modelChanged(ModelEvent event) {
-		// TODO Auto-generated method stub
+		if (event.getSource() == getModel() && event.getID() == VideoModel.VIDEO_CHANGED) {
+			Video video = getModel().getVideo();
+			// update the fields since the underlying video changed
+			upc.setText(video.getUpc());
+			videoTitle.setText(video.getTitle());
+			director.setSelectedItem(video.getDirector());
+			rated.setSelectedItem(video.getRated());
+			runtime.setValue(video.getRuntime());
+			year.setValue(video.getYear());
+			category.setSelectedItem(video.getCategory());
+			myRating.setValue(video.getMyRating());
+			notes.setText(video.getNotes());	
+		}
 	}
 
 	private void setWindowTitle() {

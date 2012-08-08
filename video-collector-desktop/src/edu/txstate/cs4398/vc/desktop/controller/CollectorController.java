@@ -21,6 +21,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.ws.Endpoint;
 
 import edu.txstate.cs4398.vc.desktop.model.CollectorModel;
+import edu.txstate.cs4398.vc.desktop.services.MobileServices;
 import edu.txstate.cs4398.vc.desktop.services.MobileServicesImpl;
 import edu.txstate.cs4398.vc.desktop.services.VideoLookupService;
 import edu.txstate.cs4398.vc.desktop.utils.DiscoveryListener;
@@ -66,6 +67,7 @@ public class CollectorController extends AbstractController {
 	 */
 	private VideoLookupService videoLookup;
 
+	private MobileServicesImpl mobileServices;
 	private Endpoint wsEndpoint;
 	private String wsURI = null;
 	private DiscoveryListener discoveryListener;
@@ -117,6 +119,10 @@ public class CollectorController extends AbstractController {
 		String tomatoesToken = vlsProps.getProperty(TOMATO_API_TOKEN);
 		videoLookup = new VideoLookupService(upcToken, tomatoesToken);
 
+		// set up the mobile services
+		mobileServices = new MobileServicesImpl();
+		mobileServices.setVideoLookupService(videoLookup);
+
 		// set the application model
 		setModel(new CollectorModel());
 
@@ -128,6 +134,13 @@ public class CollectorController extends AbstractController {
 	@Override
 	public CollectorModel getModel() {
 		return (CollectorModel) super.getModel();
+	}
+
+	/**
+	 * @return a reference to the mobile services
+	 */
+	public MobileServices getMobileServices() {
+		return mobileServices;
 	}
 
 	/**
@@ -266,6 +279,16 @@ public class CollectorController extends AbstractController {
 			// user canceled or closed without selection
 			break;
 		}
+	}
+
+	/**
+	 * Sets the CollectorModel for the controller.
+	 * 
+	 * @param model the CollectorModel
+	 */
+	public void setModel(CollectorModel model) {
+		super.setModel(model);
+		mobileServices.setCollectorModel(model);
 	}
 
 	public void setRemoteServiceState(boolean enabled) {
@@ -447,9 +470,7 @@ public class CollectorController extends AbstractController {
 
 	private void startWebService() {
 		// create the web service endpoint
-		MobileServicesImpl serviceImpl = new MobileServicesImpl(getModel());
-		serviceImpl.setVideoLookupService(videoLookup);
-		wsEndpoint = Endpoint.create(serviceImpl);
+		wsEndpoint = Endpoint.create(mobileServices);
 		System.out.println("Publishing webservice at " + wsURI);
 		wsEndpoint.publish(wsURI);
 	}

@@ -77,7 +77,7 @@ public class TestVideoLookupService {
 	@Test
 	public void testTVLookup() throws Exception {
 		System.out.println("Test upc and Video lookup with TV Series barcode");
-		String videoName = null;;
+		String videoName = null;
 		
 		videoName = videoLookupService.getProductName(UPC_HIMYM);
 		

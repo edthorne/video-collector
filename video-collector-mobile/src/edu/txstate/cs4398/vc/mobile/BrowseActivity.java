@@ -3,6 +3,7 @@ package edu.txstate.cs4398.vc.mobile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
 import edu.txstate.cs4398.vc.mobile.controller.CollectionReadWriter;
 import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
 
@@ -85,6 +86,7 @@ public class BrowseActivity extends Activity {
 			int runtime = vd.getRuntime();
 			String myRating = vd.getRated();
 			String notes = vd.getNotes();
+			byte[] image = vd.getImageBytes();
 
 			Intent next = new Intent(view.getContext(), ViewActivity.class);
 			next.putExtra("title", title);
@@ -94,6 +96,7 @@ public class BrowseActivity extends Activity {
 		    next.putExtra("runtime", runtime);
 		    next.putExtra("rating", myRating);
 		    next.putExtra("notes", notes);  
+		    next.putExtra("image", image);
 			startActivity(next);   
 		}
     }

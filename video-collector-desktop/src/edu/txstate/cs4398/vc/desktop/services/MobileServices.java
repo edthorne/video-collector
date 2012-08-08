@@ -50,7 +50,7 @@ public interface MobileServices {
 	public String addVideo(@WebParam(name="upc") String upc, @WebParam(name="title")String title, 
 							@WebParam(name="director")String director,@WebParam(name="rated") Rating rated, 
 							@WebParam(name="runtime")int runtime,@WebParam(name="year") int year, 
-							@WebParam(name="imgUrl") String imgUrl);
+							@WebParam(name="imgUrl") String imgUrl, @WebParam(name="image") String image);
 	
 	/**
 	 * returns the collection from the desktop application

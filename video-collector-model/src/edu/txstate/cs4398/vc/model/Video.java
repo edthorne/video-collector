@@ -17,7 +17,7 @@ import org.simpleframework.xml.Root;
 @Root
 @XmlRootElement(name = "video")
 @XmlType(propOrder = { "upc", "title", "director", "year", "rated", "runtime",
-		"category", "myRating", "notes", "imageURL" })
+		"category", "myRating", "notes", "imageURL", "image" })
 public class Video extends AbstractModel {
 	/**
 	 * Event identifier for property changes.
@@ -45,6 +45,8 @@ public class Video extends AbstractModel {
 	private String category;
 	@Element(required = false)
 	private String imageURL;
+	@Element(required = false)
+	private byte[] image;
 
 	/**
 	 * Creates a new video. You must set a title before marshaling the video.
@@ -235,6 +237,14 @@ public class Video extends AbstractModel {
 
 	public void setImageURL(String imageURL) {
 		this.imageURL = imageURL;
+	}
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
 	}
 
 	

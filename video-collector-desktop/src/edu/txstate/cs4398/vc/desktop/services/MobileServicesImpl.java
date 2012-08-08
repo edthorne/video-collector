@@ -3,6 +3,7 @@ package edu.txstate.cs4398.vc.desktop.services;
 import java.util.Set;
 
 import javax.jws.WebService;
+import javax.xml.bind.DatatypeConverter;
 
 import edu.txstate.cs4398.vc.desktop.model.CollectorModel;
 import edu.txstate.cs4398.vc.model.Collection;
@@ -14,7 +15,7 @@ import edu.txstate.cs4398.vc.model.Video;
 public class MobileServicesImpl implements MobileServices {
 	private CollectorModel model;
 	private VideoLookupService service;
-
+	
 	public MobileServicesImpl() {
 
 	}
@@ -26,7 +27,7 @@ public class MobileServicesImpl implements MobileServices {
 	public void setCollectorModel(CollectorModel model) {
 		this.model = model;
 	}
-	
+
 	public void setVideoLookupService(VideoLookupService service) {
 		this.service = service;
 	}
@@ -67,7 +68,7 @@ public class MobileServicesImpl implements MobileServices {
 
 	@Override
 	public String addVideo(String upc, String title, String director,
-			Rating rated, int runtime, int year, String imgUrl) {
+			Rating rated, int runtime, int year, String imgUrl, String image) {
 		try {
 			Video video = new Video(title);
 			video.setUpc(upc);
@@ -82,15 +83,11 @@ public class MobileServicesImpl implements MobileServices {
 			video.setRuntime(runtime);
 			video.setYear(year);
 			video.setImageURL(imgUrl);
+			byte[] bytes = DatatypeConverter.parseBase64Binary(image);
+			if (bytes != null && bytes.length > 0)
+				video.setImage(bytes);
 
 			model.getCollection().addVideo(video);
-			System.out.println("Added video:");
-			System.out.println(video.getUpc());
-			System.out.println(video.getTitle());
-			System.out.println(video.getDirector());
-			System.out.println(video.getRated());
-			System.out.println(video.getRuntime());
-			System.out.println(video.getYear());
 
 			return "success";
 		} catch (Exception e) {

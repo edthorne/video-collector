@@ -44,7 +44,8 @@ public class VideoMobile extends AbstractModel {
 	@Element(required = false)
 	private String imageURL;
 
-	private Bitmap image;
+	@Element(required = false)
+	private byte[] imageBytes;
 
 
 	/**
@@ -69,10 +70,7 @@ public class VideoMobile extends AbstractModel {
 		notes = video.getNotes();
 		category = video.getCategory();
 		imageURL = video.getImageURL();
-		if(imageURL != null && !imageURL.isEmpty()) {
-			setImageByURL();
-		}
-		
+		imageBytes = video.getImage();
 	}
 
 	/**
@@ -258,19 +256,12 @@ public class VideoMobile extends AbstractModel {
 		this.imageURL = imageURL;
 	}
 
-	public Bitmap getImage() {
-		return image;
+
+	public byte[] getImageBytes() {
+		return imageBytes;
 	}
 
-	public void setImageByURL() {
-		if(imageURL != null) {
-
-			try {
-				Bitmap bmp = BitmapFactory.decodeStream(new java.net.URL(imageURL).openStream());
-				this.image = bmp;
-			} catch (Exception e) {
-				image = null;
-			} 
-		}
+	public void setImageBytes(byte[] imageBytes) {
+		this.imageBytes = imageBytes;
 	}
 }

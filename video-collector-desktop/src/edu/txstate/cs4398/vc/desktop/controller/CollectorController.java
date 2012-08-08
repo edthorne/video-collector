@@ -410,6 +410,9 @@ public class CollectorController extends AbstractController {
 		try {
 			if (reader == null) {
 				// the file should exist at this point since we created it above
+				JOptionPane
+				.showMessageDialog(null,
+						"Configuration file created at: " + vlsPropsFile.getAbsolutePath());
 				reader = new FileReader(vlsPropsFile);
 			}
 			vlsProps.load(reader);

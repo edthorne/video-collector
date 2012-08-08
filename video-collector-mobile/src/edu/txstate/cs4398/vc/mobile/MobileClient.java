@@ -69,7 +69,6 @@ public class MobileClient extends Activity implements View.OnClickListener, List
         List<VideoMobile> xmlList = rw.getVideosFromXml(this);
         if (xmlList != null)
         	appState.setVideoList(xmlList);
-        current = DialogList.FIRST;
         
         searchForHost();
         
@@ -99,32 +98,6 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     	ConnectTask service = new ConnectTask(this);
 		service.execute(serverAddress);
     }
-    
-    public void onClick(View v) {
-		if(v.equals(browse)){
-			List<VideoMobile> vm = appState.getVideoList();
-			Log.i("Interfaces", "In browse onClick");
-			if(vm!=null && !vm.isEmpty()){
-				Intent next = new Intent(this, BrowseActivity.class);
-				this.startActivity(next);
-			}
-			else
-				Toast.makeText(this.getApplicationContext(), "No entries, please Sync or Add a video." , Toast.LENGTH_SHORT).show();
-		}
-		else if(v.equals(add)){
-			appState.setWebServiceAddress(serverAddress);
-			Intent next = new Intent(this, ScanActivity.class);
-			this.startActivity(next);
-			
-    	}
-		else if(v.equals(sync)) {
-			GetCollectionTask task = new GetCollectionTask(this);
-			task.execute(serverAddress);
-		}
-		else if(v.equals(retry)){
-			searchForHost();
-		}
-	}
     
     private boolean checkIpAddress(String ip){
     	if(ip.equals(""))
@@ -221,6 +194,32 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
+    
+    public void onClick(View v) {
+		if(v.equals(browse)){
+			List<VideoMobile> vm = appState.getVideoList();
+			Log.i("Interfaces", "In browse onClick");
+			if(vm!=null && !vm.isEmpty()){
+				Intent next = new Intent(this, BrowseActivity.class);
+				this.startActivity(next);
+			}
+			else
+				Toast.makeText(this.getApplicationContext(), "No entries, please Sync or Add a video." , Toast.LENGTH_SHORT).show();
+		}
+		else if(v.equals(add)){
+			appState.setWebServiceAddress(serverAddress);
+			Intent next = new Intent(this, ScanActivity.class);
+			this.startActivity(next);
+			
+    	}
+		else if(v.equals(sync)) {
+			GetCollectionTask task = new GetCollectionTask(this);
+			task.execute(serverAddress);
+		}
+		else if(v.equals(retry)){
+			searchForHost();
+		}
+	}  
 
     public void onEvent(TaskEvent task) {
     	
@@ -247,10 +246,22 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     			add.setEnabled(true);		// enable add button
     			sync.setEnabled(true);
     			SharedPreferences settings = getSharedPreferences("PrefsFile", 0);
-	        	SharedPreferences.Editor editor = settings.edit();
-	        	editor.putString(current.toString(), serverAddress);
-	        	editor.commit();
-	        	current = nextOnList(current);
+	        	boolean shouldSave = true;
+    			DialogList dl = DialogList.FIRST;
+    	    	while(dl != DialogList.FOURTH){		
+    	    		String s = settings.getString(dl.toString(), null);
+    	    		if(serverAddress.equals(s)){		// break if we found the address is already in our list
+    	    			shouldSave = false;
+    	    			break;
+    	    		}
+    	    		dl = nextOnList(dl);
+    	    	}
+    			if(shouldSave){
+	    			SharedPreferences.Editor editor = settings.edit();
+		        	editor.putString(current.toString(), serverAddress);
+		        	editor.commit();
+		        	current = nextOnList(current);
+    			}
     		}
     		else{
     			 progressCircle.setVisibility(View.INVISIBLE); // hide progress circle

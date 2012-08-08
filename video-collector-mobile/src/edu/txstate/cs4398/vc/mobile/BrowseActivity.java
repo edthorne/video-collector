@@ -86,6 +86,7 @@ public class BrowseActivity extends Activity {
 			int runtime = vd.getRuntime();
 			String myRating = vd.getRated();
 			String notes = vd.getNotes();
+			Log.i("Interfaces", "Notes in browse act: " + notes);
 			byte[] image = vd.getImageBytes();
 
 			Intent next = new Intent(view.getContext(), ViewActivity.class);

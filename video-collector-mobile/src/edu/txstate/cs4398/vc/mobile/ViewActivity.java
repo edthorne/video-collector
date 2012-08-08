@@ -52,14 +52,16 @@ public class ViewActivity extends Activity {
 		yearField = (TextView) findViewById(R.id.videoYear);
 		runField = (TextView) findViewById(R.id.videoRuntime);
 		ratingField = (TextView) findViewById(R.id.videoRated);
-		image = (ImageView) this.findViewById(R.id.thumb_img);
-		
+		image = (ImageView) findViewById(R.id.thumb_img);
+		notesField = (TextView)findViewById(R.id.notes_text);
+		Log.i("Interfaces", "my notes: " + notes);
 		titleField.setText(title);
 		catField.setText(category);
 		dirField.setText(director);
 		yearField.setText("" + year);
 		runField.setText("" + runtime);
 		ratingField.setText(rating);
+		notesField.setText(notes);
 		if (imageBytes != null && imageBytes.length > 0) {
 			InputStream is = new ByteArrayInputStream(imageBytes);
 			Bitmap bmp = BitmapFactory.decodeStream(is);

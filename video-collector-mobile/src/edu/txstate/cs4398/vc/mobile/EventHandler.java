@@ -9,7 +9,6 @@ import android.util.Log;
 public class EventHandler {
 	private List<Listener> listeners = new ArrayList<Listener>();
 	public synchronized void addEventListener(Listener listener){
-		Log.i("Interfaces", "Adding listener");
 		listeners.add(listener);
 	}
 	public synchronized void removeEventListener(Listener listener){

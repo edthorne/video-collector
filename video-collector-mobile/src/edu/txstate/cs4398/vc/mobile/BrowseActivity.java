@@ -46,7 +46,7 @@ public class BrowseActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.browse_layout);
         CollectionReadWriter rw = new CollectionReadWriter();
-        vml = (ArrayList<VideoMobile>)rw.getVideosFromXml(this);
+        vml = (ArrayList<VideoMobile>) ((VideoApp)getApplicationContext()).getVideoList();
         Collections.sort(vml, new TitleComparator());
         titles = new ArrayList<String>();
         for(VideoMobile vid: vml){

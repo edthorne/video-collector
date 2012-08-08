@@ -199,7 +199,7 @@ public class ScanActivity extends Activity implements View.OnClickListener, List
 			if(!imgUrl.isEmpty()) {
 				try {
 					Bitmap bmp = BitmapFactory.decodeStream(new java.net.URL(imgUrl).openStream());
-					image.setImageBitmap(bmp);
+					image.setImageBitmap(Bitmap.createScaledBitmap(bmp, image.getMeasuredWidth(), image.getMeasuredHeight(), false));
 				} catch (Exception e) {
 					image.setImageResource(R.drawable.blank);
 				} 

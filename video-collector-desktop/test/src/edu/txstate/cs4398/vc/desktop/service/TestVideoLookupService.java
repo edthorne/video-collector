@@ -4,8 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.junit.After;
@@ -34,7 +36,12 @@ public class TestVideoLookupService {
 	VideoLookupService videoLookupService;
 	@Before
 	public void setUp() throws Exception {
-		videoLookupService = new VideoLookupService();
+		Properties testProps = new Properties();
+		testProps.load(new FileInputStream("config/token.properties"));
+		String tomato_token = testProps.getProperty("tomato_api_token");
+		String access_token = testProps.getProperty("upc_api_token");
+
+		videoLookupService = new VideoLookupService(access_token, tomato_token);
 		System.out.println("------------------------------");
 	}
 

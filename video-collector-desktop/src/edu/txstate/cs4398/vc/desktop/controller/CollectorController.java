@@ -1,9 +1,14 @@
 package edu.txstate.cs4398.vc.desktop.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Properties;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -17,6 +22,7 @@ import javax.xml.ws.Endpoint;
 
 import edu.txstate.cs4398.vc.desktop.model.CollectorModel;
 import edu.txstate.cs4398.vc.desktop.services.MobileServicesImpl;
+import edu.txstate.cs4398.vc.desktop.services.VideoLookupService;
 import edu.txstate.cs4398.vc.desktop.utils.DiscoveryListener;
 import edu.txstate.cs4398.vc.desktop.utils.NetworkUtils;
 import edu.txstate.cs4398.vc.desktop.view.CollectorView;
@@ -28,12 +34,37 @@ import edu.txstate.cs4398.vc.model.Video;
  * @author Ed
  */
 public class CollectorController extends AbstractController {
+
+	private static final String TOMATO_API_TOKEN = "tomato_api_token";
+
+	private static final String UPC_API_TOKEN = "upc_api_token";
+
+	/**
+	 * The private instance for the singleton interface.
+	 */
+	private static CollectorController instance;
+
+	/**
+	 * @return the singleton instance of the application controller
+	 */
+	public static synchronized CollectorController getInstance() {
+		if (instance == null) {
+			instance = new CollectorController();
+		}
+		return instance;
+	}
+
 	/**
 	 * A shared instance of the file chooser used to select a file to open or
 	 * save. Since there's one instance the controller essentially remembers the
 	 * last file selected.
 	 */
 	private JFileChooser fileChooser;
+
+	/**
+	 * An instance of the video lookup service for use by the application.
+	 */
+	private VideoLookupService videoLookup;
 
 	private Endpoint wsEndpoint;
 	private String wsURI = null;
@@ -44,7 +75,7 @@ public class CollectorController extends AbstractController {
 	/**
 	 * Creates a new application controller.
 	 */
-	public CollectorController() {
+	private CollectorController() {
 		// make sure we can use JAXB for reading/writing application data
 		try {
 			JAXBContext context = JAXBContext.newInstance(CollectorModel.class);
@@ -68,6 +99,7 @@ public class CollectorController extends AbstractController {
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"Video Collection Database", "vcd");
 		fileChooser.setFileFilter(filter);
+		fileChooser.setAcceptAllFileFilterUsed(false);
 
 		// build the web service URL
 		try {
@@ -76,6 +108,14 @@ public class CollectorController extends AbstractController {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
+
+		// get the video lookup service properties
+		Properties vlsProps = getVLSConfig();
+
+		// set up the video lookup service
+		String upcToken = vlsProps.getProperty(UPC_API_TOKEN);
+		String tomatoesToken = vlsProps.getProperty(TOMATO_API_TOKEN);
+		videoLookup = new VideoLookupService(upcToken, tomatoesToken);
 
 		// set the application model
 		setModel(new CollectorModel());
@@ -90,6 +130,13 @@ public class CollectorController extends AbstractController {
 		return (CollectorModel) super.getModel();
 	}
 
+	/**
+	 * @return a reference to the video lookup service
+	 */
+	public VideoLookupService getVideoLookupService() {
+		return videoLookup;
+	}
+
 	@Override
 	public CollectorView getView() {
 		return (CollectorView) super.getView();
@@ -100,6 +147,13 @@ public class CollectorController extends AbstractController {
 	 */
 	public void edit(Video video) {
 		new VideoController(video, getModel().getCollection());
+	}
+	
+	/**
+	 * Deletes the video from the collection
+	 */
+	public void delete(Video video) {
+		getModel().getCollection().removeVideo(video);
 	}
 
 	/**
@@ -199,7 +253,13 @@ public class CollectorController extends AbstractController {
 		switch (choice) {
 		case JFileChooser.APPROVE_OPTION:
 			// get file from chooser
-			getModel().setFile(fileChooser.getSelectedFile());
+			File selectedFile = fileChooser.getSelectedFile();
+			// make sure it complies with the vcd file filter
+			if (!fileChooser.accept(selectedFile)) {
+				// file doesn't have .vcd extension
+				selectedFile = new File(selectedFile.getPath() + ".vcd");
+			}
+			getModel().setFile(selectedFile);
 			save();
 			break;
 		case JFileChooser.CANCEL_OPTION:
@@ -252,6 +312,123 @@ public class CollectorController extends AbstractController {
 		return true;
 	}
 
+	private void createVLSCfgTemplate(File vlsCfg) {
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(new FileWriter(vlsCfg));
+			writer.println("# In order to use the video lookup services you will need to obtain keys for two");
+			writer.println("# web service APIs.  See http://searchupc.com/api/ for information on how to");
+			writer.println("# create your account to obtain a key for the following property:");
+			writer.println("upc_api_token=");
+			writer.println("# See http://developer.rottentomatoes.com/ for information on how to create");
+			writer.println("# your account to obtain a key for the following property:");
+			writer.println("tomato_api_token=");
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null,
+					"There was a problem creating the VLS configuration file ("
+							+ vlsCfg.getAbsolutePath() + ")",
+					"Error Creating Configuration", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+
+	/**
+	 * Load the Video Lookup Service config. If the configuration does not exist
+	 * the user will be prompted to create it.
+	 * 
+	 * @return a properties object loaded with the VLS configuration
+	 */
+	private Properties getVLSConfig() {
+		final String filename = "vls.cfg";
+		Properties vlsProps = new Properties();
+		File vlsPropsFile = new File(System.getProperty("user.home"), filename);
+		FileReader reader = null;
+		try {
+			reader = new FileReader(vlsPropsFile);
+		} catch (FileNotFoundException e) {
+			// no properties file exists
+			int option = JOptionPane
+					.showConfirmDialog(
+							null,
+							"Video lookup service configuration not found. Would you like to configure it now?",
+							"VLS Config Missing", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
+			switch (option) {
+			case JOptionPane.YES_OPTION:
+				String upcKey = JOptionPane
+						.showInputDialog("Enter your searchupc.com API key");
+				// returns null if the user pressed cancel
+				if (upcKey == null) {
+					JOptionPane
+							.showMessageDialog(null,
+									"User input cancelled, creating configuration template.");
+					createVLSCfgTemplate(vlsPropsFile);
+					break;
+				}
+				// returns null if the user pressed cancel
+				String rotTomKey = JOptionPane
+						.showInputDialog("Enter your Rotten Tomatoes API key");
+				if (rotTomKey == null) {
+					JOptionPane
+							.showMessageDialog(null,
+									"User input cancelled, creating configuration template.");
+					createVLSCfgTemplate(vlsPropsFile);
+					break;
+				}
+				// we have both keys, write the properties file
+				vlsProps.put(UPC_API_TOKEN, upcKey);
+				vlsProps.put(TOMATO_API_TOKEN, rotTomKey);
+				FileWriter writer = null;
+				try {
+					writer = new FileWriter(vlsPropsFile);
+					vlsProps.store(writer, "Video Lookup Service Configuration");
+				} catch (IOException ioe) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Unable to write VLS configuration. "
+									+ ioe.getMessage(),
+							"Error Saving Configuration",
+							JOptionPane.ERROR_MESSAGE);
+				} finally {
+					if (writer != null) {
+						try {
+							writer.close();
+						} catch (IOException e1) {
+							// closing
+						}
+					}
+				}
+				break;
+			case JOptionPane.NO_OPTION:
+				// create the file for later configuration
+				createVLSCfgTemplate(vlsPropsFile);
+			}
+		}
+		try {
+			if (reader == null) {
+				// the file should exist at this point since we created it above
+				reader = new FileReader(vlsPropsFile);
+			}
+			vlsProps.load(reader);
+		} catch (IOException ioe) {
+			JOptionPane.showMessageDialog(null,
+					"Unable to read VLS configuration. " + ioe.getMessage(),
+					"Error Reading Configuration", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// closing
+				}
+			}
+		}
+		return vlsProps;
+	}
+
 	private void startListener() {
 		// create the discovery listener
 		try {
@@ -267,7 +444,9 @@ public class CollectorController extends AbstractController {
 
 	private void startWebService() {
 		// create the web service endpoint
-		wsEndpoint = Endpoint.create(new MobileServicesImpl(getModel()));
+		MobileServicesImpl serviceImpl = new MobileServicesImpl(getModel());
+		serviceImpl.setVideoLookupService(videoLookup);
+		wsEndpoint = Endpoint.create(serviceImpl);
 		System.out.println("Publishing webservice at " + wsURI);
 		wsEndpoint.publish(wsURI);
 	}

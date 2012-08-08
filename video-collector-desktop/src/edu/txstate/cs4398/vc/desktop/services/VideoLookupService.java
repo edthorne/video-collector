@@ -1,16 +1,12 @@
 package edu.txstate.cs4398.vc.desktop.services;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.Properties;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,21 +15,20 @@ import edu.txstate.cs4398.vc.model.Rating;
 import edu.txstate.cs4398.vc.model.Video;
 
 /**
+ * A service for looking up video data from the web.
  * 
  * @author mnosler
- *
+ * @author Ed
  */
 public class VideoLookupService {
 	
-	private Properties prop = new Properties();
 	private String access_token;
 	private String tomato_token;
 	
-	public VideoLookupService() throws FileNotFoundException, IOException
+	public VideoLookupService(String upcToken, String tomatoesToken)
 	{
-		prop.load(new FileInputStream("config/token.properties"));
-		tomato_token = prop.getProperty("tomato_api_token");
-		access_token = prop.getProperty("upc_api_token");
+		tomato_token = tomatoesToken;
+		access_token = upcToken;
 	}
 
 	/**

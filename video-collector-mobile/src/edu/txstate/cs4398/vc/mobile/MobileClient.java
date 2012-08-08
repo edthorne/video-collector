@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -153,26 +154,38 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     
     private void ipDialog(){
     	custom = getLayoutInflater().inflate(R.layout.dialog_layout, null);
-    	ipAddress = (EditText) custom.findViewById(R.id.ip_text);
     	
+    	ipAddress = (EditText) custom.findViewById(R.id.ip_text);
     	SharedPreferences settings = getSharedPreferences("PrefsFile", 0);
-	    Spinner sp;
 	    DialogList dl = DialogList.FIRST;
-    	sp = (Spinner) custom.findViewById(R.id.ip_list);
+    	Spinner sp = (Spinner) custom.findViewById(R.id.ip_list);
     	ArrayList<String> sArr = new ArrayList<String>();
     	String s = settings.getString(dl.toString(), null);
-    	int i = 0;
     	while(s != null && dl != DialogList.FOURTH){
     		sArr.add(s);
     		dl = nextOnList(dl);
     		s = settings.getString(dl.toString(), null);
-    		i++;
     	}
-    	if(i == 0)
-    		sArr.add("");
-    	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, sArr);
-    	sp.setAdapter(adapter);
+    	current = dl;
+    		
+    	ArrayAdapter<String> adp = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, sArr);
     	
+    	adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    	sp.setAdapter(adp);
+    	sp.setPrompt("Select an IP:");
+		sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+
+			public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+				ipAddress.setText(parent.getSelectedItem().toString());
+			}
+
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(status)
 		       .setCancelable(false)

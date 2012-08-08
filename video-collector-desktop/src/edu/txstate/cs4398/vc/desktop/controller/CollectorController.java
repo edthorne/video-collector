@@ -148,6 +148,13 @@ public class CollectorController extends AbstractController {
 	public void edit(Video video) {
 		new VideoController(video, getModel().getCollection());
 	}
+	
+	/**
+	 * Deletes the video from the collection
+	 */
+	public void delete(Video video) {
+		getModel().getCollection().removeVideo(video);
+	}
 
 	/**
 	 * Creates a new collection. If the current collection is dirty the user is

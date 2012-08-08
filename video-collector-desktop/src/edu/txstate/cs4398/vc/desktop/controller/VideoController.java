@@ -70,7 +70,7 @@ public class VideoController extends AbstractController {
 			video.setNotes(view.getNotes());
 			video.setRated(view.getRated());
 			video.setRuntime(view.getRuntime());
-			video.setTitle(view.getVideoTitle());
+			video.setTitle(view.getTitle());
 			video.setUpc(view.getUpc());
 			video.setYear(view.getYear());
 

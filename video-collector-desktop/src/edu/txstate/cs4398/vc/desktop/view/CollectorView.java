@@ -17,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
@@ -44,6 +45,7 @@ public class CollectorView extends JFrameView {
 	private Action servicesAction;
 	private Action exitAction;
 	private Action ipAddrAction;
+	private Action deleteAction;
 
 	private JTable videos;
 
@@ -75,6 +77,7 @@ public class CollectorView extends JFrameView {
 				KeyEvent.VK_X);
 		ipAddrAction = new IPAddrAction("IP Address",
 				"Shows the IP address of this computer", KeyEvent.VK_I);
+		deleteAction = new DeleteVideoAction("Delete", "Deletes the selected video");
 
 		// create the menu bar
 		JMenuBar menubar = new JMenuBar();
@@ -99,6 +102,10 @@ public class CollectorView extends JFrameView {
 		item = new JMenuItem(exitAction);
 		menu.add(item);
 		menubar.add(menu);
+		menu = new JMenu("Edit");
+		item = new JMenuItem(deleteAction);
+		menu.add(item);
+		menubar.add(menu);
 		menu = new JMenu("Help");
 		item = new JMenuItem(ipAddrAction);
 		menu.add(item);
@@ -119,6 +126,9 @@ public class CollectorView extends JFrameView {
 				}
 			}
 		});
+		videos.getInputMap().put(KeyStroke.getKeyStroke("DELETE"), "deleteVideo");
+		videos.getActionMap().put("deleteVideo", deleteAction);
+		
 		JScrollPane videoScroll = new JScrollPane(videos);
 		getContentPane().add(videoScroll, BorderLayout.CENTER);
 
@@ -306,6 +316,31 @@ public class CollectorView extends JFrameView {
 					"This computer's IP address is "
 							+ getModel().getIPAddress(), "IP Address",
 					JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	
+	class DeleteVideoAction extends AbstractAction {
+		public DeleteVideoAction(String text, String description) {
+			super(text);
+			putValue(SHORT_DESCRIPTION, description);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			int selectedRow = videos.getSelectedRow();
+			if(selectedRow > -1) {
+				int answer = JOptionPane.showConfirmDialog(CollectorView.this, 
+						"Are you sure you want to delete?", "Confirm Delete",
+						JOptionPane.WARNING_MESSAGE);
+				if(answer == JOptionPane.YES_OPTION) {
+					VideoTableModel tableModel = (VideoTableModel) videos.getModel();
+					getController().delete(tableModel.getVideo(selectedRow));
+				}
+			} else {
+				JOptionPane.showMessageDialog(CollectorView.this, 
+						"Select a video to delete.", "No Video Selected", 
+						JOptionPane.WARNING_MESSAGE);
+			}
 		}
 	}
 

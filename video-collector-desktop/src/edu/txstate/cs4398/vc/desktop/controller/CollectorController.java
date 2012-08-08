@@ -68,6 +68,7 @@ public class CollectorController extends AbstractController {
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"Video Collection Database", "vcd");
 		fileChooser.setFileFilter(filter);
+		fileChooser.setAcceptAllFileFilterUsed(false);
 
 		// build the web service URL
 		try {
@@ -100,6 +101,13 @@ public class CollectorController extends AbstractController {
 	 */
 	public void edit(Video video) {
 		new VideoController(video, getModel().getCollection());
+	}
+	
+	/**
+	 * Deletes the video from the collection
+	 */
+	public void delete(Video video) {
+		getModel().getCollection().removeVideo(video);
 	}
 
 	/**
@@ -199,7 +207,13 @@ public class CollectorController extends AbstractController {
 		switch (choice) {
 		case JFileChooser.APPROVE_OPTION:
 			// get file from chooser
-			getModel().setFile(fileChooser.getSelectedFile());
+			File selectedFile = fileChooser.getSelectedFile();
+			// make sure it complies with the vcd file filter
+			if (!fileChooser.accept(selectedFile)) {
+				// file doesn't have .vcd extension
+				selectedFile = new File(selectedFile.getPath() + ".vcd");
+			}
+			getModel().setFile(selectedFile);
 			save();
 			break;
 		case JFileChooser.CANCEL_OPTION:

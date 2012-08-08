@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import org.kobjects.base64.Base64;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
@@ -69,7 +70,7 @@ public class GetCollectionTask extends
 	}
 
 	@Override
-	protected void onPostExecute(List<VideoMobile> list) { // If we reach this method then it'sguaranteed wehave a successful result
+	protected void onPostExecute(List<VideoMobile> list) { // If we reach this method then it's guaranteed we have a successful result
 		TaskEvent<List<VideoMobile>> task = new TaskEvent<List<VideoMobile>>(
 				"GET_COLLECTION");
 		if (list != null && list.size() > 0)
@@ -117,8 +118,13 @@ public class GetCollectionTask extends
 				.getPropertySafelyAsString("runtime"));
 		video.setRuntime(runtime);
 		Log.d("adding video", video.getTitle());
-		video.setImageURL(response.getPropertySafelyAsString("imageURL", ""));
+		video.setImageURL(response.getPropertyAsString("imageURL"));
+
+		String notes = response.getPropertySafelyAsString("notes");
+		video.setNotes(!notes.contains("anyType{}") ? notes : "");
+		
 		video.setCategory(response.getPropertySafelyAsString("category"));
+		video.setMyRating(Byte.parseByte(response.getPropertySafelyAsString("myRating","0")));
 		video.setImageBytes(Base64.decode(response.getPropertySafelyAsString("image", "")));
 
 		return video;

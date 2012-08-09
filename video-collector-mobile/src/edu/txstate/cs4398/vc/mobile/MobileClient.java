@@ -204,7 +204,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 				this.startActivity(next);
 			}
 			else
-				Toast.makeText(this.getApplicationContext(), "No entries, please Sync with your desktop." , Toast.LENGTH_SHORT).show();
+				Toast.makeText(this.getApplicationContext(), "No entries, please Sync with desktop." , Toast.LENGTH_SHORT).show();
 		}
 		else if(v.equals(add)){
 			appState.setWebServiceAddress(serverAddress);
@@ -256,7 +256,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     	    		}
     	    		dl = nextOnList(dl);
     	    	}
-    			if(shouldSave){
+    			if(shouldSave && current != null){
 	    			SharedPreferences.Editor editor = settings.edit();
 		        	editor.putString(current.toString(), serverAddress);
 		        	editor.commit();
@@ -275,10 +275,6 @@ public class MobileClient extends Activity implements View.OnClickListener, List
     			appState.setVideoList(list);
     			CollectionReadWriter rw = new CollectionReadWriter();
     			rw.writeVideosToXml(this);
-    			List<VideoMobile> vm = rw.getVideosFromXml(this);
-    			for(VideoMobile vid : vm) {
-    				Log.i("Interfaces", vid.getTitle());
-    			}
     			Toast.makeText(this.getApplicationContext(), "Sync successful!" , Toast.LENGTH_SHORT).show();
     		}
     			

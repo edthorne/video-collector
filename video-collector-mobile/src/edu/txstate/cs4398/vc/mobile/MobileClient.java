@@ -22,7 +22,12 @@ import android.widget.Toast;
 import edu.txstate.cs4398.vc.mobile.controller.CollectionReadWriter;
 import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
 
-
+/**
+ * Activity called when the user opens the application.
+ * All other activities and tasks spawns from this activity.
+ * @author Rudolph Newball
+ *
+ */
 public class MobileClient extends Activity implements View.OnClickListener, Listener{
 
 	private Button browse;
@@ -72,6 +77,107 @@ public class MobileClient extends Activity implements View.OnClickListener, List
         
         searchForHost();
         
+    }
+    
+    /**
+     * Handles when the user clicks on a button displayed on this activity.
+     * @param v the View (or widget) which was selected, in this case a button
+     */
+    public void onClick(View v) {
+		if(v.equals(browse)){
+			List<VideoMobile> vm = appState.getVideoList();
+			Log.i("Interfaces", "In browse onClick");
+			if(vm!=null && !vm.isEmpty()){
+				Intent next = new Intent(this, BrowseActivity.class);
+				this.startActivity(next);
+			}
+			else
+				Toast.makeText(this.getApplicationContext(), "No entries, please Sync to desktop." , Toast.LENGTH_SHORT).show();
+		}
+		else if(v.equals(add)){
+			appState.setWebServiceAddress(serverAddress);
+			Intent next = new Intent(this, ScanActivity.class);
+			this.startActivity(next);
+			
+    	}
+		else if(v.equals(sync)) {
+			GetCollectionTask task = new GetCollectionTask(this);
+			task.execute(serverAddress);
+		}
+		else if(v.equals(retry)){
+			searchForHost();
+		}
+	}  
+
+    /**
+     * Handles events fired by other threads.
+     * @param task the task that was just completed by another thread
+     */
+    public void onEvent(TaskEvent task) {
+    	
+    	TaskEvent.Status taskStatus = task.getStatus();
+    	String action = task.getTask();
+    	
+    	if("SEARCH".equals(action)){
+			if(taskStatus == TaskEvent.Status.SUCCESS){
+				serverAddress = (String)task.getResult();
+				connectToHost();
+				progressText.setText("Found host: "+ serverAddress +"\nAttempting connection...");
+			}
+			else{
+				status = "Please enter your computer IP address: ";
+				ipDialog();
+			}
+			
+    	}
+    	else if("CONNECT".equals(action)){
+    		// On successful connection, save that address.
+    		if(taskStatus == TaskEvent.Status.SUCCESS){
+    			progressText.setText("Connection Succesful!");
+    			progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
+    			add.setEnabled(true);		// enable add button
+    			sync.setEnabled(true);
+    			SharedPreferences settings = getSharedPreferences("PrefsFile", 0);
+	        	boolean shouldSave = true;
+    			DialogList dl = DialogList.FIRST;
+    	    	while(dl != DialogList.FOURTH){		
+    	    		String s = settings.getString(dl.toString(), null);
+    	    		if(serverAddress.equals(s)){		// break if we found the address is already in our list
+    	    			shouldSave = false;
+    	    			break;
+    	    		}
+    	    		dl = nextOnList(dl);
+    	    	}
+    			if(shouldSave && current != null){
+	    			SharedPreferences.Editor editor = settings.edit();
+		        	editor.putString(current.toString(), serverAddress);
+		        	editor.commit();
+		        	current = nextOnList(current);
+    			}
+    		}
+    		else{
+    			 progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
+	    		 progressText.setText("Connection Failed!");
+	    		 retry.setVisibility(View.VISIBLE);
+    		}
+    	}
+    	else if("GET_COLLECTION".equals(action)) {
+    		if(taskStatus == TaskEvent.Status.SUCCESS){
+    			List<VideoMobile> list = (List<VideoMobile>) task.getResult();
+    			appState.setVideoList(list);
+    			CollectionReadWriter rw = new CollectionReadWriter();
+    			rw.writeVideosToXml(this);
+    			Toast.makeText(this.getApplicationContext(), "Sync successful!" , Toast.LENGTH_SHORT).show();
+    		}
+    			
+    	}
+		
+    }
+        
+    public void onStop() {
+    	super.onStop();
+		CollectionReadWriter rw = new CollectionReadWriter();
+		rw.writeVideosToXml(this);
     }
     
     private DialogList nextOnList(DialogList temp){
@@ -194,98 +300,5 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-    
-    public void onClick(View v) {
-		if(v.equals(browse)){
-			List<VideoMobile> vm = appState.getVideoList();
-			Log.i("Interfaces", "In browse onClick");
-			if(vm!=null && !vm.isEmpty()){
-				Intent next = new Intent(this, BrowseActivity.class);
-				this.startActivity(next);
-			}
-			else
-				Toast.makeText(this.getApplicationContext(), "No entries, please Sync to desktop." , Toast.LENGTH_SHORT).show();
-		}
-		else if(v.equals(add)){
-			appState.setWebServiceAddress(serverAddress);
-			Intent next = new Intent(this, ScanActivity.class);
-			this.startActivity(next);
-			
-    	}
-		else if(v.equals(sync)) {
-			GetCollectionTask task = new GetCollectionTask(this);
-			task.execute(serverAddress);
-		}
-		else if(v.equals(retry)){
-			searchForHost();
-		}
-	}  
-
-    public void onEvent(TaskEvent task) {
-    	
-    	TaskEvent.Status taskStatus = task.getStatus();
-    	String action = task.getTask();
-    	
-    	if("SEARCH".equals(action)){
-			if(taskStatus == TaskEvent.Status.SUCCESS){
-				serverAddress = (String)task.getResult();
-				connectToHost();
-				progressText.setText("Found host: "+ serverAddress +"\nAttempting connection...");
-			}
-			else{
-				status = "Please enter your computer IP address: ";
-				ipDialog();
-			}
-			
-    	}
-    	else if("CONNECT".equals(action)){
-    		// On successful connection, save that address.
-    		if(taskStatus == TaskEvent.Status.SUCCESS){
-    			progressText.setText("Connection Succesful!");
-    			progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
-    			add.setEnabled(true);		// enable add button
-    			sync.setEnabled(true);
-    			SharedPreferences settings = getSharedPreferences("PrefsFile", 0);
-	        	boolean shouldSave = true;
-    			DialogList dl = DialogList.FIRST;
-    	    	while(dl != DialogList.FOURTH){		
-    	    		String s = settings.getString(dl.toString(), null);
-    	    		if(serverAddress.equals(s)){		// break if we found the address is already in our list
-    	    			shouldSave = false;
-    	    			break;
-    	    		}
-    	    		dl = nextOnList(dl);
-    	    	}
-    			if(shouldSave && current != null){
-	    			SharedPreferences.Editor editor = settings.edit();
-		        	editor.putString(current.toString(), serverAddress);
-		        	editor.commit();
-		        	current = nextOnList(current);
-    			}
-    		}
-    		else{
-    			 progressCircle.setVisibility(View.INVISIBLE); // hide progress circle
-	    		 progressText.setText("Connection Failed!");
-	    		 retry.setVisibility(View.VISIBLE);
-    		}
-    	}
-    	else if("GET_COLLECTION".equals(action)) {
-    		if(taskStatus == TaskEvent.Status.SUCCESS){
-    			List<VideoMobile> list = (List<VideoMobile>) task.getResult();
-    			appState.setVideoList(list);
-    			CollectionReadWriter rw = new CollectionReadWriter();
-    			rw.writeVideosToXml(this);
-    			Toast.makeText(this.getApplicationContext(), "Sync successful!" , Toast.LENGTH_SHORT).show();
-    		}
-    			
-    	}
-		
-    }
-        
-    public void onStop() {
-    	super.onStop();
-		CollectionReadWriter rw = new CollectionReadWriter();
-		rw.writeVideosToXml(this);
-    }
 
 }

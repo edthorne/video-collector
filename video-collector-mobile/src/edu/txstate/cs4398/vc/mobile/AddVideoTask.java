@@ -5,7 +5,11 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-
+/**
+ * Adds video to the collection.
+ * @author Rudolph Newball
+ *
+ */
 public class AddVideoTask extends BaseTask<String, Void, SoapObject> {
 
 	private static final String ADD_VIDEO_METHOD = "addVideo";
@@ -13,15 +17,15 @@ public class AddVideoTask extends BaseTask<String, Void, SoapObject> {
 	private static String URL;
 	
 	public AddVideoTask(Listener listener){
-		event = new EventHandler();
-		event.addEventListener(listener);
+		super(listener);
 	}
 	
+	/**
+	 * @param data String array that holds video information
+	 */
 	@Override
 	protected SoapObject doInBackground(String... data) {
-		URL = "http://"+data[0]+":8796/MobileServices?WSDL";
-		
-		        
+		URL = "http://"+data[0]+":8796/MobileServices?WSDL";       
         SoapObject request = new SoapObject(NAMESPACE, ADD_VIDEO_METHOD);
         
         request.addPropertyIfValue("upc", data[1]);
@@ -49,7 +53,9 @@ public class AddVideoTask extends BaseTask<String, Void, SoapObject> {
      
 		return addResult;
 	}
-	
+	/**
+	 * Determine if task succeeded or failed. Then notifies all listeners
+	 */
 	@Override
 	protected void onPostExecute(SoapObject soap){		// If we reach this method then it's guaranteed we have a successful result
 		TaskEvent<SoapObject> task = new TaskEvent<SoapObject>("ADD_VIDEO");

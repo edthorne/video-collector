@@ -26,8 +26,7 @@ public class GetVideoTask extends BaseTask<String, Void, VideoMobile>  {
 	private static final String GET_SOAP_ACTION_TITLE =  "\"http://services.desktop.vc.cs4398.txstate.edu/lookupVideoByTitle\"";
 	
 	public GetVideoTask(Listener listener){
-		event = new EventHandler();
-		event.addEventListener(listener);
+		super(listener);
 	}
 	
 	@Override
@@ -69,7 +68,9 @@ public class GetVideoTask extends BaseTask<String, Void, VideoMobile>  {
         	return null;
         }
 	}
-	
+	/**
+	 * Determine if task succeeded or failed. Then notifies all listeners
+	 */
 	@Override
 	protected void onPostExecute(VideoMobile video){		// If we reach this method then it's guaranteed we have a successful result
 		TaskEvent<VideoMobile> task = new TaskEvent<VideoMobile>("GET_VIDEO");

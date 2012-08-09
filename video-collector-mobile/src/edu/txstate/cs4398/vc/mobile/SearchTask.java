@@ -17,14 +17,9 @@ import java.net.MulticastSocket;
  */
 
 public class SearchTask extends BaseTask<TextView, TextView, InetAddress> {
-	/**
-	 * SearchTask constructor takes a listener and adds it to the EventHandler pool
-	 * @param listener listener to be notified of any changes made
-	 */
+	
 	public SearchTask(Listener listener){
-		event = new EventHandler();
-        event.addEventListener(listener);
-        
+		super(listener);
 	}
 
 	@Override

@@ -28,8 +28,8 @@ public class GetCollectionTask extends
 	private static final String GET_SOAP_ACTION = "\"http://services.desktop.vc.cs4398.txstate.edu/getCollection\"";
 
 	public GetCollectionTask(Listener listener) {
-		event = new EventHandler();
-		event.addEventListener(listener);
+		super(listener);
+		
 	}
 
 	@Override
@@ -66,7 +66,10 @@ public class GetCollectionTask extends
 			return null;
 		}
 	}
-
+	
+	/**
+	 * Determine if task succeeded or failed. Then notifies all listeners
+	 */
 	@Override
 	protected void onPostExecute(List<VideoMobile> list) { // If we reach this method then it's guaranteed we have a successful result
 		TaskEvent<List<VideoMobile>> task = new TaskEvent<List<VideoMobile>>(

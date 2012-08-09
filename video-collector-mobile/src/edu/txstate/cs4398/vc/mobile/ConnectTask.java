@@ -18,8 +18,8 @@ public class ConnectTask extends BaseTask<String, Void, SoapObject> {
 	
 
 	protected ConnectTask(Listener listener){
-		event = new EventHandler();
-		event.addEventListener(listener);
+		super(listener);
+		
 	}
 	@Override
 	protected SoapObject doInBackground(String... address) {
@@ -40,7 +40,9 @@ public class ConnectTask extends BaseTask<String, Void, SoapObject> {
 		}
 		return addResult;
 	}
-	
+	/**
+	 * Determine if task succeeded or failed. Then notifies all listeners
+	 */
 	@Override
 	protected void onPostExecute(SoapObject result){
 		TaskEvent<String> task = new TaskEvent<String>("CONNECT");

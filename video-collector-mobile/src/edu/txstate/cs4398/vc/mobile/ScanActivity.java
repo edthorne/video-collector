@@ -95,7 +95,9 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 		});
 
 	}
-
+	/**
+	 * Handles what happens when a certain button is clicked.
+	 */
 	public void onClick(View v) {
 		if (v.equals(clearButton)) {
 			clearAllFields();
@@ -143,7 +145,6 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 				ad.show();
 			} else {
 				GetVideoTask getTask = new GetVideoTask(this);
-
 				progressCircle.setVisibility(View.VISIBLE);
 				getTask.execute(ipAddress, TITLE, videoTitle.getText()
 						.toString());
@@ -171,7 +172,11 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 		}
 		}
 	}
-
+	
+	/**
+     * Handles events fired by other threads.
+     * @param task the task that was just completed by another thread
+     */
 	public void onEvent(TaskEvent task) {
 
 		TaskEvent.Status taskStatus = task.getStatus();

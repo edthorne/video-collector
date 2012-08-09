@@ -204,7 +204,7 @@ public class MobileClient extends Activity implements View.OnClickListener, List
 				this.startActivity(next);
 			}
 			else
-				Toast.makeText(this.getApplicationContext(), "No entries, please Sync or Add a video." , Toast.LENGTH_SHORT).show();
+				Toast.makeText(this.getApplicationContext(), "No entries, please Sync with your desktop." , Toast.LENGTH_SHORT).show();
 		}
 		else if(v.equals(add)){
 			appState.setWebServiceAddress(serverAddress);

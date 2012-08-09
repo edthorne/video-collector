@@ -168,8 +168,8 @@ public class BrowseActivity extends Activity {
 	        		currentVidLetter = strItem.substring(0,1);
 	        	}
 	        	
-	        	// Map the first tittle of a given letter to its corresponding letter on the side index
-	        	// if there is no tittle for a given letter, then that letter will map to the previous mapped title
+	        	// Map the first title of a given letter to its corresponding letter on the side index
+	        	// if there is no title for a given letter, then that letter will map to the previous mapped title
 	            if (!tmpLetter.equals(currentVidLetter))
 	            {  
 	            	// adding new letter

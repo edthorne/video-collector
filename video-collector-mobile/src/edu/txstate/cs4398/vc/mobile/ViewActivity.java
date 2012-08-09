@@ -9,8 +9,14 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
-
+/**
+ * Displays the Video information entered when adding a video or the info
+ * gathered from the desktop client.
+ * @author Rudolph Newball
+ *
+ */
 public class ViewActivity extends Activity {
 
 	private String title;
@@ -20,6 +26,7 @@ public class ViewActivity extends Activity {
 	private int runtime;
 	private String rating;
 	private String notes;
+	private byte myRating;
 	private byte[] imageBytes;
 	private TextView titleField;
 	private TextView catField;
@@ -29,6 +36,7 @@ public class ViewActivity extends Activity {
 	private TextView ratingField;
 	private TextView notesField;
 	private ImageView image;
+	private RatingBar ratingBar;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +53,8 @@ public class ViewActivity extends Activity {
 		rating = getIntent().getExtras().getString("rating");
 		notes = getIntent().getExtras().getString("notes");
 		imageBytes = getIntent().getExtras().getByteArray("image");
-
+		myRating = getIntent().getExtras().getByte("myRating");
+		
 		titleField = (TextView) findViewById(R.id.videoTitle);
 		catField = (TextView) findViewById(R.id.videoCat);
 		dirField = (TextView) findViewById(R.id.videoDirector);
@@ -54,7 +63,8 @@ public class ViewActivity extends Activity {
 		ratingField = (TextView) findViewById(R.id.videoRated);
 		image = (ImageView) findViewById(R.id.thumb_img);
 		notesField = (TextView)findViewById(R.id.notes_text);
-		Log.i("Interfaces", "my notes: " + notes);
+		ratingBar = (RatingBar)findViewById(R.id.rating_bar);
+		
 		titleField.setText(title);
 		catField.setText(category);
 		dirField.setText(director);
@@ -67,6 +77,8 @@ public class ViewActivity extends Activity {
 			Bitmap bmp = BitmapFactory.decodeStream(is);
 			image.setImageBitmap(Bitmap.createBitmap(bmp));
 		}
+		ratingBar.setRating(myRating);
+		ratingBar.setEnabled(false);
 
 	}
 }

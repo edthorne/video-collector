@@ -17,17 +17,6 @@
             android:layout_height="454dp" >
 
             <EditText
-                android:id="@+id/upcText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/videoTitle"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="5dp"
-                android:layout_below="@+id/btnScan"                
-                android:ems="10"
-                android:hint="@string/UPC" />
-
-            <EditText
                 android:id="@+id/videoTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -144,7 +133,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@+id/btnAdd"
-                
                 android:layout_alignParentLeft="true"
                 android:text="Clear All" />
 
@@ -205,6 +193,17 @@
                 android:layout_alignParentTop="true"
                 android:text="@string/scan_barcode" />
 
+            <EditText
+                android:id="@+id/upcText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/btnScan"
+                android:ems="10"
+                android:hint="@string/UPC" >
+
+                <requestFocus />
+            </EditText>
         </RelativeLayout>
 
     </ScrollView>

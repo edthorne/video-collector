@@ -44,7 +44,7 @@ public class CollectionReadWriter {
 			return vmlist.getVideos();
 		
 		} catch(Exception e) {
-			Log.i("ERROR READING XML", e.getMessage());
+			Log.i("ERROR READING XML", "" + e.getMessage());
 			return null;
 		}
 		
@@ -71,7 +71,7 @@ public class CollectionReadWriter {
 			
 			fos.close();
 		} catch(Exception e) {
-			Log.i("ERROR WRITING XML", e.getMessage());
+			Log.i("ERROR WRITING XML", "" + e.getMessage());
 		}
 	}
 	

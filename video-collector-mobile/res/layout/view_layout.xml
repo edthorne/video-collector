@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <ImageView
         android:id="@+id/thumb_img"
         android:layout_width="185dp"
@@ -17,26 +17,32 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
-
+
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="306dp"
-            android:layout_height="326dp"
-            android:layout_gravity="bottom|center" >
-
+            android:layout_height="326dp" >
+
+            <RatingBar
+                android:id="@+id/rating_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" />
+
             <TextView
                 android:id="@+id/videoTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_below="@+id/rating_bar"
                 android:layout_toRightOf="@+id/category"
                 android:background="@android:drawable/edit_text"
                 android:editable="false"
                 android:ems="10"
                 android:enabled="false"
                 android:text="TextView" />
-
+
             <TextView
                 android:id="@+id/videoDirector"
                 android:layout_width="wrap_content"
@@ -49,7 +55,7 @@
                 android:ems="10"
                 android:enabled="false"
                 android:text="TextView" />
-
+
             <TextView
                 android:id="@+id/Title"
                 android:layout_width="wrap_content"
@@ -59,7 +65,7 @@
                 android:layout_alignParentLeft="true"
                 android:text="@string/title"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <TextView
                 android:id="@+id/Director"
                 android:layout_width="wrap_content"
@@ -69,7 +75,7 @@
                 android:layout_alignParentLeft="true"
                 android:text="@string/director"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <TextView
                 android:id="@+id/videoRated"
                 android:layout_width="wrap_content"
@@ -81,7 +87,7 @@
                 android:editable="false"
                 android:enabled="false"
                 android:text="TextView" />
-
+
             <TextView
                 android:id="@+id/Rated"
                 android:layout_width="wrap_content"
@@ -91,7 +97,7 @@
                 android:layout_alignParentLeft="true"
                 android:text="@string/rated"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <TextView
                 android:id="@+id/videoRuntime"
                 android:layout_width="wrap_content"
@@ -104,7 +110,7 @@
                 android:ems="10"
                 android:enabled="false"
                 android:text="TextView" />
-
+
             <TextView
                 android:id="@+id/Runtime"
                 android:layout_width="wrap_content"
@@ -114,7 +120,7 @@
                 android:layout_alignParentLeft="true"
                 android:text="@string/runtime"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <TextView
                 android:id="@+id/videoYear"
                 android:layout_width="wrap_content"
@@ -127,7 +133,7 @@
                 android:ems="10"
                 android:enabled="false"
                 android:text="TextView" />
-
+
             <TextView
                 android:id="@+id/Year"
                 android:layout_width="wrap_content"
@@ -137,7 +143,7 @@
                 android:layout_alignParentLeft="true"
                 android:text="@string/year"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <TextView
                 android:id="@+id/category"
                 android:layout_width="wrap_content"
@@ -148,7 +154,7 @@
                 android:layout_alignParentTop="false"
                 android:text="Category"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <TextView
                 android:id="@+id/videoCat"
                 android:layout_width="wrap_content"
@@ -163,7 +169,7 @@
                 android:ems="10"
                 android:enabled="false"
                 android:text="TextView" />
-
+
             <TextView
                 android:id="@+id/notes"
                 android:layout_width="wrap_content"
@@ -172,14 +178,16 @@
                 android:layout_below="@+id/videoCat"
                 android:text="Notes:"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <TextView
                 android:id="@+id/notes_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_below="@+id/notes"
                 android:layout_toRightOf="@+id/notes"
+                android:background="@android:drawable/edit_text"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </RelativeLayout>

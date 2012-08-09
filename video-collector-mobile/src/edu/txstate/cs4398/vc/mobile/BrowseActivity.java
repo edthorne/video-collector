@@ -40,6 +40,9 @@ public class BrowseActivity extends Activity {
 
     // list with items for side index
     private ArrayList<Object[]> indexList = null;
+    final static String[] ABC =	{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+    							 "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+    							 "W", "X", "Y", "Z"};
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -51,7 +54,6 @@ public class BrowseActivity extends Activity {
         Collections.sort(vml, new TitleComparator());
         titles = new ArrayList<String>();
         for(VideoMobile vid: vml){
-        	Log.i("Interfaces", "Img url: " + vid.getImageURL());
         	titles.add(vid.getTitle());
         }
         Collections.sort(titles);
@@ -76,7 +78,7 @@ public class BrowseActivity extends Activity {
     private class ItemListener implements OnItemClickListener{
 
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			Log.i("Interfaces", "Touched: " + vml.get(position).getTitle());
+			//Log.i("Interfaces", "Touched: " + vml.get(position).getTitle());
 			VideoMobile vd = vml.get(position);
 			
 			String title = vd.getTitle();
@@ -84,20 +86,21 @@ public class BrowseActivity extends Activity {
 			String director = vd.getDirector();
 			int year = vd.getYear();
 			int runtime = vd.getRuntime();
-			String myRating = vd.getRated();
+			String rated = vd.getRated();
 			String notes = vd.getNotes();
-			Log.i("Interfaces", "Notes in browse act: " + notes);
 			byte[] image = vd.getImageBytes();
-
+			byte myRating = vd.getMyRating();
+			Log.i("Interfaces", "my rating: " + myRating);
 			Intent next = new Intent(view.getContext(), ViewActivity.class);
 			next.putExtra("title", title);
 		    next.putExtra("category", category);
 		    next.putExtra("director", director);
 		    next.putExtra("year", year);
 		    next.putExtra("runtime", runtime);
-		    next.putExtra("rating", myRating);
+		    next.putExtra("rating", rated);
 		    next.putExtra("notes", notes);  
 		    next.putExtra("image", image);
+		    next.putExtra("myRating", myRating);
 			startActivity(next);   
 		}
     }
@@ -107,7 +110,6 @@ public class BrowseActivity extends Activity {
     {
         if (mGestureDetector.onTouchEvent(event))
         {
-        	Log.i("Interfaces", "Touched: " + event.toString());
             return true;
         } 
         else
@@ -121,40 +123,67 @@ public class BrowseActivity extends Activity {
         ArrayList<Object[]> tmpIndexList = new ArrayList<Object[]>();
         Object[] tmpIndexItem = null;
 
-        int tmpPos = 0;
-        String tmpLetter = "";
-        String currentLetter = null;
+        int tmpPos = 0, latestLetterIdx = 0;
+        String tmpLetter = " ";
+        String currentVidLetter = null;
         String strItem = null;
 
-        for (int j = 0; j < strArr.length; j++)
-        {
-            strItem = strArr[j];
-            currentLetter = strItem.substring(0, 1);
-
-            // every time new letters comes
-            // save it to index list
-            if (!currentLetter.equals(tmpLetter))
-            {
-                tmpIndexItem = new Object[3];
-                tmpIndexItem[0] = tmpLetter;
-                tmpIndexItem[1] = tmpPos - 1;
-                tmpIndexItem[2] = j - 1;
-
-                tmpLetter = currentLetter;
-                tmpPos = j + 1;
-
-                tmpIndexList.add(tmpIndexItem);
-            }
+        if(strArr.length > 0){
+	        for (int i = 0; i < ABC.length; i++)
+	        {
+	        	if(i < strArr.length){
+	        		strItem = strArr[i];
+	        		currentVidLetter = strItem.substring(0,1);
+	        	}
+	        	// Map the first video of a given letter to its corresponding letter on the side index
+	        	// if there is no video for a given letter, then that letter well map to the previous mapped video
+	            if (!tmpLetter.equals(currentVidLetter))
+	            {  
+	            	// adding new letter
+	            	tmpIndexItem = new Object[3];
+	                tmpIndexItem[0] = tmpLetter;
+	                tmpIndexItem[1] = tmpPos - 1;
+	                tmpIndexItem[2] = i - 1;
+	                tmpLetter = currentVidLetter;
+	                
+	             	
+	                tmpIndexList.add(tmpIndexItem);
+	                
+	                int j = latestLetterIdx;
+	             	while(!(currentVidLetter.equals(ABC[j]))){
+	             		tmpIndexItem = new Object[3];
+	                    tmpIndexItem[0] = ABC[j];
+	                    tmpIndexItem[1] = tmpPos - 1;
+	                    tmpIndexItem[2] = i - 1;
+	                    tmpIndexList.add(tmpIndexItem);
+	                    j++;
+	                    
+	             	}		
+	             	latestLetterIdx = j+1;
+	             	tmpPos = i + 1;
+	             	
+	            }
+	            if(ABC[i].equals("Z") && tmpLetter.equals(currentVidLetter)){
+	            	int j = latestLetterIdx -1;
+	            	while(!("Z".equals(ABC[j]))){
+	             		tmpIndexItem = new Object[3];
+	                    tmpIndexItem[0] = ABC[j];
+	                    tmpIndexItem[1] = tmpPos - 2;
+	                    tmpIndexItem[2] = latestLetterIdx - 1;
+	                    tmpIndexList.add(tmpIndexItem);
+	                    j++;
+	             	}
+	            }
+	            
+	        }
         }
 
-        // save also last letter
         tmpIndexItem = new Object[3];
-        tmpIndexItem[0] = tmpLetter;
+        tmpIndexItem[0] = ABC[ABC.length - 1];
         tmpIndexItem[1] = tmpPos - 1;
-        tmpIndexItem[2] = strArr.length - 1;
+        tmpIndexItem[2] = ABC.length - 1;
         tmpIndexList.add(tmpIndexItem);
 
-        // and remove first temporary empty entry
         if (tmpIndexList != null && tmpIndexList.size() > 0)
         {
             tmpIndexList.remove(0);
@@ -168,51 +197,42 @@ public class BrowseActivity extends Activity {
     {
         super.onWindowFocusChanged(hasFocus);
 
-        
-        //final ListView listView = (ListView) findViewById(R.id.list_view);
-        LinearLayout sideIndex = (LinearLayout) findViewById(R.id.side_index);
+        final LinearLayout sideIndex = (LinearLayout) findViewById(R.id.side_index);
         sideIndexHeight = sideIndex.getHeight();
         sideIndex.removeAllViews();
 
-        // TextView for every visible item
-        TextView tmpTV = null;
+        TextView tv = null;
 
-        // we'll create the index list
         indexList = createIndex(titles.toArray(new String[titles.size()]));
 
-        // number of items in the index List
         indexListSize = indexList.size();
 
         // maximal number of item, which could be displayed
-        int indexMaxSize = (int) Math.floor(sideIndex.getHeight() / 20);
+        int indexMaxSize = (int) Math.floor(sideIndex.getHeight() / 26);
 
         int tmpIndexListSize = indexListSize;
 
-        // handling that case when indexListSize > indexMaxSize
         while (tmpIndexListSize > indexMaxSize)
         {
             tmpIndexListSize = tmpIndexListSize / 2;
         }
 
-        // computing delta (only a part of items will be displayed to save a
-        // place)
         double delta = indexListSize / tmpIndexListSize;
 
         String tmpLetter = null;
         Object[] tmpIndexItem = null;
 
-        // show every m-th letter
         for (double i = 1; i <= indexListSize; i = i + delta)
         {
             tmpIndexItem = indexList.get((int) i - 1);
             tmpLetter = tmpIndexItem[0].toString();
-            tmpTV = new TextView(this);
-            tmpTV.setText(tmpLetter);
-            tmpTV.setGravity(Gravity.TOP);
-            tmpTV.setTextSize(13);
+            tv = new TextView(this);
+            tv.setText(tmpLetter);
+            tv.setGravity(Gravity.CENTER);
+            tv.setTextSize(10);
             LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1);
-            tmpTV.setLayoutParams(params);
-            sideIndex.addView(tmpTV);
+            tv.setLayoutParams(params);
+            sideIndex.addView(tv);
         }
 
         // and set a touch listener for it
@@ -220,13 +240,10 @@ public class BrowseActivity extends Activity {
         {
             public boolean onTouch(View v, MotionEvent event)
             {
-                // now you know coordinates of touch
+                // Coordinates of touch on index list
                 sideIndexX = event.getX();
                 sideIndexY = event.getY();
-
-                // and can display a proper item it country list
                 displayListItem();
-
                 return false;
             }
             
@@ -246,9 +263,6 @@ public class BrowseActivity extends Activity {
             sideIndexX = sideIndexX - distanceX;
             sideIndexY = sideIndexY - distanceY;
 
-            // when the user scrolls within our side index
-            // we can show for every position in it a proper
-            // item in the country list
             if (sideIndexX >= 0 && sideIndexY >= 0)
             {
                 displayListItem();

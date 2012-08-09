@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
@@ -207,13 +208,11 @@ public class VideoLookupService {
 		videoObject.setYear(Integer.parseInt(imdbResponse.getString("Year")));
 		String directorName = imdbResponse.getString("Director");
 
-		String[] nameSplit = directorName.split(" ");
-		if (nameSplit.length > 2) {
-			String firstName = nameSplit[0];
-			String lastName = nameSplit[1];
-			videoObject.setDirector(new Person(lastName, firstName));
-		} else
+		try {
+			videoObject.setDirector(Person.fromString(directorName));
+		} catch(ParseException e) {
 			videoObject.setDirector(null);
+		}
 
 		videoObject.setRuntime(getImdbRuntime(imdbResponse.getString("Runtime")));
 		videoObject.setImageURL(imdbResponse.getString("Poster"));
@@ -255,10 +254,8 @@ public class VideoLookupService {
 				.getJSONObject(0);
 		String directorName = tomatoResponse.getString("name");
 
-		String[] nameSplit = directorName.split(" ");
-		String firstName = nameSplit[0];
-		String lastName = nameSplit[1];
-		return new Person(lastName, firstName);
+
+		return Person.fromString(directorName);
 	}
 
 	private Rating getRating(String rating) {

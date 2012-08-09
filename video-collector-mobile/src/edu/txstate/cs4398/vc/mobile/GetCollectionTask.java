@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.kobjects.base64.Base64;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
@@ -17,7 +15,7 @@ import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
 import android.util.Log;
 
 /**
- * This task will get the current collection from the desktop application
+ * This task will get the current as a list of videos from the desktop application
  * 
  * @author mnosler
  * 
@@ -89,45 +87,10 @@ public class GetCollectionTask extends
 		int size = soap.getPropertyCount();
 
 		for (int i = 0; i < size; i++) {
-			list.add(getVideoFromSoap((SoapObject) soap.getProperty(i)));
+			list.add(VideoMobile.getVideoFromSoap(((SoapObject) soap.getProperty(i))));
 		}
 		return list;
 	}
 
-	private VideoMobile getVideoFromSoap(SoapObject response) {
-		VideoMobile video = new VideoMobile();
-		String title = response.getPropertySafelyAsString("title");
-		video.setTitle(title);
-
-		SoapObject director = (SoapObject) response.getPropertySafely(
-				"director", new SoapObject("", ""));
-		if (!director.toString().isEmpty()) {
-			String first = director.getPropertySafelyAsString("firstName", "");
-			String last = director.getPropertySafelyAsString("lastName", "");
-			if (!(last.isEmpty() && first.isEmpty())) {
-				video.setDirector(first + " " + last);
-			}
-
-		}
-
-		String rated = response.getPropertySafelyAsString("rated", "UNRATED");
-		video.setRated(rated);
-		int year = Integer.parseInt(response.getPropertySafelyAsString("year"));
-		video.setYear(year);
-		int runtime = Integer.parseInt(response
-				.getPropertySafelyAsString("runtime"));
-		video.setRuntime(runtime);
-		Log.d("adding video", video.getTitle());
-		video.setImageURL(response.getPropertyAsString("imageURL"));
-
-		String notes = response.getPropertySafelyAsString("notes");
-		video.setNotes(!notes.contains("anyType{}") ? notes : "");
-		
-		video.setCategory(response.getPropertySafelyAsString("category"));
-		video.setMyRating(Byte.parseByte(response.getPropertySafelyAsString("myRating","0")));
-		video.setImageBytes(Base64.decode(response.getPropertySafelyAsString("image", "")));
-
-		return video;
-	}
 
 }

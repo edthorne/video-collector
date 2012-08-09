@@ -8,9 +8,16 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import edu.txstate.cs4398.vc.mobile.video.VideoMobile;
+
 import android.util.Log;
 
-public class GetVideoTask extends BaseTask<String, Void, SoapObject>  {
+/**
+ * Task to retrieve a video from the video lookup services
+ * @author mnosler
+ *
+ */
+public class GetVideoTask extends BaseTask<String, Void, VideoMobile>  {
 
 	private static String URL;
 	private static final String GET_VIDEO_UPC = "lookupVideoByUPC";
@@ -24,7 +31,7 @@ public class GetVideoTask extends BaseTask<String, Void, SoapObject>  {
 	}
 	
 	@Override
-	protected SoapObject doInBackground(String... data) {
+	protected VideoMobile doInBackground(String... data) {
 		URL = "http://"+data[0]+":8796/MobileServices?WSDL";
 		
 		String name = null;
@@ -55,7 +62,7 @@ public class GetVideoTask extends BaseTask<String, Void, SoapObject>  {
 			task.cancel( );           // cancel the timeout
 
 			SoapObject resultRequestSOAP = (SoapObject) envelope.bodyIn;
-			return (SoapObject) resultRequestSOAP.getProperty(0);		
+			return VideoMobile.getVideoFromSoap((SoapObject)resultRequestSOAP.getProperty(0));		
 			
         } catch (Exception e) {
         	Log.d("SOAPERROR", e.getMessage());
@@ -64,13 +71,13 @@ public class GetVideoTask extends BaseTask<String, Void, SoapObject>  {
 	}
 	
 	@Override
-	protected void onPostExecute(SoapObject soap){		// If we reach this method then it's guaranteed we have a successful result
-		TaskEvent<SoapObject> task = new TaskEvent<SoapObject>("GET_VIDEO");
-		if(soap != null)
+	protected void onPostExecute(VideoMobile video){		// If we reach this method then it's guaranteed we have a successful result
+		TaskEvent<VideoMobile> task = new TaskEvent<VideoMobile>("GET_VIDEO");
+		if(video != null)
 			task.setStatus(TaskEvent.Status.SUCCESS);
 		else
 			task.setStatus(TaskEvent.Status.FAIL);
-		task.setResult(soap);
+		task.setResult(video);
 		event.notifyEvent(task);
 	}
 

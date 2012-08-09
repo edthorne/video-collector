@@ -26,6 +26,11 @@ import android.widget.Toast;
 import org.kobjects.base64.Base64;
 import org.ksoap2.serialization.SoapObject;
 
+/**
+ * The activity for adding a video to the collection.
+ * @author mnosler
+ *
+ */
 public class ScanActivity extends Activity implements View.OnClickListener,
 		Listener {
 	Button scanButton;
@@ -47,6 +52,7 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 	private static final String UPC = "UPC";
 	private static final String TITLE = "TITLE";
 	private byte[] currentImageBytes;
+	AlertDialog ad;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +84,15 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 		clearButton = (Button) this.findViewById(R.id.clearAll);
 		clearButton.setOnClickListener(this);
 		image = (ImageView) this.findViewById(R.id.image);
+		
+		ad = new AlertDialog.Builder(this).create();
+		ad.setCancelable(false); // This blocks the 'BACK' button
+		ad.setButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+
 	}
 
 	public void onClick(View v) {
@@ -111,13 +126,6 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 
 		if (v.equals(lookupUpcButton)) {
 			if (upcText.getText().toString().length() != 12 && !isFinishing()) {
-				AlertDialog ad = new AlertDialog.Builder(this).create();
-				ad.setCancelable(false); // This blocks the 'BACK' button
-				ad.setButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				});
 				ad.setMessage("UPC must be 12 digits");
 				ad.show();
 			} else {
@@ -130,13 +138,6 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 
 		if (v.equals(lookupTitleButton)) {
 			if (videoTitle.getText().toString().length() < 1 && !isFinishing()) {
-				AlertDialog ad = new AlertDialog.Builder(this).create();
-				ad.setCancelable(false); // This blocks the 'BACK' button
-				ad.setButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				});
 				ad.setMessage("Title can not be blank");
 				ad.show();
 			} else {
@@ -170,77 +171,6 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 		}
 	}
 
-	private void transformSoapResponse(SoapObject response) {
-
-		String title = response.getPropertySafelyAsString("title", "");
-		if (!title.isEmpty()) {
-			videoTitle.setText(title);
-
-			// if Director doesn't exist... leave it empty
-			SoapObject director = (SoapObject) response.getPropertySafely("director", new SoapObject("", ""));
-			if (!director.toString().isEmpty()) {
-				String first = director.getPropertySafelyAsString("firstName",
-						"");
-				String last = director
-						.getPropertySafelyAsString("lastName", "");
-				if (!(last.isEmpty() && first.isEmpty())) {
-					videoDirector.setText(first + " " + last);
-				} else {
-					videoDirector.setText("");
-				}
-
-			} else {
-				videoDirector.setText("");
-			}
-
-			String rated = response.getPropertySafelyAsString("rated",
-					"UNRATED");
-			if (rated.equals("G"))
-				ratedSpinner.setSelection(0);
-			else if (rated.equals("PG"))
-				ratedSpinner.setSelection(1);
-			else if (rated.equals("PG13"))
-				ratedSpinner.setSelection(2);
-			else if (rated.equals("R"))
-				ratedSpinner.setSelection(3);
-			else if (rated.equals("NC17"))
-				ratedSpinner.setSelection(4);
-			else
-				ratedSpinner.setSelection(5);
-
-			videoYear.setText(response.getPropertySafelyAsString("year", ""));
-			videoRuntime.setText(response.getPropertySafelyAsString("runtime",
-					""));
-
-			imgUrl = response.getPropertySafelyAsString("imageURL", "");
-			if (!imgUrl.isEmpty()) {
-				try {
-					currentImageBytes = Base64.decode(response
-							.getPropertySafelyAsString("image"));
-					InputStream is = new ByteArrayInputStream(currentImageBytes);
-					Bitmap bmp = BitmapFactory.decodeStream(is);
-					image.setImageBitmap(Bitmap.createScaledBitmap(bmp,
-							image.getMeasuredWidth(),
-							image.getMeasuredHeight(), false));
-				} catch (Exception e) {
-					image.setImageResource(R.drawable.blank);
-				}
-			}
-		} else if (!isFinishing()) {
-			AlertDialog ad = new AlertDialog.Builder(this).create();
-			ad.setCancelable(false); // This blocks the 'BACK' button
-			ad.setButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				}
-			});
-			ad.setMessage("No results found");
-			ad.show();
-
-		}
-
-	}
-
 	public void onEvent(TaskEvent task) {
 
 		TaskEvent.Status taskStatus = task.getStatus();
@@ -250,15 +180,8 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 			progressCircle.setVisibility(View.INVISIBLE);
 			if (taskStatus == TaskEvent.Status.SUCCESS) {
 				Log.i("Interfaces", "GET_VIDEO Success");
-				transformSoapResponse((SoapObject) task.getResult());
+				setFieldsFromVideo((VideoMobile) task.getResult());
 			} else if (!isFinishing()) {
-				AlertDialog ad = new AlertDialog.Builder(this).create();
-				ad.setCancelable(false); // This blocks the 'BACK' button
-				ad.setButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				});
 				ad.setMessage("No response from video lookup services");
 				ad.show();
 			}
@@ -268,16 +191,6 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 						.getPropertyAsString(0);
 				if (!"success".equals(response)) {
 					if (!isFinishing()) {
-						AlertDialog ad = new AlertDialog.Builder(this).create();
-						ad.setCancelable(false); // This blocks the 'BACK'
-													// button
-						ad.setButton("OK",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int which) {
-										dialog.dismiss();
-									}
-								});
 						ad.setMessage(response);
 						ad.show();
 					}
@@ -292,19 +205,54 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 					clearAllFields();
 				}
 			} else if (!isFinishing()) {
-
-				AlertDialog ad = new AlertDialog.Builder(this).create();
-				ad.setCancelable(false); // This blocks the 'BACK' button
-				ad.setButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				});
 				ad.setMessage("Error sending video to server");
 				ad.show();
 			}
 		}
 
+	}
+
+	private void setFieldsFromVideo(VideoMobile v) {
+		if(!v.getTitle().isEmpty()) {
+			videoTitle.setText(v.getTitle());
+
+			videoDirector.setText(v.getDirector());
+			String rated = v.getRated();
+			if (rated.equals("G"))
+				ratedSpinner.setSelection(0);
+			else if (rated.equals("PG"))
+				ratedSpinner.setSelection(1);
+			else if (rated.equals("PG13"))
+				ratedSpinner.setSelection(2);
+			else if (rated.equals("R"))
+				ratedSpinner.setSelection(3);
+			else if (rated.equals("NC17"))
+				ratedSpinner.setSelection(4);
+			else
+				ratedSpinner.setSelection(5);
+
+			videoYear.setText(String.valueOf(v.getYear()));
+			videoRuntime.setText(String.valueOf(v.getRuntime()));
+
+			imgUrl = v.getImageURL();
+			if (!imgUrl.isEmpty()) {
+				try {
+					currentImageBytes = v.getImageBytes();
+					InputStream is = new ByteArrayInputStream(currentImageBytes);
+					Bitmap bmp = BitmapFactory.decodeStream(is);
+					image.setImageBitmap(Bitmap.createScaledBitmap(bmp,
+							image.getMeasuredWidth(),
+							image.getMeasuredHeight(), false));
+				} catch (Exception e) {
+					image.setImageResource(R.drawable.blank);
+				}
+			}
+		} else if (!isFinishing()) {
+			ad.setMessage("No results found");
+			ad.show();
+		}
+
+		
 	}
 
 	private void clearAllFields() {
@@ -320,13 +268,6 @@ public class ScanActivity extends Activity implements View.OnClickListener,
 
 	private VideoMobile getVideoFromFields() {
 		VideoMobile video = new VideoMobile();
-		AlertDialog ad = new AlertDialog.Builder(this).create();
-		ad.setCancelable(false); // This blocks the 'BACK' button
-		ad.setButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
 
 		ad.setMessage("Error sending video to server");
 

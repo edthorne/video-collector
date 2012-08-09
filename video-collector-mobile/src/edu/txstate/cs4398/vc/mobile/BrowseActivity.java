@@ -44,6 +44,7 @@ public class BrowseActivity extends Activity {
 
     // list with items for side index
     private ArrayList<Object[]> indexList = null;
+    final static String[] NUMS = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
     final static String[] ABC =	{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
     							 "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
     							 "W", "X", "Y", "Z"};
@@ -127,7 +128,7 @@ public class BrowseActivity extends Activity {
             tv = new TextView(this);
             tv.setText(tmpLetter);
             tv.setGravity(Gravity.CENTER);
-            tv.setTextSize(20);		// size of each index letter
+            tv.setTextSize(14);		// size of each index letter
             LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1);
             tv.setLayoutParams(params);
             sideIndex.addView(tv);
@@ -154,11 +155,11 @@ public class BrowseActivity extends Activity {
         ArrayList<Object[]> tmpIndexList = new ArrayList<Object[]>();
         Object[] tmpIndexItem = null;
 
-        int tmpPos = 0, latestLetterIdx = 0;
+        int tmpPos = 0, latestLetterIdx = -1;
         String tmpLetter = " ";
         String currentVidLetter = null;
         String strItem = null;
-
+        boolean first = true;
         if(strArr.length > 0){
 	        for (int i = 0; i < ABC.length; i++)
 	        {
@@ -166,37 +167,39 @@ public class BrowseActivity extends Activity {
 	        		strItem = strArr[i];
 	        		currentVidLetter = strItem.substring(0,1);
 	        	}
-	        	// Map the first video of a given letter to its corresponding letter on the side index
-	        	// if there is no video for a given letter, then that letter well map to the previous mapped video
+	        	
+	        	// Map the first tittle of a given letter to its corresponding letter on the side index
+	        	// if there is no tittle for a given letter, then that letter will map to the previous mapped title
 	            if (!tmpLetter.equals(currentVidLetter))
 	            {  
 	            	// adding new letter
 	            	tmpIndexItem = new Object[3];
-	                tmpIndexItem[0] = tmpLetter;
+             		tmpIndexItem[0] = tmpLetter;
 	                tmpIndexItem[1] = tmpPos - 1;
 	                tmpIndexItem[2] = i - 1;
 	                tmpLetter = currentVidLetter;
-	                
-	             	
 	                tmpIndexList.add(tmpIndexItem);
-	                
+	 
 	                int j = latestLetterIdx;
-	             	while(!(currentVidLetter.equals(ABC[j]))){
+	                
+	             	while(first == false && !(currentVidLetter.equals(ABC[j]))){
 	             		tmpIndexItem = new Object[3];
-	                    tmpIndexItem[0] = ABC[j];
+	             		tmpIndexItem[0] = ABC[j];
 	                    tmpIndexItem[1] = tmpPos - 1;
 	                    tmpIndexItem[2] = i - 1;
 	                    tmpIndexList.add(tmpIndexItem);
-	                    j++;
+	                    j++; 
 	                    
 	             	}		
 	             	latestLetterIdx = j+1;
 	             	tmpPos = i + 1;
-	             	
+	             	first = false;
+
 	            }
 	            if(ABC[i].equals("Z") && tmpLetter.equals(currentVidLetter)){
+	            	
 	            	int j = latestLetterIdx -1;
-	            	while(!("Z".equals(ABC[j]))){
+	            	while(!(ABC[j].equals("Z"))){
 	             		tmpIndexItem = new Object[3];
 	                    tmpIndexItem[0] = ABC[j];
 	                    tmpIndexItem[1] = tmpPos - 2;

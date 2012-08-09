@@ -1,11 +1,14 @@
 package edu.txstate.cs4398.vc.mobile.video;
 
 
+import org.kobjects.base64.Base64;
+import org.ksoap2.serialization.SoapObject;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import edu.txstate.cs4398.vc.model.AbstractModel;
 import edu.txstate.cs4398.vc.model.ModelEvent;
@@ -13,7 +16,6 @@ import edu.txstate.cs4398.vc.model.Video;
 
 /**
  * Represents a video without JAXB annotation
- * and with a bitmap image
  * @author mnosler
  */
 @Root
@@ -71,6 +73,48 @@ public class VideoMobile extends AbstractModel {
 		category = video.getCategory();
 		imageURL = video.getImageURL();
 		imageBytes = video.getImage();
+	}
+	
+	/**
+	 * returns a video given a soap object containing all values from web service response
+	 * @param response
+	 * @return
+	 */
+	public static VideoMobile getVideoFromSoap(SoapObject response) {
+		VideoMobile video = new VideoMobile();
+		String title = response.getPropertySafelyAsString("title");
+		video.setTitle(title);
+
+		SoapObject director = (SoapObject) response.getPropertySafely(
+				"director", new SoapObject("", ""));
+		if (!director.toString().isEmpty()) {
+			String first = director.getPropertySafelyAsString("firstName", "");
+			String last = director.getPropertySafelyAsString("lastName", "");
+			if (!(last.isEmpty() && first.isEmpty()) && !"N/A".equals(last)) {
+				video.setDirector(first + " " + last);
+			}
+
+		}
+
+		String rated = response.getPropertySafelyAsString("rated", "UNRATED");
+		video.setRated(rated);
+		int year = Integer.parseInt(response.getPropertySafelyAsString("year"));
+		video.setYear(year);
+		int runtime = Integer.parseInt(response
+				.getPropertySafelyAsString("runtime"));
+		video.setRuntime(runtime);
+		Log.d("adding video", video.getTitle());
+		video.setImageURL(response.getPropertySafelyAsString("imageURL"));
+
+		String notes = response.getPropertySafelyAsString("notes");
+		video.setNotes(!notes.contains("anyType{}") ? notes : "");
+		
+		video.setCategory(response.getPropertySafelyAsString("category"));
+		video.setMyRating(Byte.parseByte(response.getPropertySafelyAsString("myRating","0")));
+		video.setImageBytes(Base64.decode(response.getPropertySafelyAsString("image", "")));
+
+		return video;
+
 	}
 
 	/**

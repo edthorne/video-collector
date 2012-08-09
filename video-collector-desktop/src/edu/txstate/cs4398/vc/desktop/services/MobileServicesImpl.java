@@ -1,5 +1,6 @@
 package edu.txstate.cs4398.vc.desktop.services;
 
+import java.text.ParseException;
 import java.util.Set;
 
 import javax.jws.WebService;
@@ -76,9 +77,11 @@ public class MobileServicesImpl implements MobileServices {
 			if (title.isEmpty())
 				throw new IllegalArgumentException("Title can not be blank");
 
-			if (!director.isEmpty())
+			try {
 				video.setDirector(Person.fromString(director));
-
+			} catch(ParseException e) {
+				throw new IllegalArgumentException("Director is invalid");
+			}
 			video.setRated(rated);
 			video.setRuntime(runtime);
 			video.setYear(year);
